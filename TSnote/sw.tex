@@ -4,13 +4,14 @@ The software implemented to run the teststation essentially consists of two prog
 
 \subsection{DAQ, Run control and test scenarios}
 
-The ARC boards are operated with a software which is based on ARCS version 6.1~\ref{sec:arcs} and \ref{sec:acdc}.\\
+The ARC boards are operated with a software which is based on ARCS version 6.1~\ref{sec:arcs} and~\ref{sec:acdc}.\\
 The modified ARCS version fulfills the special needs for the test station: in particular the teststation ARCS is able to perform the test on all the loaded hybrids, implements the pulse injection test and 
 has been modified to interact with the slow control application in such a way tests are performed automatically once the desired environmental condition have been reached. The entire test procedure can proceed without the intervention of the operator that is only asked to load and unload the hybrids. The test scenario is given to ARCS trough a simple text file in which the sequence of operations is coded with a specific format
-Beyond the high automatization, to facilitate the operator also a simple and intuitive interface has been implemented where the operator only needs to scan the bar codes of the hybrids. A screenshot of the software is shown in figure \ref{fig:ss_arcs_teststation}.
+Beyond the high automatization, to facilitate the operator also a simple and intuitive interface has been implemented where the operator only needs to scan the bar codes of the hybrids. A screenshot of the software is shown in figure~\ref{fig:ss_arcs_teststation}.
 \begin{figure}[h]
   \begin{center}
-    \resizebox{\textwidth}{!}{\includegraphics{fig/ss_arcs_hybrid_test_station_mod.pdf}}
+    \includegraphics[width=\textwidth]{fig/ss_arcs_hybrid_test_station_mod.pdf}
+%\includegraphics*[width=0.99\textwidth]{fig/cms_note.pdf}
     \caption{Screenshot of the ARCS version for the hybrid test station showing the initialization panel were only the bar codes of the hybrids have to be scanned.}
     \label{fig:ss_arcs_teststation}
   \end{center}
