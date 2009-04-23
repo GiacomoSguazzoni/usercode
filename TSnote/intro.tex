@@ -1,0 +1,95 @@
+\section{Introduction}
+
+The CMS microstrip Silicon tracker modules consist of one or two and a
+front-end hybrid. The various types of silicon sensors have strip
+pitches ranging from 80 and 180. The front-end hybrid, made up of a
+multi-layer kapton circuit laminated onto a ceramic support, host four
+or six APVs, the CMS front-end chips, and the ancillary ASICs. The APV
+readout channel input pads are arranged into two staggerd rows with a
+pitch of . Thus a pitch adapter is needed to accommodate the
+microstrips' pitch and the readout chips' pitch.
+ 
+The production of the $\sim18000$ modules for the CMS Silicon Tracker
+has to be considered on industrial scale, given the huge number of
+pieces to be assembled and qualified. This task is shared between many
+labs. CERN had the resposibility for the three distinct tasks are: 1)
+assembly of the pitch adapter onto the hybrid carrier using the CERN
+gantry, 2) wire bonding of the APV chip inputs to the pitch adapter (PA),
+and 3) thorough testing of the completed assembly. Part of the latter
+two steps have been performed also in US labs. Nevertheless the
+testing is done by using a replica of the test-station developed at CERN.
+
+The mounting of the glass pitch adapter (PA) onto the ceramic hybrid
+carrier is performed by an automatic machine called gantry []. Then
+follows the wire bonding from the APV inputs to the PA. After the
+gluing and bonding steps, a series of quality control tests are made
+to ensure the continued correct functioning of the hybrid and that the
+PA has been successfully bonded. The aim of these tests are:
+\begin{itemize}
+\item ensure that the hybrid did not suffer any damage that could
+  possibly affect its electrical functionality as a consequence of bad
+  handling, mechanical stress or accidental electrostatic discharge
+  during the gantry picth adapter or the wire bonding;
+\item identify and tag all possible single channel defects resulting
+  from bonding errors and failure:\\
+- open, a channel non connected
+  to the corresponding PA line;\\
+- short, two or more neighboring
+  channels shorted;
+\item identify and tag all possible single channel defects due to
+  microscopic damage of the chips, as may result, for example, from
+  accidental electrostatic discharges:\\
+- noisy channel, a channel with abnormal intrinsinc noise;\\
+- dead channel, a channel not responding to an input signal.
+\end{itemize}
+
+The verification of the wire bonding between the PA and the APVs on
+the hybrid is important: opens will result in as many unusable 
+channels; shorts could result in 'pin-hole' like effect making at
+least the corresponding channels unuseful but possibly the entire APV 
+could be affected [some refs]. 
+
+Since the CMS Silicon tracker will run at a
+temperature of $-10^\circ$ to reduce the effects of radiation
+damage, to improve quality control reliability has been decided to
+have a setup capable to perform the described tests during a thermal
+cycle with continuous read-out within the range of temperatures
+expected during the real data taking to simulate the thermal-induced
+stress that all hybrid components and the wire bonds will suffer. On a
+fraction of pieces the thermal cycle is repeted $\sim10$ times for a
+realistic simulation of the average number of running-shutdown cycles
+expected during the CMS lifetime. Each single module will be liquid cooled,
+the coolant liquid will be flowing at a temperature around $-20^\circ$
+[Ref to TDR]. In normal condition the hybrid, where a large fraction
+of power is dissipated, will be $6$ to $8^\circ$ warmer that the
+coolant despite being the module element with the best thermal contact
+with the cooling circuit, but, in case of power failures, it will
+easily reach the temperature of the coolant. These events are
+expected to be rare, the temperature of $-20^\circ$ has been
+conservatively choosen to perform qualification tests.
+
+Thus, as a matter of fact, also the following point can be added to the PA
+assembly electrical quality control test target: 
+\begin{itemize}
+\item a large statistics cross check going beyond small scale R\&D
+  tests or single component tests that the entire hybrid plus pitch
+  adapter assembly is able to operate within the expectation at the
+  CMS running conditions; potential problem affecting hybrids related
+  to the operating temperature even at a level of few percent would
+  have been discovered and eventually investigated.
+\end{itemize}
+
+The described procedures are planned to be carried out at
+CERN for a large initial sample of hybrids (about 1000). If very few
+failures of pitch adapter gluing and bonding are discovered, the level
+of testing may be relaxed and a large fraction of the bonding and
+testing work may be given to one or two collaborating institutes.
+
+This note describes the test setup that has been developed and built
+at CERN to test and qualify the front-end hybrids assembly.
+This setup allows a full automatic test sequence to be carried out on
+four hybrids of any type at the same time in a controlled environment.
+
+The note is organized as follows. A description of the hardware components of the test setup and of the software needed to run are given in Sections \ref{sec:} and \ref{sec:} respectevely.
+
+As a consequence of the well defined subject of this note, in the following with {\em hybrid} is intended the assembly made up of the hybrid and the pitch adapter; the hybrid without the PA will be referred to with {\em bare hybrid}.
