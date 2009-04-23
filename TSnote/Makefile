@@ -1,5 +1,5 @@
 # makefile for pdflatex
-MAIN=TSNote
+MAIN=TSnote
 TEXSOURCES= $(wildcard *.tex)
 PLOTFILES= $(wildcard Figs/*.png Figs/*.pdf)
 STYLEFILES= $(wildcard *.sty *.cls )
