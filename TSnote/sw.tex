@@ -19,11 +19,16 @@ Beyond the high automatization, to facilitate the operator also a simple and int
 
 The tests which are performed in the hybrid test station are a pedestal and noise test, a calibration pulse test at fixed timing position and the pitch adapter signal injection test.
 
-At the end of a test, the DAQ software immediately gives to the operator feedback on the hybrid test result on the basis of the quality criteria described in~\ref{sec:}.
+At the end of a test, the DAQ software immediately gives to the operator feedback on the hybrid test result on the basis of the quality criteria described in~\ref{sec:}. The test results are automatically uploaded to the Tracker Construcrion Database.
 
 \subsection{Slow control}
 
-The central application of the hybrid test station is ACDC. The software monitors and controls the temperature and the humidity of the test box, tells ARCS to run tests if the desired temperatures are reached and gives alerts if one of sensors shows unexpected results. The temperature control is done regulating the current and the polarity of the peltier element. The difference between the actual temperature readings with respect to the required temperature are fed into a software implemented PID algorythm that returns the current value and sign (i.e. cooling or heating) that has to be driven into the peltier element through the cooli box and its built-in polarity switch.
+The main application for controlling the environmental conditions inside the hybrid test station is called ACDC. 
+The software monitors and controls the temperature and the humidity of the test box and provides flags that can be queried by the ARCS system.
+In this way the tests can be started when the desired temperatures are reached.
+ACDC also gives alerts if any parameter leaves the range of safe operation. 
+The temperature control is done regulating the current and the polarity of the peltier element. 
+The difference between the actual temperature readings with respect to the required temperature are fed into a software implemented PID algorythm that returns the current value and sign (i.e. cooling or heating) that has to be driven into the peltier element through the cooli box and its built-in polarity switch.
 \begin{figure}[h]
   \begin{center}
     \resizebox{\textwidth}{!}{\includegraphics{fig/ACDC_screenshot.pdf}}
