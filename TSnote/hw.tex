@@ -21,17 +21,36 @@ A simplified functional scheme of the test-station can be seen in Figure~\ref{fi
 
 The hybrids are read out by ARC boards in combination with the old version of the ARC front-end adapter.
 
-\subsection{Climatic chamber}
+\clearpage
 
-\begin{2figures}{t}
-  \resizebox{0.46\textwidth}{!}{\includegraphics{fig/setup_labels.pdf}} &
-  \resizebox{0.46\textwidth}{!}{\includegraphics{fig/climatic_chamber_labels.pdf}} \\
-  \caption{The test-station setup at CERN.}
-  \label{fig:setup} &
+% \begin{2figures}{t}
+%   \resizebox{0.46\textwidth}{!}{\includegraphics{fig/setup_labels.pdf}} &
+%   \resizebox{0.46\textwidth}{!}{\includegraphics{fig/climatic_chamber_labels.pdf}} \\
+%   \caption{The test-station setup at CERN.}
+%   \label{fig:setup} &
+%   \caption{The test-station climatic without the cover lid; three of
+%   the four slots are occupied by hybrids.}
+%   \label{fig:climaticchamber} \\
+% \end{2figures}
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{fig/setup_labels.pdf}
+    \caption{The test-station setup at CERN.}
+    \label{fig:setup}
+  \end{center}
+\end{figure}
+\begin{figure}[b]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{fig/climatic_chamber_labels.pdf}
   \caption{The test-station climatic without the cover lid; three of
   the four slots are occupied by hybrids.}
-  \label{fig:climaticchamber} \\
-\end{2figures}
+  \label{fig:climaticchamber}
+  \end{center}
+\end{figure}
+
+\clearpage
+
+\subsection{Climatic chamber}
 
 The main component of the test-station is the climatic chamber or {\em cold-box}. It is a thermally-insulated aluminum box suited to host up to four hybrids of any kind\footnote{There are 26 different kinds of hybrids that could differ either for the bare hybrid kind and for the different PA.}. The throughput depends either on the possibility to test in parallel up to four hybrids but also on the rapid thermal cycles, achieved thanks  to the limited volume, the low material budget and the good isolation and to the powerful active element and\\
 The climatic chamber is visible in Figure~\ref{fig:climaticchamber} without the cover lid.  When closed, the overall internal dimensions of the box are roughly $\sim 45\times 38 \times 11 \cm ^3$. For shielding purposes the box is entirely made of aluminum, 1cm thick for the lateral walls, 2mm thick for the bootom plate and the removal cover lid. The bottom plate extends well beyond the box itself to host the readout electronic boards and is screw-tightened to a 2cm thick plywood board to be sufficiently stiff. 
@@ -76,12 +95,12 @@ The humidity is actively controlled by a switch box that hosts four independent 
 \end{figure}
 
 
-The temperature of the hybrids is measured by four DS18B20 sensors from Dallas Semiconductor\cite{bib:dallas_sensor}sitting just below each hybrid support plate, but thermally decoupled from the cold box bottom plate.\\
+The temperature of the hybrids is measured by four DS18B20 sensors from Dallas Semiconductor~\cite{bib:dallas_sensor} sitting just below each hybrid support plate, but thermally decoupled from the cold box bottom plate.\\
 
 Temperature is controlled by the heating/cooling power of the peltier element. The peltier element supply current is provided by an analog programmable power supply\footnote{Delta Elektronika BV, SM 7020-D.}. In such a device the output current is proportional to the 0 to 5V voltage applied at the programming analog input. This input is driven by one of the DAC outputs of the cooli box. The cooli box also features a relay based switch to polarity of the current flow into the peltier element. The DAC setting and the current direction is calculated by the slow control software ACDC as described (\ref{sec:slowcontrol}). One of the electro valves of the switch box is used to switch the water for the peltier element on and off. The remaining one could be used as spare.\\
 
-Current...\\
-PID algorithm...\\
+%Current...\\
+%PID algorithm...\\
 
 \subsubsection {Safety (to be reviewed)}
 Next to the temperature and humidity range warnings which are described in section~\ref{sec:acdc} and the cooli interlock two sensors are implemented in the hybrid test station for the detection of operation failures. They are very useful to check if the test station is provided with the necessary water and nitrogen supply. Both sensors are monitored via the analog inputs of the cooli box. Thus they are software implemented.\\
