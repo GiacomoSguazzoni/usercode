@@ -41,6 +41,7 @@ The difference between the actual temperature readings with respect to the requi
 ACDC cycles trough all the temperature sensors every second and the {\em Partial-Integral-Differential}, {PID}, filter is implemented as follows: 
 \begin{equation}
 J_\mathrm{Peltier} = P\cdot\left( T - T_{\rm set}\right) + I \cdot \left( T - T' \right) \left( t-t' \right) + D\cdot \frac{T - T '}{t-t'},
+\label{eq:pid}
 \end{equation}
 where:\\
 - $T_{\rm set}$, target temperature;\\
@@ -83,5 +84,9 @@ An example of a typical temperature cycle is shown in Fig.~\ref{fig:Tcycle}. To 
   \end{center}
 \end{figure}
 
-A criterion has been  implemented into ACDC to declare the target temperature reached. According to this criterion ACDC issues the 'stable' flag to ARCS in order to start all the tests foreseen at that temperature or to take any other action.
+A criterion has been implemented into ACDC to declare the target temperature reached and stable. According to this criterion ACDC issues the 'stable' flag to ARCS in order to start all the tests foreseen at that temperature or to take any other action. The target temperature is declared reached and stable if
+\begin{equation}
+\left| T-T_{\rm set} + \tau\cdot\frac{T-T'}{t-t'}\right| < 1\Cdegree,
+\end{equation}
+with the same notation used in eq.~(\ref{eq:pid}). The term proportional to the derivative allows the stability to be estimated within a given time span $\tau$. Within the test-station setup a value of $10\s$ has been chosen for $\tau$.  
 
