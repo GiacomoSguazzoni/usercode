@@ -30,7 +30,7 @@ The software monitors and controls the temperature and the humidity of the test 
 In this way the tests can be started when the desired temperatures are reached.
 ACDC also gives alerts if any parameter leaves the range of safe operation. 
 The temperature control is done regulating the current and the polarity of the peltier element. 
-The difference between the actual temperature readings with respect to the required temperature are fed into a software implemented PID algorythm that returns the current value and sign (i.e. cooling or heating) that has to be driven into the peltier element through the cooli box and its built-in polarity switch.
+The difference between the actual temperature readings with respect to the required temperature are fed into a software implemented PID filter that returns the current value, signed (i.e. cooling or heating), that has to be driven into the peltier element through the cooli box and its built-in polarity switch.
 \begin{figure}[h]
   \begin{center}
     \resizebox{\textwidth}{!}{\includegraphics{fig/ACDC_screenshot.pdf}}
@@ -38,4 +38,50 @@ The difference between the actual temperature readings with respect to the requi
     \label{fig:ss_acdc_teststation}
   \end{center}
 \end{figure}
+ACDC cycles trough all the temperature sensors every second and the {\em Partial-Integral-Differential}, {PID}, filter is implemented as follows: 
+\begin{equation}
+J_\mathrm{Peltier} = P\cdot\left( T - T_{\rm set}\right) + I \cdot \left( T - T' \right) \left( t-t' \right) + D\cdot \frac{T - T '}{t-t'},
+\end{equation}
+where:\\
+- $T_{\rm set}$, target temperature;\\
+- $T$, last temperature reading of the regulation sensor;\\
+- $T'$, preavious temperature reading of the regulation sensor;\\
+- $t$, time of last reading;\\
+- $t'$, time of preavious reading;\\
+- $J_\mathrm{Peltier}$, current made flowing into the Peltier element; the sign convention is such that negative current means 'cooling';\\
+- $P$, $I$ and $D$, coefficients of the proportional, integral and differential components of the filter, respectively.
+
+Since the test-station features one temperature sensor per hybrid slot with {\em temperature reading} the maximum temperature read out by the four sensors was intended. For special runs (i.e. without all the four hybrids), ACDC allowed any of the sensors sitting into the test-station to be choosen as regulation sensor.
+
+The values of the filter component coefficients have been choosen to minimize the time to reach the target temperature while keeping under control over/undershoots and oscillations around the $T_{\rm set}$ value. Two different sets of coefficients have been used depending on the $T_{\rm set}$ range, in particular for $T_{\rm set}>0\Cdegree$ and $T_{\rm set}<0\Cdegree$ ({\fixme} may be a more sensible threshold should be $20\Cdegree$ or some value closer to room temperature), as a consequence of the very different performance of the test-station set up in heating and cooling. The coefficient values are given in table~\ref{tab:pidcoeff}. Obviously the test-station set up performances in heating are much better than in cooling. This is reflected in the smaller proportional coefficient and in the bigger differential coefficient in case of $T_{\rm set}>0\Cdegree$ with respect to the $T_{\rm set}<0\Cdegree$ case.
+Regardless the output of the PID filter, the current is limited within $\pm 14\A$ according to the specifications of the Peltier element.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{r|c|c|c}
+                       & $P$ & $I$ & $D$ \\
+    $T_{\rm set}$ range & [$\!\A\Cdegree$] & [$\!\A/(\Cdegree\s)$] & [$\!\A\s/\Cdegree$] \\ \hline
+    $T_{\rm set}<0\Cdegree$ & 14.0 & 0.03 & 0.\\
+    $T_{\rm set}>0\Cdegree$ & 8.0 & 0.03 & 18.0\\
+  \end{tabular}
+  \caption{Values of the coefficients of the PID filter.}
+  \label{tab:pidcoeff}
+\end{table}
+
+An example of a typical temperature cycle is shown in Fig.~\ref{fig:Tcycle}. To cool down from room temperature to $-20\Cdegree$ about $20\mn$ are needed. Heating up back to $18\Cdegree$ is much faster, needing only about $5 \mn$.
+
+\begin{figure}[h]
+  \begin{center}
+\includegraphics*[width=0.65\textwidth]{fig/cycle.png}
+   \begin{picture}(0,0)
+     \put(-255,85){\mbox{(c)}}
+     \put(-255,190){\mbox{(b)}}
+     \put(-255,395){\mbox{(a)}}
+   \end{picture}
+    \caption{Test-station temperature cycle: (a) temperature of the regulation sensor and $T_{\rm set}$; (b) humidity in the climatic chamber; (c) current in the Peltier element.}
+    \label{fig:Tcycle}
+  \end{center}
+\end{figure}
+
+A criterion has been  implemented into ACDC to declare the target temperature reached. According to this criterion ACDC issues the 'stable' flag to ARCS in order to start all the tests foreseen at that temperature or to take any other action.
 
