@@ -1,4 +1,5 @@
 \section{Teststation software}
+\label{sec:sw}
 
 The software implemented to run the teststation essentially consists of two programs running in parallel: one taking care of the DAQ and immediate data analysis, one devoted to the slow control of the climatic chamber. 
 
@@ -78,15 +79,17 @@ An example of a typical temperature cycle is shown in Fig.~\ref{fig:Tcycle}. To 
      \put(-255,85){\mbox{(c)}}
      \put(-255,190){\mbox{(b)}}
      \put(-255,395){\mbox{(a)}}
+     \put(-258,318){\mbox{\textcolor{blue}{\sf T$_{\sf set}$}}}
+     \put(-255,360){\mbox{{\sf T}}}
    \end{picture}
-    \caption{Test-station temperature cycle: (a) temperature of the regulation sensor and $T_{\rm set}$; (b) humidity in the climatic chamber; (c) current in the Peltier element.}
+    \caption{Test-station temperature cycle: (a) temperature $T$ of the regulation sensor and target temperature $T_{\rm set}$; (b) humidity in the climatic chamber; (c) current in the Peltier element.}
     \label{fig:Tcycle}
   \end{center}
 \end{figure}
 
 A criterion has been implemented into ACDC to declare the target temperature reached and stable. According to this criterion ACDC issues the 'stable' flag to ARCS in order to start all the tests foreseen at that temperature or to take any other action. The target temperature is declared reached and stable if
 \begin{equation}
-\left| T-T_{\rm set} + \tau\cdot\frac{T-T'}{t-t'}\right| < 1\Cdegree,
+\sqrt{\left(T-T_{\rm set} \right)^2 + \left( \tau\cdot\frac{T-T'}{t-t'}\right)^2} < 1\Cdegree,
 \end{equation}
 with the same notation used in eq.~(\ref{eq:pid}). The term proportional to the derivative allows the stability to be estimated within a given time span $\tau$. Within the test-station setup a value of $10\s$ has been chosen for $\tau$.  
 
