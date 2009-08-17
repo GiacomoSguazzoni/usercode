@@ -46,16 +46,16 @@ J_\mathrm{Peltier} = P\cdot\left( T - T_{\rm set}\right) + I \cdot \left( T - T'
 \end{equation}
 where:\\
 - $T_{\rm set}$, target temperature;\\
-- $T$, last temperature reading of the regulation sensor;\\
-- $T'$, preavious temperature reading of the regulation sensor;\\
+- $T$, last temperature reading;\\
+- $T'$, preavious temperature reading;\\
 - $t$, time of last reading;\\
 - $t'$, time of preavious reading;\\
 - $J_\mathrm{Peltier}$, current made flowing into the Peltier element; the sign convention is such that negative current means 'cooling';\\
 - $P$, $I$ and $D$, coefficients of the proportional, integral and differential components of the filter, respectively.
 
-Since the test-station features one temperature sensor per hybrid slot with {\em temperature reading} the maximum temperature read out by the four sensors was intended. For special runs (i.e. without all the four hybrids), ACDC allowed any of the sensors sitting into the test-station to be choosen as regulation sensor.
+The {\em temperature reading} is the temperature choosen as the {\em regulated temperature}, i.e. the temperature to be set at the {\em target temperature}. Since the test-station features one temperature sensor per hybrid slot, the default regulated temperature is just the maximum temperature reading among the four hybrid sensors. For special runs (i.e. without all the four hybrids), ACDC allowed any of the temperatures of the sensors sitting into the test-station to be choosen as regulated temperature.
 
-The values of the filter component coefficients have been choosen to minimize the time to reach the target temperature while keeping under control over/undershoots and oscillations around the $T_{\rm set}$ value. Two different sets of coefficients have been used depending on the $T_{\rm set}$ range, in particular for $T_{\rm set}>0\Cdegree$ and $T_{\rm set}<0\Cdegree$ ({\fixme} may be a more sensible threshold should be $20\Cdegree$ or some value closer to room temperature), as a consequence of the very different performance of the test-station set up in heating and cooling. The coefficient values are given in table~\ref{tab:pidcoeff}. Obviously the test-station set up performances in heating are much better than in cooling. This is reflected in the smaller proportional coefficient and in the bigger differential coefficient in case of $T_{\rm set}>0\Cdegree$ with respect to the $T_{\rm set}<0\Cdegree$ case.
+The values of the filter component coefficients have been choosen to minimize the time to reach the target temperature while keeping under control over/undershoots and oscillations around the $T_{\rm set}$ value. Two different sets of coefficients have been used depending on the $T_{\rm set}$ ranges used for the tests ($T_{\rm set}>10\Cdegree$ and $T_{\rm set}<-10\Cdegree$), as a consequence of the very different performance of the test-station set up in heating and cooling. The coefficient values are given in table~\ref{tab:pidcoeff}. Obviously the test-station set up performances in heating are much better than in cooling. This is reflected in the smaller proportional coefficient and in the bigger differential coefficient in case of $T_{\rm set}>10\Cdegree$ with respect to the $T_{\rm set}<-10\Cdegree$ case.
 Regardless the output of the PID filter, the current is limited within $\pm 14\A$ according to the specifications of the Peltier element.
 
 \begin{table}[h]
@@ -63,10 +63,10 @@ Regardless the output of the PID filter, the current is limited within $\pm 14\A
   \begin{tabular}{r|c|c|c}
                        & $P$ & $I$ & $D$ \\
     $T_{\rm set}$ range & [$\!\A\Cdegree$] & [$\!\A/(\Cdegree\s)$] & [$\!\A\s/\Cdegree$] \\ \hline
-    $T_{\rm set}<0\Cdegree$ & 14.0 & 0.03 & 0.\\
-    $T_{\rm set}>0\Cdegree$ & 8.0 & 0.03 & 18.0\\
+    $T_{\rm set}<-10\Cdegree$ & 14.0 & 0.03 & 0.\\
+    $T_{\rm set}>10\Cdegree$ & 8.0 & 0.03 & 18.0\\
   \end{tabular}
-  \caption{Values of the coefficients of the PID filter.}
+  \caption{Values of the coefficients of the PID filter for the temperature ranges of interest for the test station.}
   \label{tab:pidcoeff}
 \end{table}
 
@@ -82,7 +82,7 @@ An example of a typical temperature cycle is shown in Fig.~\ref{fig:Tcycle}. To 
      \put(-258,318){\mbox{\textcolor{blue}{\sf T$_{\sf set}$}}}
      \put(-255,360){\mbox{{\sf T}}}
    \end{picture}
-    \caption{Test-station temperature cycle: (a) temperature $T$ of the regulation sensor and target temperature $T_{\rm set}$; (b) humidity in the climatic chamber; (c) current in the Peltier element.}
+    \caption{Test-station temperature cycle: (a) regulated temperature $T$ and target temperature $T_{\rm set}$; (b) humidity in the climatic chamber; (c) current in the Peltier element.}
     \label{fig:Tcycle}
   \end{center}
 \end{figure}
@@ -91,5 +91,5 @@ A criterion has been implemented into ACDC to declare the target temperature rea
 \begin{equation}
 \sqrt{\left(T-T_{\rm set} \right)^2 + \left( \tau\cdot\frac{T-T'}{t-t'}\right)^2} < 1\Cdegree,
 \end{equation}
-with the same notation used in eq.~(\ref{eq:pid}). The term proportional to the derivative allows the stability to be estimated within a given time span $\tau$. Within the test-station setup a value of $10\s$ has been chosen for $\tau$.  
+with the same notation used in eq.~(\ref{eq:pid}). The term proportional to the derivative allows the stability to be estimated within the time span $\tau$. Within the test-station setup a value of $10\s$ has been chosen for $\tau$.  
 
