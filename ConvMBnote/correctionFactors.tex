@@ -16,7 +16,7 @@ Given a portion $R^2 \sin \theta\, d\theta\, d\phi$ centered in $(R,\theta,\phi)
 thickness $dR$ in a spherical reference system $(R, \theta, \phi)$,
 relation~(\ref{eq:1}) is:
 \begin{equation}
-dN_{\rm conv} = N_{\gamma}(R, \theta, \phi) \cdot R^2 \sin \theta \, d\theta\, d\phi \cdot \frac{P}{X_0} dR .
+dN_{\rm conv} = N_{\gamma}(R, \theta, \phi) \cdot R^2 \sin \theta \, d\theta\, d\phi \cdot \frac{P}{X_0} dR \;,
 \label{eq:2}
 \end{equation}
 where $N_\gamma(R,\theta,\phi)$ is the photon flux impinging the surface element.
@@ -26,43 +26,46 @@ structure is a cylindrical skin for which cylindrical reference system
 is more appropriate and in some case also cartesian reference system
 is convenient.
 
-\noindent{\bf Pseudo-cylindrical reference system.} 
-In a pseudo-cylindrical
-reference system $(r,\theta,\phi)$ ($r=R\sin\theta$), the relation~(\ref{eq:2}) can be
-conveniently rewritten having care of using the appropriate Jacobian
-factor, i.e.
-\begin{equation}
- dr\, d\theta\, d\phi = \left| \frac{dr\,d\theta\,d\phi}{dR\,d\theta\,d\phi}
-   \right| \cdot dR\,d\theta\,d\phi
-\label{eq:3}
-\end{equation}
-where
-\begin{equation}
-\begin{split}
-\frac{dr\,d\theta,d\phi}{dR\,d\theta\,d\phi}
-& = \det \left( \begin{array}{ccc}
-\nicefrac{dr}{dR}      & \nicefrac{dr}{d\theta}      & \nicefrac{dr}{d\phi} \\
-\nicefrac{d\theta}{dR} & \nicefrac{d\theta}{d\theta} & \nicefrac{d\theta}{d\phi} \\
-\nicefrac{d\phi}{dR}   & \nicefrac{d\phi}{d\theta}   & \nicefrac{d\phi}{d\phi}
-\end{array} \right) =\\
-& = \det \left( \begin{array}{ccc}
-\sin \theta & R\cos \theta & 0\\
- 0 & 1 & 0 \\
- 0 & 0 & 1 
-\end{array} \right)
-= \sin \theta .
-\end{split}
-\label{eq:4}
-\end{equation}
-Using~(\ref{eq:4}) in~(\ref{eq:2}) we get:
-\begin{equation}
-dN_{\rm conv} = N_{\gamma}(r, \theta, \phi) 
-\frac{P}{X_0} \frac{r^2}{\sin^2\theta} \,dr\,d\theta\,d\phi .
-\label{eq:5}
-\end{equation}
+
+% \noindent{\bf Pseudo-cylindrical reference system.} 
+% In a pseudo-cylindrical
+% reference system $(r,\theta,\phi)$ ($r=R\sin\theta$), the relation~(\ref{eq:2}) can be
+% conveniently rewritten having care of using the appropriate Jacobian
+% factor, i.e.
+% \begin{equation}
+%  dr\, d\theta\, d\phi = \left| \frac{dr\,d\theta\,d\phi}{dR\,d\theta\,d\phi}
+%    \right| \cdot dR\,d\theta\,d\phi
+% \label{eq:3}
+% \end{equation}
+% where
+% \begin{equation}
+% \begin{split}
+% \frac{dr\,d\theta,d\phi}{dR\,d\theta\,d\phi}
+% & = \det \left( \begin{array}{ccc}
+% \nicefrac{dr}{dR}      & \nicefrac{dr}{d\theta}      & \nicefrac{dr}{d\phi} \\
+% \nicefrac{d\theta}{dR} & \nicefrac{d\theta}{d\theta} & \nicefrac{d\theta}{d\phi} \\
+% \nicefrac{d\phi}{dR}   & \nicefrac{d\phi}{d\theta}   & \nicefrac{d\phi}{d\phi}
+% \end{array} \right) =\\
+% & = \det \left( \begin{array}{ccc}
+% \sin \theta & R\cos \theta & 0\\
+%  0 & 1 & 0 \\
+%  0 & 0 & 1 
+% \end{array} \right)
+% = \sin \theta .
+% \end{split}
+% \label{eq:4}
+% \end{equation}
+% Using~(\ref{eq:4}) in~(\ref{eq:2}) we get:
+% \begin{equation}
+% dN_{\rm conv} = N_{\gamma}(r, \theta, \phi) 
+% \frac{P}{X_0} \frac{r^2}{\sin^2\theta} \,dr\,d\theta\,d\phi .
+% \label{eq:5}
+% \end{equation}
 
 \noindent{\bf Cylindrical reference system.} 
-Similarly, in a cylindrical reference system $(r,z,\phi)$ ($r=R\sin\theta$, $z=R\cos\theta$)
+In a cylindrical reference system $(r,z,\phi)$ ($r=R\sin\theta$, $z=R\cos\theta$) the relation~(\ref{eq:2}) can be
+conveniently rewritten having care of using the appropriate Jacobian
+factor, i.e.
 \begin{equation}
  dr\,dz\,d\phi = \left| \frac{dr\, dz\, d\phi}{dR\,d\theta\,d\phi}
    \right| \cdot dR\,d\theta\,d\phi
@@ -94,7 +97,7 @@ dN_{\rm conv} = N_{\gamma}(r, z, \phi)
 \end{equation}
 
 \noindent{\bf Cartesian reference system.} 
-In a cartesian reference system $(x, y, z)$ ($x=R\sin\theta\cos\phi$, $y=R\sin\theta\sin\phi$, $z=R\cos\theta$)
+Similarly, in a cartesian reference system $(x, y, z)$ ($x=R\sin\theta\cos\phi$, $y=R\sin\theta\sin\phi$, $z=R\cos\theta$)
 \begin{equation}
  dx\,dy\,dz  = \left| \frac{dx\, dy\, dz}{dR\,d\theta\,d\phi}
    \right| \cdot dR\,d\theta\,d\phi
@@ -139,7 +142,7 @@ inferred assuming the following:
 \item[c)] the number of photons interacting with the material is negligible. 
 \end{itemize}
 All these three assumption are to some extent not true, c) especially,
-but let's give them for granted.
+but let's give them for granted for the present preliminary study.
 
 %\clearpage
 
@@ -199,10 +202,10 @@ Putting~(\ref{eq:6}) and~(\ref{eq:9}) together we get
 N_{\gamma} (R, \theta, \phi) = k \frac{1}{R^2\sin \theta} \, \, \, ,
 \label{eq:10pre}
 \end{equation}
-\begin{equation}
-N_{\gamma} (r, \theta, \phi) = k \frac{\sin \theta}{r^2} \,\,\, ,
-\label{eq:10}
-\end{equation}
+% \begin{equation}
+% N_{\gamma} (r, \theta, \phi) = k \frac{\sin \theta}{r^2} \,\,\, ,
+% \label{eq:10}
+% \end{equation}
 \begin{equation}
 N_{\gamma} (r, z, \phi) = k \frac{1}{r\sqrt{r^2+z^2}} \,\,\, ,
 \label{eq:10bis}
@@ -212,21 +215,25 @@ and
 N_{\gamma} (x, y, z) = k \frac{1}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}} \,\,\, ,
 \label{eq:10tris}
 \end{equation}
-for spherical, pseudo-cylindrical, cylindrical and cartesian coordinates
+for spherical,
+%pseudo-cylindrical, 
+cylindrical and cartesian coordinates
 respectively. In all cases $k$ is an appropriate dimensional factor
 that accounts for all necessary constants.
 
 \noindent{\bf Geometrical dependence of photon conversions.} 
-Equations~(\ref{eq:5}) with~(\ref{eq:10}),~(\ref{eq:5bis})
+Equations
+%~(\ref{eq:5}) with~(\ref{eq:10}),
+~(\ref{eq:5bis})
 with~(\ref{eq:10bis}), and~(\ref{eq:5tris}) with~(\ref{eq:10tris}),
 respectively, allow the following expressions for the number of photon
 conversion to be written:
-\begin{equation}
-d N_{\rm conv} = k \frac{\sin \theta}{r^2} 
-\frac{P}{X_0} \frac{r^2}{\sin^2\theta}\, dr\, d\theta\, d\phi = k
-\frac{P}{X_0} \frac{1}{\sin\theta}\, dr\, d\theta\, d\phi ,
-\label{eq:11}
-\end{equation}
+% \begin{equation}
+% d N_{\rm conv} = k \frac{\sin \theta}{r^2} 
+% \frac{P}{X_0} \frac{r^2}{\sin^2\theta}\, dr\, d\theta\, d\phi = k
+% \frac{P}{X_0} \frac{1}{\sin\theta}\, dr\, d\theta\, d\phi ,
+% \label{eq:11}
+% \end{equation}
 \begin{equation}
 d N_{\rm conv} = k \frac{1}{r\sqrt{r^2+z^2}} 
 \frac{P}{X_0} r dr\, dz\, d\phi = k
@@ -239,27 +246,28 @@ d N_{\rm conv} & = k \frac{P}{X_0} \frac{1}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}} \,
 \end{split}
 \label{eq:11tris}
 \end{equation}
-After the appropriate integration, Eq.~(\ref{eq:11}),
-Eq.~(\ref{eq:11bis}), and~(\ref{eq:11tris}) can be used to extract the
-factor to translate the observed number of conversion in a given 
+After the appropriate integration,
+%Eq.~(\ref{eq:11}),
+Eq.~(\ref{eq:11bis}) and~(\ref{eq:11tris}) can be used to extract the
+geometrical factor to translate the observed number of conversion in a given 
 volume into an estimate of $P/X_0$ (for the moment let's assume that
 the conversion reconstruction efficiency is 1 with no background).
 
 Few relevant examples follow.
 
 \begin{description}
-\item[$r_1<r<r_2$,~$\, \theta_1<\theta<\theta_2$,~$\, 0<\phi<2\pi$;]
-  from~Eq.~(\ref{eq:11}): 
-\begin{equation}
-\begin{split}
-N_{\rm conv} & = k \frac{P}{X_0} \int_{\theta_1}^{\theta_2}
-\frac{d\theta}{\sin\theta} \int_{r_1}^{r_2}dr \int_0^{2\pi}d\phi = \\
-& = 2\pi k \frac{P}{X_0} (r_2-r_1) \cdot \left. \ln \tan
-    \frac{\theta}{2} \right|_{\theta_1}^{\theta_2} =\\
-& = 2\pi k \frac{P}{X_0} (r_2-r_1) (\eta_1 - \eta_2).
-\end{split}
-\label{eq:12}
-\end{equation}
+% \item[$r_1<r<r_2$,~$\, \theta_1<\theta<\theta_2$,~$\, 0<\phi<2\pi$;]
+%   from~Eq.~(\ref{eq:11}): 
+% \begin{equation}
+% \begin{split}
+% N_{\rm conv} & = k \frac{P}{X_0} \int_{\theta_1}^{\theta_2}
+% \frac{d\theta}{\sin\theta} \int_{r_1}^{r_2}dr \int_0^{2\pi}d\phi = \\
+% & = 2\pi k \frac{P}{X_0} (r_2-r_1) \cdot \left. \ln \tan
+%     \frac{\theta}{2} \right|_{\theta_1}^{\theta_2} =\\
+% & = 2\pi k \frac{P}{X_0} (r_2-r_1) (\eta_1 - \eta_2).
+% \end{split}
+% \label{eq:12}
+% \end{equation}
 \item[$r_1<r<r_2$,~$\, z_1<z<z_2$,~$\, 0<\phi<2\pi$;]
   from~Eq.~(\ref{eq:11bis}): 
 \begin{equation}
@@ -287,7 +295,7 @@ N_{\rm conv} & = k
 \end{split}
 \label{eq:14}
 \end{equation}
-The analytical solution of the integral does not exist\footnote{\tt http://integrals.wolfram.com/}. Within
+The analytical solution of the integral does not exist~\cite{integrals}. Within
 our needs (i.e. for a scatter plot in the $xy$ plane) we can integrate first in $dz$:
 \begin{equation}
 \begin{split}
@@ -310,8 +318,7 @@ N_{\rm conv} & = k
 \end{equation}
 where $\overline{r}$ is the ``average'' radius, i.e. the one taken on
 the middle of the ``box'', $\overline{r}=\nicefrac{1}{2}\sqrt{(x_1+x_2)^2+(y_1+y_2)^2}$
-%$\overline{r}=\sqrt{\nicefrac{(x_1+x_2)^2}{4}+\nicefrac{(y_1+y_2)^2}{4}}$
-.
+%$\overline{r}=\sqrt{\nicefrac{(x_1+x_2)^2}{4}+\nicefrac{(y_1+y_2)^2}{4}}$.
 \end{description}
 
 %\end{document}
