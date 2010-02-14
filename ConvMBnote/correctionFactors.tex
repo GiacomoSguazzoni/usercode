@@ -1,0 +1,332 @@
+\section{Material Budget Estimation}
+\label{correctionFactors}
+
+The number\footnote{The following is along the lines of \cite{steve}} of photon conversions $dN_{\rm conv}$ in a
+small volume filled with a homogenous material is:
+\begin{equation}
+dN_{\rm conv} = dN_{\gamma} \frac{P}{X_0} dt .
+\label{eq:1}
+\end{equation}
+where
+\begin{description}
+\item[$dN_\gamma$] is the number of impinging photons;\\
+\item[$P$] is the energy dependent conversion probability per unit
+radiation length ($P\sim 7/9$);\\
+\item[$dt$] is the volume effective thickness (i.e. with respect to the photon arrival direction);\\
+\item[$X_0$] is the interaction length (in $cm$).%$\cm$
+\end{description}
+
+Given a portion $R^2 \sin \theta\, d\theta\, d\phi$ centered in $(R,\theta,\phi)$ of a homogenous spherical skin of 
+thickness $dR$ in a spherical reference system $(R, \theta, \phi)$,
+relation~(\ref{eq:1}) is:
+\begin{equation}
+dN_{\rm conv} = N_{\gamma}(R, \theta, \phi) \cdot R^2 \sin \theta \, d\theta\, d\phi \cdot \frac{P}{X_0} dR .
+\label{eq:2}
+\end{equation}
+where $N_\gamma(R,\theta,\phi)$ is the photon flux impinging the surface element.
+
+However in a particle physics experiment the most common geometrical
+structure is a cylindrical skin for which cylindrical reference system
+is more appropriate and in some case also cartesian reference system
+is convenient.
+
+\noindent{\bf Pseudo-cylindrical reference system.} 
+In a pseudo-cylindrical
+reference system $(r,\theta,\phi)$ ($r=R\sin\theta$), the relation~(\ref{eq:2}) can be
+conveniently rewritten having care of using the appropriate Jacobian
+factor, i.e.
+\begin{equation}
+ dr\, d\theta\, d\phi = \left| \frac{dr\,d\theta\,d\phi}{dR\,d\theta\,d\phi}
+   \right| \cdot dR\,d\theta\,d\phi
+\label{eq:3}
+\end{equation}
+where
+\begin{equation}
+\begin{split}
+\frac{dr\,d\theta,d\phi}{dR\,d\theta\,d\phi}
+& = \det \left( \begin{array}{ccc}
+\nicefrac{dr}{dR}      & \nicefrac{dr}{d\theta}      & \nicefrac{dr}{d\phi} \\
+\nicefrac{d\theta}{dR} & \nicefrac{d\theta}{d\theta} & \nicefrac{d\theta}{d\phi} \\
+\nicefrac{d\phi}{dR}   & \nicefrac{d\phi}{d\theta}   & \nicefrac{d\phi}{d\phi}
+\end{array} \right) =\\
+& = \det \left( \begin{array}{ccc}
+\sin \theta & R\cos \theta & 0\\
+ 0 & 1 & 0 \\
+ 0 & 0 & 1 
+\end{array} \right)
+= \sin \theta .
+\end{split}
+\label{eq:4}
+\end{equation}
+Using~(\ref{eq:4}) in~(\ref{eq:2}) we get:
+\begin{equation}
+dN_{\rm conv} = N_{\gamma}(r, \theta, \phi) 
+\frac{P}{X_0} \frac{r^2}{\sin^2\theta} \,dr\,d\theta\,d\phi .
+\label{eq:5}
+\end{equation}
+
+\noindent{\bf Cylindrical reference system.} 
+Similarly, in a cylindrical reference system $(r,z,\phi)$ ($r=R\sin\theta$, $z=R\cos\theta$)
+\begin{equation}
+ dr\,dz\,d\phi = \left| \frac{dr\, dz\, d\phi}{dR\,d\theta\,d\phi}
+   \right| \cdot dR\,d\theta\,d\phi
+\label{eq:3bis}
+\end{equation}
+where
+\begin{equation}
+\begin{split}
+\frac{dr\,dz\,d\phi}{dR\,d\theta\, d\phi}
+& = \det \left( \begin{array}{ccc}
+\nicefrac{dr}{dR}      & \nicefrac{dr}{d\theta}      & \nicefrac{dr}{d\phi} \\
+\nicefrac{dz}{dR}      & \nicefrac{dz}{d\theta}      & \nicefrac{dz}{d\phi} \\
+\nicefrac{d\phi}{dR}   & \nicefrac{d\phi}{d\theta}   & \nicefrac{d\phi}{d\phi}
+\end{array} \right) = \\
+& = \det \left( \begin{array}{ccc}
+\sin \theta & R\cos\theta  & 0\\
+\cos\theta  & -R\sin\theta & 0 \\
+ 0 & 0 & 1 
+\end{array} \right)
+= R .
+\end{split}
+\label{eq:4bis}
+\end{equation}
+Using~(\ref{eq:4bis}) in~(\ref{eq:2}) we get:
+\begin{equation}
+dN_{\rm conv} = N_{\gamma}(r, z, \phi) 
+\frac{P}{X_0} r\, \,dr\,dz\,d\phi .
+\label{eq:5bis}
+\end{equation}
+
+\noindent{\bf Cartesian reference system.} 
+In a cartesian reference system $(x, y, z)$ ($x=R\sin\theta\cos\phi$, $y=R\sin\theta\sin\phi$, $z=R\cos\theta$)
+\begin{equation}
+ dx\,dy\,dz  = \left| \frac{dx\, dy\, dz}{dR\,d\theta\,d\phi}
+   \right| \cdot dR\,d\theta\,d\phi
+\label{eq:3tris}
+\end{equation}
+where
+\begin{equation}
+\begin{split}
+\frac{dx\,dy\,dz}{dR\,d\theta\,d\phi}
+& = \det \left( \begin{array}{ccc}
+\nicefrac{dx}{dR}      & \nicefrac{dx}{d\theta}      & \nicefrac{dx}{d\phi} \\
+\nicefrac{dy}{dR}      & \nicefrac{dy}{d\theta}      & \nicefrac{dy}{d\phi} \\
+\nicefrac{dz}{dR}      & \nicefrac{dz}{d\theta}   & \nicefrac{dz}{d\phi}
+\end{array} \right)
+= \\
+& = \det \left( \begin{array}{ccc}
+\sin\theta\cos\phi & R\cos\theta\cos\phi & -R\sin\theta\sin\phi\\
+\sin\theta\sin\phi & R\cos\theta\sin\phi &  R\sin\theta\cos\phi\\
+\cos\theta & -R\sin\theta & 0 
+\end{array} \right)
+= \\
+& = R^2 \sin \theta = \sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}.
+\end{split}
+\label{eq:4tris}
+\end{equation}
+Using~(\ref{eq:4bis}) in~(\ref{eq:2}) we get:
+\begin{equation}
+dN_{\rm conv} = N_{\gamma}(x, y, z) 
+\frac{P}{X_0}
+%\frac{\sqrt{x^2+y^2+z^2}}{\sqrt{x^2+y^2}}
+ \,dx\,dy\,dz .
+\label{eq:5tris}
+\end{equation}
+
+\noindent{\bf Photon flux.} 
+A reasonable but approximate guess of the form of
+$N_{\gamma}(R, \theta, \phi)$ in the pp collisions at LHC can be
+inferred assuming the following:
+\begin{itemize}
+\item[a)] all photons are originating at the interaction point $(0, 0, 0)$;
+\item[b)] all photons come from QCD events ($\pi_0$ decays);
+\item[c)] the number of photons interacting with the material is negligible. 
+\end{itemize}
+All these three assumption are to some extent not true, c) especially,
+but let's give them for granted.
+
+%\clearpage
+
+The dependence on the distance from the interaction point is easily inferred observing that, givem the above assumptions, 
+the flux is the same in the same portion of solid angle $\delta \Omega=\sin \theta\delta\theta d\phi$:%$\d \Omega=\sin \theta\d\theta d\phi$: 
+\begin{equation}
+N_{\gamma}(R', \theta, \phi) R'^2 d\Omega = N_{\gamma}(R, \theta, \phi) R^2 d\Omega,
+\label{eq:6pre}
+\end{equation}
+from which immediately follows that
+\begin{equation}
+N_{\gamma}(R) \propto \frac{1}{R^2} = \frac{\sin^2 \theta}{r^2} = \frac{1}{x^2+y^2+z^2} .
+\label{eq:6}
+\end{equation}
+
+As a consequence of the cylindrical symmetry of pp interactions
+$N_\gamma$ does not depend on $\phi$.
+
+As far as the $\theta$ dependance is concerned, given that 
+\begin{equation}
+\eta = -\ln \left( \tan \nicefrac{\theta}{2} \right)
+\label{eq:7}
+\end{equation}
+it follows that
+\begin{equation}
+\begin{split}
+dN_\gamma & = N_\gamma(\eta) d\eta  =
+N_\gamma(\eta)\frac{d\eta}{d\theta} d\theta  = N_\gamma(\eta)\frac{1+\tan^2\nicefrac[]{\theta}{2}
+ }{2\tan\nicefrac{\theta}{2}}  d\theta =\\ 
+ & =
+ N_\gamma(\eta)\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}}  d\theta  
+ = N_\gamma(\eta)\frac{1}{\sin\theta}  d\theta .
+\label{eq:8}
+\end{split}
+\end{equation}
+Eq.~(\ref{eq:8}) allows to identify $N_\gamma(\theta)$ with $N_\gamma(\eta(\theta))/\sin{\theta}$.
+%\begin{equation}
+%\begin{split}
+%dN_\gamma(\theta) & = \frac{dN_\gamma}{d\theta} d\theta  =
+%\frac{dN_\gamma}{d\eta}\frac{d\eta}{d\theta}  d\theta  = %\frac{dN_\gamma}{d\eta}\frac{1+\tan^2\nicefrac[]{\theta}{2}
+% }{2\tan\nicefrac{\theta}{2}}  d\theta =\\ 
+% & =
+% \frac{dN_\gamma}{d\eta}\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}}  d\theta  
+% = \frac{dN_\gamma}{d\eta}\frac{1}{\sin\theta}  d\theta .
+%\label{eq:8}
+%\end{split}
+%\end{equation}
+Since 'all' photons come from $\pi_0$'s that show an almost flat
+distribution vs. $\eta$, also photon $\eta$-distribution is flat as
+well and $N_\gamma(\eta)$ does not depend on $\eta$, thus:
+\begin{equation}
+N_\gamma(\theta) \propto \frac{1}{\sin \theta} = \frac{\sqrt{x^2+y^2+z^2}}{\sqrt{x^2+y^2}}.
+\label{eq:9}
+\end{equation}
+Putting~(\ref{eq:6}) and~(\ref{eq:9}) together we get 
+\begin{equation}
+N_{\gamma} (R, \theta, \phi) = k \frac{1}{R^2\sin \theta} \, \, \, ,
+\label{eq:10pre}
+\end{equation}
+\begin{equation}
+N_{\gamma} (r, \theta, \phi) = k \frac{\sin \theta}{r^2} \,\,\, ,
+\label{eq:10}
+\end{equation}
+\begin{equation}
+N_{\gamma} (r, z, \phi) = k \frac{1}{r\sqrt{r^2+z^2}} \,\,\, ,
+\label{eq:10bis}
+\end{equation}
+and
+\begin{equation}
+N_{\gamma} (x, y, z) = k \frac{1}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}} \,\,\, ,
+\label{eq:10tris}
+\end{equation}
+for spherical, pseudo-cylindrical, cylindrical and cartesian coordinates
+respectively. In all cases $k$ is an appropriate dimensional factor
+that accounts for all necessary constants.
+
+\noindent{\bf Geometrical dependence of photon conversions.} 
+Equations~(\ref{eq:5}) with~(\ref{eq:10}),~(\ref{eq:5bis})
+with~(\ref{eq:10bis}), and~(\ref{eq:5tris}) with~(\ref{eq:10tris}),
+respectively, allow the following expressions for the number of photon
+conversion to be written:
+\begin{equation}
+d N_{\rm conv} = k \frac{\sin \theta}{r^2} 
+\frac{P}{X_0} \frac{r^2}{\sin^2\theta}\, dr\, d\theta\, d\phi = k
+\frac{P}{X_0} \frac{1}{\sin\theta}\, dr\, d\theta\, d\phi ,
+\label{eq:11}
+\end{equation}
+\begin{equation}
+d N_{\rm conv} = k \frac{1}{r\sqrt{r^2+z^2}} 
+\frac{P}{X_0} r dr\, dz\, d\phi = k
+\frac{P}{X_0} \frac{1}{\sqrt{r^2+z^2}}\, dr\, dz\, d\phi ,
+\label{eq:11bis}
+\end{equation}
+\begin{equation}
+\begin{split}
+d N_{\rm conv} & = k \frac{P}{X_0} \frac{1}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}} \,dx\,dy\,dz .
+\end{split}
+\label{eq:11tris}
+\end{equation}
+After the appropriate integration, Eq.~(\ref{eq:11}),
+Eq.~(\ref{eq:11bis}), and~(\ref{eq:11tris}) can be used to extract the
+factor to translate the observed number of conversion in a given 
+volume into an estimate of $P/X_0$ (for the moment let's assume that
+the conversion reconstruction efficiency is 1 with no background).
+
+Few relevant examples follow.
+
+\begin{description}
+\item[$r_1<r<r_2$,~$\, \theta_1<\theta<\theta_2$,~$\, 0<\phi<2\pi$;]
+  from~Eq.~(\ref{eq:11}): 
+\begin{equation}
+\begin{split}
+N_{\rm conv} & = k \frac{P}{X_0} \int_{\theta_1}^{\theta_2}
+\frac{d\theta}{\sin\theta} \int_{r_1}^{r_2}dr \int_0^{2\pi}d\phi = \\
+& = 2\pi k \frac{P}{X_0} (r_2-r_1) \cdot \left. \ln \tan
+    \frac{\theta}{2} \right|_{\theta_1}^{\theta_2} =\\
+& = 2\pi k \frac{P}{X_0} (r_2-r_1) (\eta_1 - \eta_2).
+\end{split}
+\label{eq:12}
+\end{equation}
+\item[$r_1<r<r_2$,~$\, z_1<z<z_2$,~$\, 0<\phi<2\pi$;]
+  from~Eq.~(\ref{eq:11bis}): 
+\begin{equation}
+\begin{split}
+N_{\rm conv} & = k
+\frac{P}{X_0} \int_{r_1}^{r_2} \int_{z_1}^{z_2} \frac{dr \, dz}{\sqrt{r^2+z^2}}
+\int_0^{2\pi} d\phi = \\
+& = 2\pi k \frac{P}{X_0} \int_{r_1}^{r_2} dr \left. \ln \left( 2\sqrt{r^2+z^2}+2z \right) \right|_{z_1}^{z_2} = \\
+& = 2\pi k \frac{P}{X_0} \int_{r_1}^{r_2} dr \ln \frac{\sqrt{r^2+{z_2}^2}+z_2}{\sqrt{r^2+{z_1}^2}+{z_1}} = \\ 
+& = 2\pi k \frac{P}{X_0} \left[ r \ln \frac{\sqrt{r^2+{z_2}^2}+z_2}{\sqrt{r^2+{z_1}^2}+{z_1}} + \right. \\
+& - z_1 \ln \left( 2\sqrt{r^2+{z_1}^2}+r \right)  + \Biggl. \Biggl. z_2 \ln \left( 2\sqrt{r^2+{z_2}^2}+r \right) \Biggr] \Biggr|_{r_1}^{r_2} = \\
+& = 2\pi k \frac{P}{X_0} \left[ r_2 \ln \frac{\sqrt{{r_2}^2+{z_2}^2}+z_2}{\sqrt{{r_2}^2+{z_1}^2}+z_1} - r_1 \ln \frac{\sqrt{{r_1}^2+{z_2}^2}+z_2}{\sqrt{{r_1}^2+{z_1}^2}+z_1} + \right. \\
+& \left. + z_2 \ln \frac{\sqrt{{r_2}^2+{z_2}^2}+r_2}{\sqrt{{r_1}^2+{z_2}^2}+r_1} - z_1 \ln \frac{\sqrt{{r_2}^2+{z_1}^2}+r_2}{\sqrt{{r_1}^2+{z_1}^2}+r_1} \right] \\
+& \equiv k \frac{P}{X_0} f^{r, z}_{\rm geom}.\\
+\end{split}
+\label{eq:13}
+\end{equation}
+\item[$x_1<x<x_2$,~$\, y_1<y<y_2$,~$\, z_1<z<z_2$;]
+  from~Eq.~(\ref{eq:11tris}): 
+\begin{equation}
+\begin{split}
+N_{\rm conv} & = k
+\frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} \int_{z_1}^{z_2}  \frac{dx\,
+  dy \, dz}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}}. 
+\end{split}
+\label{eq:14}
+\end{equation}
+The analytical solution of the integral does not exist\footnote{\tt http://integrals.wolfram.com/}. Within
+our needs (i.e. for a scatter plot in the $xy$ plane) we can integrate first in $dz$:
+\begin{equation}
+\begin{split}
+N_{\rm conv} & = k
+\frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} dx \, dy \left. \frac{1}{r} \ln \left( 2\sqrt{r^2+z^2} + 2z \right) \right|_{z_1}^{z_2} \\
+& = k \frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} dx \, dy  \ln \frac{\sqrt{r^2+{z_2}^2} + z_2}{\sqrt{r^2+{z_1}^2} + z_1} ,
+\end{split}
+\label{eq:15}
+\end{equation}
+where $r=\sqrt{x^2+y^2}$. If $r\gg |x_2-x_1|$ and $r\gg |y_2
+- y_1|$, a likely sufficient approximate
+solution is
+\begin{equation}
+\begin{split}
+N_{\rm conv} & = k
+\frac{P}{X_0} \Delta x\, \Delta y\,  \ln \frac{\sqrt{\overline{r}^2+{z_2}^2} + z_2}{\sqrt{\overline{r}^2+{z_1}^2} + z_1} \\
+& \equiv k \frac{P}{X_0} f^{x, y}_{\rm geom}
+\end{split}
+\label{eq:15}
+\end{equation}
+where $\overline{r}$ is the ``average'' radius, i.e. the one taken on
+the middle of the ``box'', $\overline{r}=\nicefrac{1}{2}\sqrt{(x_1+x_2)^2+(y_1+y_2)^2}$
+%$\overline{r}=\sqrt{\nicefrac{(x_1+x_2)^2}{4}+\nicefrac{(y_1+y_2)^2}{4}}$
+.
+\end{description}
+
+%\end{document}
+
+
+
+
+
+
+
+
+
+
+  
