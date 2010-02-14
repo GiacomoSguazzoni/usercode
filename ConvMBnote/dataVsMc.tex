@@ -28,10 +28,9 @@ A reconstructed conversion is considered associated if simulated and reconstruct
 box\footnote{A more proper association criteria, based on the hit
   association of the electron tracks, cannot be applied on the used MC
   sample. However, it was proven that the hit and vertex position
-  association methods provide compatible results}.
-Figure~\ref{efficpurity} shows that performance degrade for radius greater than $5\cm$, i.e. outside the first pixel barrel layer.
-Very likely the main reason for this effect is the current tracking configuration, allowing for the reconstruction of very low $p_T$ tracks from
-pixel hit-triplets only. A different tune of $p_T$ thresholds in iterative tracking steps could improve performance at larger radii.
+  association methods provide compatible results.}.
+Figure~\ref{efficpurity} shows that performance degrade for radii greater than $5\cm$, i.e. outside the first pixel barrel layer.
+Likely the main reason for this effect is the current tracking configuration where very low $p_T$ tracks can be reconstructed only by using pixel hit triplets as seeds. A different tune of $p_T$ thresholds in iterative tracking steps  could improve performance at larger radii.
 %efficiency
 %purity
 \begin{figure}[!hbtp]
@@ -43,55 +42,45 @@ pixel hit-triplets only. A different tune of $p_T$ thresholds in iterative track
 \centering
 \label{efficpurity_vs_pt}
 \includegraphics[width=.45\textwidth]{efficpurity_vs_pt.pdf}}
-\caption{Efficiency (blue) and purity (red) vs $r$\subref{efficpurity_vs_r} and $p_T$\subref{efficpurity_vs_pt}.}
+\caption{Efficiency (blue) and purity (red) of the Tracker-only conversion finding algorithm: \subref{efficpurity_vs_r} as a function of $r$; \subref{efficpurity_vs_pt} as a function of $p_T$.}
 \label{efficpurity}
 \end{figure}
 
-In order to check that the conversion algorithm is providing
-reasonable results with collision data, the basic conversion
-distributions are compared to what is expected form MC. Converted
-photon $p_T$, $\eta$ and $r$ are reported in
-Figures~\ref{fig:eta}-\ref{fig:r}. Shapes show a nice agreement
-between data and MC, while the number of comversions (normalized to
-the total number of events) is $\sim10\%$ higher in data with respect
-to MC. Such discrepancy could be due to several effects, like a higher
-number of fakes in data or differences in the MC photon flux
-and it is acceptable for the sake of the present preliminary study.
-\begin{figure}[!hbtp]
-\centering
-\subfigure[]{
-\label{subfig:eta_lin}
-\includegraphics[width=.45\textwidth]{eta_lin.png}}
-\subfigure[]{
-\label{subfig:eta_log}
-\includegraphics[width=.45\textwidth]{eta_log.png}}
-\caption{Eta distribution of reconstructed conversions in linear\subref{subfig:eta_lin} and logaritmic\subref{subfig:eta_log} scale.
-Data is shown in black dots and MC in blue boxes. Red boxes represent the expected fake contribution.}
-\label{fig:eta}
-\end{figure}
+Data versus Monte Carlo simulation comparison has been done on some basic distributions to check the conversion finding algorithm performances with first collision data. The distributions of the reconstructed transverse momentum ($p_T$) and of the pseudo-rapidity ($\eta$) of the converted photon are shown in Fig. ~\ref{fig:pt} and Fig.~\ref{fig:eta}, respectively. The radius of the conversion vertex ($r$) distribution is shown in Fig.~\ref{fig:r}. 
 
+All distributions, given either in linear and in logarithmic scale, result in a pretty good agreement between data and Monte Carlo as far as the shapes are concerned. The overall number of conversions candidates is $\sim10\%$ higher in data with respect to the Monte Carlo simulation. Such small discrepancy is acceptable for the sake of the present preliminary study. It could be due, among several effects, to differences between data and simulation in the number of fakes or at the level of the photon flux.
 \begin{figure}[!hbtp]
 \centering
 \subfigure[]{
 \label{subfig:pt_lin}
-\includegraphics[width=.45\textwidth]{pt_lin.png}}
+\includegraphics[width=.49\textwidth]{pt_lin.png}}
 \subfigure[]{
 \label{subfig:pt_log}
-\includegraphics[width=.45\textwidth]{pt_log.png}}
-\caption{$p_T$ distribution of reconstructed conversions in linear\subref{subfig:pt_lin} and logaritmic\subref{subfig:pt_log} scale.
-Data is shown in black dots and MC in blue boxes. Red boxes represent the expected fake contribution.}
+\includegraphics[width=.49\textwidth]{pt_log.png}}
+\caption{Distribution of the reconstructed tranverse momentum ($p_T$) of the converted photon in linear~\subref{subfig:pt_lin} and logarithmic~\subref{subfig:pt_log} scale. Data is shown in black dots and Monte Carlo  simulation in blue boxes. Red boxes represent the estimated fake contribution.}
 \label{fig:pt}
 \end{figure}
 
 \begin{figure}[!hbtp]
 \centering
 \subfigure[]{
+\label{subfig:eta_lin}
+\includegraphics[width=.49\textwidth]{eta_lin.png}}
+\subfigure[]{
+\label{subfig:eta_log}
+\includegraphics[width=.49\textwidth]{eta_log.png}}
+\caption{Distribution of the reconstructed pseudorapidity ($\eta$) of the converted photon in linear~\subref{subfig:eta_lin} and logarithmic~\subref{subfig:eta_log} scale. Data is shown in black dots and Monte Carlo  simulation in blue boxes. Red boxes represent the estimated fake contribution.}
+\label{fig:eta}
+\end{figure}
+
+\begin{figure}[!hbtp]
+\centering
+\subfigure[]{
 \label{subfig:r_lin}
-\includegraphics[width=.45\textwidth]{r_lin.png}}
+\includegraphics[width=.49\textwidth]{r_lin.png}}
 \subfigure[]{
 \label{subfig:r_log}
-\includegraphics[width=.45\textwidth]{r_log.png}}
-\caption{Radius distribution of reconstructed conversions in linear\subref{subfig:r_lin} and logaritmic\subref{subfig:r_log} scale.
-Data is shown in black dots and MC in blue boxes. Red boxes represent the expected fake contribution.}
+\includegraphics[width=.49\textwidth]{r_log.png}}
+\caption{Distribution of the reconstructed conversion radius ($r$) in linear~\subref{subfig:r_lin} and logarithmic~\subref{subfig:r_log} scale. Data is shown in black dots and Monte Carlo simulation in blue boxes. Red boxes represent the estimated fake contribution.}
 \label{fig:r}
 \end{figure}
