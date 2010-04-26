@@ -1,0 +1,15 @@
+ 1          CarbonFiber   13.61821 kg  17.77031%     tot=  13.61821 kg  17.77031%    rem=  63.01644 kg  82.22969%
+ 2     OrganicMaterials   13.20000 kg  17.22459%     tot=  26.81821 kg  34.99489%    rem=  49.81643 kg  65.00511%
+ 3    CopperAndCuAlloys   10.80496 kg  14.09932%     tot=  37.62318 kg  49.09421%    rem=  39.01147 kg  50.90579%
+ 4                C6F14    8.71617 kg  11.37367%     tot=  46.33935 kg  60.46788%    rem=  30.29530 kg  39.53212%
+ 5            Aluminium    8.58816 kg  11.20663%     tot=  54.92751 kg  71.67452%    rem=  21.70714 kg  28.32548%
+ 6  FiberGlassLaminated    7.23938 kg   9.44662%     tot=  62.16689 kg  81.12113%    rem=  14.46775 kg  18.87887%
+ 7        GlueAndResins    6.50280 kg   8.48545%     tot=  68.66969 kg  89.60658%    rem=   7.96496 kg  10.39342%
+ 8          OtherMetals    5.52281 kg   7.20667%     tot=  74.19250 kg  96.81326%    rem=   2.44215 kg   3.18674%
+ 9              Silicon    0.99470 kg   1.29797%     tot=  75.18719 kg  98.11123%    rem=   1.44745 kg   1.88877%
+10      OtherMechStruct    0.71974 kg   0.93919%     tot=  75.90693 kg  99.05041%    rem=   0.72771 kg   0.94959%
+11      InorganicOxides    0.40222 kg   0.52485%     tot=  76.30915 kg  99.57526%    rem=   0.32550 kg   0.42474%
+12 ElectronicComponents    0.32227 kg   0.42052%     tot=  76.63142 kg  99.99579%    rem=   0.00323 kg   0.00421%
+13                  Air    0.00323 kg   0.00421%     tot=  76.63465 kg 100.00000%    rem=   0.00000 kg   0.00000%
+                      --------------
+                  Total   76.63465 kg 100.00000% 
