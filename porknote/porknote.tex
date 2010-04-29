@@ -5,6 +5,7 @@
 %\usepackage{verbatim}
 \usepackage{fancyvrb}
 \usepackage{units}
+\usepackage{amsmath}
 
 
 \begin{document}
@@ -18,8 +19,8 @@
 %\newcommand {\Tot}           {\mathrm{T}}
 %\newcommand {\tot}     {\mathrm{t}}
 \newcommand {\Xo}         {{\mathrm{X}_0}}
-\newcommand {\TX}         {{\mathrm{T}_0}}
-\newcommand {\tX}         {{\mathrm{t}_0}}
+\newcommand {\TX}         {{\mathrm{T}_\mathrm{R}}}
+\newcommand {\tX}         {{\mathrm{t}_\mathrm{R}}}
 \newcommand {\lI}         {{\lambda_\mathrm{I}}}
 \newcommand {\TI}         {{\mathrm{T}_\mathrm{I}}}
 \newcommand {\tI}         {{\mathrm{t}_\mathrm{I}}}
@@ -43,7 +44,7 @@
 %  \conferencereport{2005/000}
    \date{1 Brumaio 2010}
 
-  \title{Evaluation of Material Budget related systematic uncertainties.}
+  \title{Altered Scenarios for the Material Budget of the CMS Tracker}
 
   \begin{Authlist}
     Ernesto Migliore
@@ -55,8 +56,8 @@
  
   \begin{abstract}
 A method to study the systematic uncertainties related to the Tracker Material Budget simulation has been developed.
-The method can be applied whenever the effect of a know variation of a material budget component has to be studied.
-A set of realistic material alterations to be used by physic analysis groups is proposed.
+The method can be applied whenever the effect of a known variation of a material budget component has to be studied.
+A set of realistic material alterations to be used by physics analysis groups is proposed.
   \end{abstract} 
 
 \end{titlepage}
@@ -65,27 +66,49 @@ A set of realistic material alterations to be used by physic analysis groups is 
 
 \section{Introduction}
 
-The present geometry contains the state-of-the-art of the Tracker material budget description. However there are knows issues:
+The description of the Tracker geometry included in the CMS software
+framework~\cite{CMSSW} to simulate and reconstruct the events includes the
+state-of-the-art knowledge of the passive materials through a set of XML files
+collected in the packages {\tt Geometry/CMSCommonData} and {\tt
+  Geometry/TrackerCommonData}. The relevant figure for determining the
+impact of the material budget on the reconstruction performance is the
+thickness, either in units of radiation length $\Xo$, or in units of 
+interaction length $\lI$, crossed by a particle produced at the
+nominal interaction point which coincides with nominal center of the Tracker.
+These thicknesses, referred in the following as $\TX$ and $\TI$ respectively,  
+are evaluated simulating a sample of 100 000
+neutrinos generated at the center of the Tracker, with a uniform
+distribution in $-5\le\eta\le5$ and $0\le\phi\le2\pi$. The unperturbed
+trajectory throughout the Tracker volumes can thus be followed and
+distribution of $\TX$ and $\TI$  as a function of $\eta$ produced. 
+The distributions of $\TX$ and $\TI$ of the Tracker drop at about $|\eta|$=3.7.
+The $\eta$ range considered in the following analysis will be 
+$-3\le\eta\le3$ where the average thicknesses determined with the procedure
+described above are  $\TX=1.184\pm0.002$ and $\TI=0.3495\pm0.0006$.
+
+%The present geometry contains the state-of-the-art of the Tracker
+%material budget description. 
+However there are known issues with this description:
 \begin{itemize}
-\item residual discrepancies between simulated and measured masses or $\DM$'s; 
-\item unavoidable approximations with respect to the actual of the geometry of the physical volumes and of the material distribution and composition.
+\item residual discrepancies between simulated and weighted masses; 
+\item unavoidable approximations with respect to the actual geometry of the physical volumes and of the material distribution and composition.
 \end{itemize}
 
-How to estimate the uncertainty related to these discrepancies and approximations?
+This note will discuss a possible way to estimate the uncertainty related to the former of these issues.
 
-The most quantitative bases of any possible way to answer are the mass discrepancies $\DM$, when available. Nevertheless, the impact of $\DM$ on the total thickness in terms of number of radiation lengths, $\TX$, or in terms of number of interaction lengths, $\TI$, does depend on how the $\DM$ is distributed among the various tracker components/materials. Once this dependence is known, it can be fed not only with $\DM$'s, but also with any other input we may consider useful to understand downstream effects on $\TX$ or $\TI$.
+The most quantitative bases of any answer are the simulated-weighted mass discrepancies $\DM$'s, when available. Nevertheless, the impact of $\DM$ on the total thickness in terms of number of radiation lengths, $\TX$, or in terms of number of interaction lengths, $\TI$, does depend on how the $\DM$ is distributed among the various Tracker components and materials. Once this dependence is known, it can be fed not only with $\DM$'s, but also with any other input useful to understand downstream effects on $\TX$ or $\TI$.
 
 \section{Method}
 
-As sketched in Fig.~\ref{fig:can}, the total thickness in terms of radiation lengths, $\TX$, has the following dependance on the $N$ materials:
+As sketched in Fig.~\ref{fig:can}, the total thickness in units of radiation lengths, $\TX$, has the following dependence on the $N$ materials:
 \begin{equation}
 \TX = \sum^N_i \rho_i \frac{\ell_i}{\Xo_i} \equiv \sum_i \tX_i.
 \end{equation}
-Similarly the total thickness in terms of radiation lengths, $\TI$, is
+Similarly the total thickness in units of radiation lengths, $\TI$, is
 \begin{equation}
 \TI = \sum^N_i \rho_i \frac{\ell_i}{\lI_i} \equiv \sum_i \tI_i.
 \end{equation}
-In the above relations, $i$ is the index running on the materials, $\rho$ the density, $\ell_i$ the thickness of the material $i$ and $\Xo$ and $\lI$ the radiation length and the interaction length, respectively, in $\mathrm{g}/\mathrm{cm}^2$. 
+In the above relations, $\rho_i$ is the density, $\ell_i$ the thickness of the $i$-th material and $\Xo_i$ and $\lI_i$ the radiation length and the interaction length, respectively, expressed in $\mathrm{g}/\mathrm{cm}^2$. 
 
 \begin{figure}[h]
 \begin{center}
@@ -95,7 +118,7 @@ In the above relations, $i$ is the index running on the materials, $\rho$ the de
 \label{fig:can}
 \end{figure}
 
-The proposed method consists in changing in an appropriate and controlled way the material components by using a set of k-factors $\kvect\equiv(k_1, ..., k_i, ..., k_N)$ and then study the effects on $\TX$ and $\TI$. In particular
+The proposed method to investigate the impact on the detector performance of residual discrepancies $\DM$'s consists in changing in an appropriate and controlled way the material components by using a set of k-factors $\kvect\equiv(k_1, ..., k_i, ..., k_N)$ and then studying the effects on $\TX$ and $\TI$, e.g.:
 \begin{equation}
 \TX = \sum^N_i \rho_i \frac{\ell_i}{\Xo_i} \rightarrow  \TX_\kvect = \sum^N_i k_i \rho_i \frac{\ell_i}{\Xo_i},
 \end{equation}
@@ -104,141 +127,145 @@ and
 \TI = \sum^N_i \rho_i \frac{\ell_i}{\lI_i} \rightarrow  \TI_\kvect = \sum^N_i k_i \rho_i \frac{\ell_i}{\lI_i}.
 \end{equation}
 
-\section{Parser}
+%\section{Parser}
 
 The method described in the previous section can only be practically implemented by modifying the material densities in the DDD xml files describing the detector geometry. This is done by using a software tool written on purpose consisting of a perl xml parser. It takes the DDD material xml files in input and then, according to a {\em scenario} configuration file, changes the effective density of the material under study and of all materials that depend (directly and indirectly) on it; finally the modified xml files are written in output. These modified xml files are fully working in CMSSW.
 
-The detailed modification procedure is the following:
-\begin{enumerate}
-\item the density attribute is modified according to the k-factors in the tags {\tt <ElementaryMaterial .../>} or {\tt <CompositeMaterial .../>} where the materials are defined;
-\item all composite materials that depend on the modified materials are accordingly modified; if the composite material has density $\rho$ and fractions $w_j$, $j$ being the index running over the components, the parser apply the following substitutions:
-\begin{equation}
-w_j \to \frac{k_jw_j}{\sum kw}, \,\,\,\,\, \rho \to \rho \sum kw;
-\end{equation}
-\item step b) is repeated recursively with a scaling factor $1/\sum kw$ for all materials modified in the step b).
-\end{enumerate}
-
-The parser is accessible via CVS in ...
-
-The parser can be launched by using the wrapper script {\tt xmlFatThaMat.sh}:
-{\small
-\begin{Verbatim}[frame=leftline]
-./xmlSuperPorker.sh <scenario-file> <base-dir>
-\end{Verbatim}
-}
-where {\tt <scenario-file>} is the scenario configuration file described below and {\tt 
-<base-dir>} is the directory to which the paths of the xml files to be modified in the scenario fle are referred. It is essentially the base dir of the CMSSW work area we are using.
-
-
-\subsection{The {\em scenario} configuration file}
-
-An example of the scenario configuration file is given below; it is the scenario file designed to properly change the Aluminium weigth in the simulation; in  this case, for example, you want to skip materials that do contain Al (i.e.Alumina!) but that you want to study independently.
-
-{\small
-\begin{Verbatim}[frame=leftline]
-<?xml version="1.0"?>
-<scenario>
-<file name="./Geometry/TrackerCommonData/data/tecmaterial.xml" />
-<file name="./Geometry/TrackerCommonData/data/tibmaterial.xml" />
-<file name="./Geometry/TrackerCommonData/data/tibtidcommonmaterial.xml" />
-<file name="./Geometry/TrackerCommonData/data/tidmaterial.xml" />
-<file name="./Geometry/TrackerCommonData/data/tobmaterial.xml" />
-<file name="./Geometry/TrackerCommonData/data/trackermaterial.xml" />
-<file name="./Geometry/CMSCommonData/data/materials.xml" />
-<ElementaryMaterial name="Aluminium" kfactor="1.1">
-<SkipMaterial name="Ceramic"/>
-<SkipMaterial name="Alumina"/>
-<SkipMaterial name="Steel-008"/>
-<SkipMaterial name="Borosilicate_Glass"/>
-<SkipMaterial name="TEC_PitchAdapter"/>
-</ElementaryMaterial>
-</scenario>
-\end{Verbatim}
-}
-
-Each scenario file tag has its own meaning:
-\begin{itemize}
-\item the tags {\tt <file .../>} define the xml material files to be
-  altered; the material files not included in any tag are not changed;
-%- il tag <path .../> (sopra commentato) definisce un altro eventuale
-%  path comune, oltre a quello definito in linea di comando (base-dir)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%The detailed modification procedure is the following:
+%\begin{enumerate}
+%\item the density attribute is modified according to the k-factors in the tags {\tt <ElementaryMaterial .../>} or {\tt <CompositeMaterial .../>} where the materials are defined;
+%\item all composite materials that depend on the modified materials are accordingly modified; if the composite material has density $\rho$ and fractions $w_j$, $j$ being the index running over the components, the parser apply the following substitutions:
+%\begin{equation}
+%w_j \to \frac{k_jw_j}{\sum kw}, \,\,\,\,\, \rho \to \rho \sum kw;
+%\end{equation}
+%\item step b) is repeated recursively with a scaling factor $1/\sum kw$ for all materials modified in the step b).
+%\end{enumerate}
+%
+%The parser is accessible via CVS in ...
+%
+%The parser can be launched by using the wrapper script {\tt xmlFatThaMat.sh}:
+%{\small
+%\begin{Verbatim}[frame=leftline]
+%./xmlSuperPorker.sh <scenario-file> <base-dir>
+%\end{Verbatim}
+%}
+%where {\tt <scenario-file>} is the scenario configuration file described below and {\tt 
+%<base-dir>} is the directory to which the paths of the xml files to be modified in the scenario file are referred. It is essentially the base dir of the CMSSW work area we are using.
+%
+%
+%\subsection{The {\em scenario} configuration file}
+%
+%An example of the scenario configuration file is given below; it is the scenario file designed to properly change the Aluminium mass in the simulation; in  this case, for example, you want to skip materials that do contain Al (i.e.Alumina!) but that you want to study independently.
+%
+%{\small
+%\begin{Verbatim}[frame=leftline]
+%<?xml version="1.0"?>
+%<scenario>
+%<file name="./Geometry/TrackerCommonData/data/tecmaterial.xml" />
+%<file name="./Geometry/TrackerCommonData/data/tibmaterial.xml" />
+%<file name="./Geometry/TrackerCommonData/data/tibtidcommonmaterial.xml" />
+%<file name="./Geometry/TrackerCommonData/data/tidmaterial.xml" />
+%<file name="./Geometry/TrackerCommonData/data/tobmaterial.xml" />
+%<file name="./Geometry/TrackerCommonData/data/trackermaterial.xml" />
+%<file name="./Geometry/CMSCommonData/data/materials.xml" />
+%<ElementaryMaterial name="Aluminium" kfactor="1.1">
+%<SkipMaterial name="Ceramic"/>
+%<SkipMaterial name="Alumina"/>
+%<SkipMaterial name="Steel-008"/>
+%<SkipMaterial name="Borosilicate_Glass"/>
+%<SkipMaterial name="TEC_PitchAdapter"/>
+%</ElementaryMaterial>
+%</scenario>
+%\end{Verbatim}
+%}
+%
+%Each scenario file tag has its own meaning:
+%\begin{itemize}
+%\item the tags {\tt <file .../>} define the xml material files to be
+%  altered; the material files not included in any tag are not changed;
+%%- il tag <path .../> (sopra commentato) definisce un altro eventuale
+%%  path comune, oltre a quello definito in linea di comando (base-dir)
 %  che debba precedere il path di ciascun file;
-\item there are three possible tags to define the material variations:
-\begin{description}
-  \item[{\tt <ElementaryMaterial ... />}] to modify an elementary
-    material and recursively all composite material that directly or
-    indirectly depend on itl; if the attribute {\tt
-      recurse} is given with the option {\tt false} ({\tt
-      recurse=false"}) the recursive modification is not done and the
-    modification is resctricted to the pure elementary material only;
-  \item[{\tt <CompositeMaterial ... />}] to modify a composite
-    material and recursively all composite material that directly or 
-    indirectly depend on it; if the attribute {\tt
-      recurse} is given with the option {\tt false} ({\tt
-      recurse=''false"}) the recursive modification is not done and the
-    modification is resctricted to the pure composite material only;
-  \item[{\tt <rMaterial ... />}] to modify all composite materials
-    that contain the specified {\tt rMaterial} and recursively all composite material that directly or 
-    indirectly depend on it; in this case the material name must
-    contain the namespace also; this tags is useful in the case a
-    given material needs to be modified but the file containing the
-    material definition is not included in any of the {\tt <file
-      .../>} tags. 
-\end{description}
-For all material modification tags the amount of alteration is
-defined via the attribute {\tt kfactor} ({\tt kfactor="..."}) that quantifies the
-multiplicative factor of the density change.
-
-All material modification tags also accept the following tags for
-extra functionalities:
-\begin{description}
-  \item[{\tt <SkipMaterial ... />}] to specify one or more {\tt CompositeMaterial} 
-  that has to remain unaltered;
-\item[{\tt <OnlyMaterial ... />}] to esclusively specify the {\tt CompositeMaterial} 
-  that has to be altered; if a tag of this kind is present
-  no other modification is done;
-\item[{\tt <SkipNamespace ... />}] to specify one or more namespaces,
-  i.e. files, that has to remain unaltered;
-\end{description}
-\end{itemize}
-
-As an output, the parser produces a modified xml file per each input
-file configured in the {\tt <file ... />} tags. The new file has the
-same name of the original one but the extension {\tt .xml} is changed
-into {\tt .xml.fat}. Within these outout files, the modified materials
-are identified by the attribute {\tt fat="true"} in the corresponding
-material definition tags.
-
-\subsection{Helper scripts}
-
-To ease the material modification onto a typical CMSSW working area, two scripts have been written:
-CMSSW work area:
-\begin{description}
-\item[{\tt fat.sh}] (usage: {\tt ./fat.sh <scenario-file> <base-dir>})
-  make the parser modify the material files under the {\tt
-    <base-dir>} according to the given {\tt <scenario-file>}; the
-  original xml files are replaced by the modified ones in order to
-  have a working CMSSW area with the new material files; the old ones
-  are saved with the extension {\tt .xml.orig}; the replacement does
-  not occur in the case original files appear to be already treated by
-  the parser (i.e. the string {\tt fat="true"} is found in the input
-  files); this to avoid to apply material modification in cascade by mistake;
-\item[{\tt defat.sh}] (usage: {\tt ./defat.sh <base-dir>}) restores
-  the original xml files by using the saved versions. 
-\end{description}
+%\item there are three possible tags to define the material variations:
+%\begin{description}
+%  \item[{\tt <ElementaryMaterial ... />}] to modify an elementary
+%    material and recursively all composite material that directly or
+%    indirectly depend on it; if the attribute {\tt
+%      recurse} is given with the option {\tt false} ({\tt
+%      recurse=false"}) the recursive modification is not done and the
+%    modification is restricted to the pure elementary material only;
+%  \item[{\tt <CompositeMaterial ... />}] to modify a composite
+%    material and recursively all composite material that directly or 
+%    indirectly depend on it; if the attribute {\tt
+%      recurse} is given with the option {\tt false} ({\tt
+%      recurse=''false"}) the recursive modification is not done and the
+%    modification is restricted to the pure composite material only;
+%  \item[{\tt <rMaterial ... />}] to modify all composite materials
+%    that contain the specified {\tt rMaterial} and recursively all composite material that directly or 
+%    indirectly depend on it; in this case the material name must
+%    contain the namespace also; this tags is useful in the case a
+%    given material needs to be modified but the file containing the
+%    material definition is not included in any of the {\tt <file
+%      .../>} tags. 
+%\end{description}
+%For all material modification tags the amount of alteration is
+%defined via the attribute {\tt kfactor} ({\tt kfactor="..."}) that quantifies the
+%multiplicative factor of the density change.
+%
+%All material modification tags also accept the following tags for
+%extra functionalities:
+%\begin{description}
+%  \item[{\tt <SkipMaterial ... />}] to specify one or more {\tt CompositeMaterial} 
+%  that has to remain unaltered;
+%\item[{\tt <OnlyMaterial ... />}] to exclusively specify the {\tt CompositeMaterial} 
+%  that has to be altered; if a tag of this kind is present
+%  no other modification is done;
+%\item[{\tt <SkipNamespace ... />}] to specify one or more namespaces,
+%  i.e. files, that has to remain unaltered;
+%\end{description}
+%\end{itemize}
+%
+%As an output, the parser produces a modified xml file per each input
+%file configured in the {\tt <file ... />} tags. The new file has the
+%same name of the original one but the extension {\tt .xml} is changed
+%into {\tt .xml.fat}. Within these output files, the modified materials
+%are identified by the attribute {\tt fat="true"} in the corresponding
+%material definition tags.
+%
+%\subsection{Helper scripts}
+%
+%To ease the material modification onto a typical CMSSW working area, two scripts have been written:
+%CMSSW work area:
+%\begin{description}
+%\item[{\tt fat.sh}] (usage: {\tt ./fat.sh <scenario-file> <base-dir>})
+%  make the parser modify the material files under the {\tt
+%    <base-dir>} according to the given {\tt <scenario-file>}; the
+%  original xml files are replaced by the modified ones in order to
+%  have a working CMSSW area with the new material files; the old ones
+%  are saved with the extension {\tt .xml.orig}; the replacement does
+%  not occur in the case original files appear to be already treated by
+%  the parser (i.e. the string {\tt fat="true"} is found in the input
+%  files); this to avoid to apply material modification in cascade by mistake;
+%\item[{\tt defat.sh}] (usage: {\tt ./defat.sh <base-dir>}) restores
+%  the original xml files by using the saved versions. 
+%\end{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{The Tracker Recipe}
 
-The first simple application of the method allows the tracker
-composition in the simulation to be evaluated. Geant4 tools, in fact, 
+As  first application of the method, the Tracker
+composition in the simulation was evaluated. GEANT4 tools, in fact, 
 make easy to dump the total mass and the composition only in terms of
 chemical elements of a given physical volume, and thus also of
-the entire tracker. More interesting is the understanding of the composition of
-the tracker in terms of basic material; as an example, a non exaustive list follows:\\
--- pure chemical elements, as aluminium, copper, or silicon;\\
--- simple compounds like alumina (${\rm Al}_2{\rm O}_3$) or glass;\\
--- more complicated compounds like carbon fiber, FR4 or plastics. 
-or  since
+the entire Tracker. More interesting is the understanding of the composition of
+the Tracker in terms of basic materials, commonly encountered in the construction, e.g.:
+\begin{itemize}
+\item[-] pure chemical elements, as aluminium, copper, or silicon;
+\item[-] simple compounds like alumina (${\rm Al}_2{\rm O}_3$) or glass;
+\item[-] more complicated compounds like carbon fiber, FR4 or plastics. 
+\end{itemize}
+The total mass of the Tracker is \fixme
 \begin{equation}
 M({\rm Tracker}) = \sum_i m_i = \sum_i \rho_i V_i,
 \end{equation}
@@ -246,28 +273,43 @@ where $i$ is the index running on the material components and $m_i$,
 $\rho_i$ and $V_i$ are, respectively, the mass, the density, and the
 volume of the component $i$.
 
-The method can be applied with the k-factor different from unity only
-for the material component $j$. In this case the resulting total mass
-of the entire tracker voulme is 
+To extract the contribution of a specific material $j$,
+the method can be applied with the k-factor different from unity only
+for the material under investigation. In this case the resulting total mass
+of the entire Tracker volume becomes:
 \begin{equation}
 M_{\vec{k}=(..., 1, k_j, 1, ...)} (\mathrm{Tracker}) = M +
 ( k_j - 1) m_j,
 \end{equation}
-from which it is straigthforward to derive the weigth of the component $j$: 
+from which it is straightforward to derive the mass of the component $j$: 
 \begin{equation}
 m_j = \frac{M_{\vec{k}=(..., 1, k_j, 1, ...)} - M}{k_j
   - 1}.
 \end{equation}
-The procedure, repeated for all the material components, allows the tracker composition to be derived. The sum of the component masses estimated in this way is equal to the total Tracker mass within 1ppm. The exercise confirms that the method is correctly implemented.
+The procedure, repeated for all the material components, allows the Tracker composition to be derived. 
+%The sum of the component masses estimated in this way is equal to the total Tracker mass within 1ppm. The exercise confirms that the method is correctly implemented
+The composition of the whole Tracker is given in table~\ref{table:Tracker}: The sum of the component masses derived by this method agrees within 1 ppm with the total Tracker mass as directly given by GEANT4. This exercise is a confirmation that the method works and it is correctly implemented.
 
-The tables of components weight composition of the whole Tracker volume and the subdetector volumes are reported in Appendix~\ref{compositionAppendix}.
+The composition of the individual subdetectors are reported in Appendix~\ref{compositionAppendix}.
 
-The sum of the component masses derived by this method is well within 1ppm equal to the total Tracker mass as directly given by Geant. This exercise is a confirmation that the method works and it is correctly implemented.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{clrrrrrr}
+\input{recipes/Tracker}
+\end{tabular}
+\caption{Mass of the basic components in the Tracker volume.}
+\label{table:Tracker}
+\end{center}
+\end{table}
 
-\subsection{Material classification in categories}
+\clearpage 
 
-The $37$ basic materials listed in table~\ref{table:Tracker} can be grouped into a limited number of material categories: a material category is a class of homogenous and/or similar materials. This grouping is needed for the following of the study as explained in section~\ref{sec:minmax}. A category can be made up also of only one basic material.
+\section{The $\TX$ and $\TI$ dependence on materials}
 
+%\subsection{Material classification in categories}
+
+Although the perl xml parser can deal with each of the 37 \fixme  basic materials listed in table~\ref{table:Tracker},
+for the following analysis these basic materials were grouped into a limited number of {\it categories} defined as a class of homogeneous and/or similar materials. A category can consist of just one basic material.
 The category definitions are given in table~\ref{table:cat}.
 
 \begin{table}[h]
@@ -288,7 +330,7 @@ The category definitions are given in table~\ref{table:cat}.
   & & &                 Brass \\
   & & &           CuNi \\
   \hline 
-  4 & Aluminum & Aluminium & Aluminium \\ 
+  4 & Aluminium & Aluminium & Aluminium \\ 
   \hline 
   5 & Organic materials & OrganicMaterials & PE \\
   & & &               Kapton \\
@@ -330,31 +372,72 @@ The category definitions are given in table~\ref{table:cat}.
 \end{center}
 \end{table}
 
-The tables of weight per category for the whole Tracker volume and the subdetector volumes are reported in Appendix~\ref{categoriesAppendix}.
+The contributions of each of the above categories to the whole Tracker mass are listed in table~\ref{table:TrackerCat} 
+and illustrated in the top plot of figure~\ref{fig:summaryMaterials}.
+Details for the individual subdetector volumes are reported in Appendix~\ref{categoriesAppendix}.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{clrrrrrr}
+\input{recipes/Tracker.cats}
+\end{tabular}
+\caption{Mass per material category in the Tracker volume.}
+\label{table:TrackerCat}
+\end{center}
+\end{table}
+%%
 
-\section{The $\TX$ and $\TI$ dependance on materials}
-
-The dependance of $\TX$ and $\TI$ on the single material or category contribution is the starting point of the systematic study. These dependances are also very important to understand which material or category dominates the total radiation length and which material or category is, on the other hand, negligible.
-
-The derivation of the dependance of $\TX$ and $\TI$ on the materials or categories is similar to the method described above for the mass fractions; if $k_j$ is the factor different from unity:
+The dependence of $\TX$ and $\TI$ on the single category contribution is the starting point of the systematic study. These dependences are also very important to understand which category dominates the total radiation length and which category is, on the other hand, negligible.The derivation of the dependence of $\TX$ and $\TI$ on the categories is similar to the method described above for the mass fractions.
+For example for the thickness in units of radiation length $\TX$, if $k_j$ is the factor different from unity
 \begin{equation}
-\mathrm{T}_{(...,1,{k_j},1...)} = \mathrm{T} + (k_j - 1) t_j,
+\mathrm{\TX}_{(...,1,{k_j},1...)} = \mathrm{\TX} + (k_j - 1) t_{{\rm R}j},
 \end{equation}
-from which it is straigthforward to derive: 
+from which it is straightforward to derive the respective component $t_{Rj}$:
 \begin{equation}
-t_j = \frac{\mathrm{T}_{(...,1,k_j,1...)} - \mathrm{T}}{k_j - 1} ,
+t_{{\rm R}j} = \frac{\mathrm{\TX}_{(...,1,k_j,1...)} - \mathrm{\TX}}{k_j - 1} .
 \end{equation}
-where $\mathrm{T}$ can be $\TX$ or $\TI$ and $t_j$ the respective component.
+The contributions of each of the above categories to the $\TX$ and $\TI$, averaged on the overall Tracker volume, 
+are illustrated in the middle and bottom plots of figure~\ref{fig:summaryMaterials} respectively.
+Figure~\ref{fig:x0Materials} shows the $\eta$ distributions of $\TX$ for the four categories mostly contributing
+to the Tracker mass, while the distributions of $\TI$ as a function of $\eta$ for the same categories are shown in figure~\ref{fig:lambda0Materials}.
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=\textwidth]{fig/SummaryMaterials.pdf}
+\end{center}
+\caption{Contribution of the categories listed in table~\ref{table:cat} to the total mass of the Tracker (top), average $\TX$ (center) and average $\TI$ (bottom). 
+Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
+\label{fig:summaryMaterials}
+\end{figure}
 
-\section{Derivation of the systematic uncertainties}
+\begin{figure}[th]
+\begin{center}
+\includegraphics[width=0.7\textwidth,angle=90]{fig/x0Materials.pdf}
+\end{center}
+\caption{Distribution of the average thickness in units of radiation length $\Xo$ as a function of $\eta$ for the four categories of table~\ref{table:cat} mostly contributing to the total mass of the 
+Tracker. 
+Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
+\label{fig:x0Materials}
+\end{figure}
 
-The systematic uncertainties on the representation of the material at the level of GEANT simulation can be due several sources, as, for example, the lack of knowledge or approximation in the shape and size of the volumes, chemical compositions and mass. Independently of the source, any effect can be represented to the extent of our needs as an appropriate relative variations $\nicefrac{\Delta \rho}{\rho}$ on the material densities resulting in a variation on the total thickness
+\begin{figure}[bh]
+\begin{center}
+\includegraphics[width=0.7\textwidth,angle=90]{fig/lambda0Materials.pdf}
+\end{center}
+\caption{Distribution of the average thickness in units of interaction length $\lI$ as a function of $\eta$ for the four categories of table~\ref{table:cat} mostly contributing to the total mass of the 
+Tracker. 
+Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
+\label{fig:lambda0Materials}
+\end{figure}
+
+
+\section{Determination of the altered scenarios for the material budget}
+
+The systematic uncertainties on the representation of the material at the level of GEANT4 simulation can be due several sources, as, for example, the lack of knowledge or approximation in the shape and size of the volumes, chemical compositions and mass. Independently of the source, any effect can be represented to the extent of our needs as an appropriate fractional changes $\nicefrac{\Delta \rho_i}{\rho_i}$ on the material densities, resulting in a variation on the total thickness
 \begin{equation}
 \Delta \mathrm{T} = \sum_i \frac{\Delta \rho_i}{\rho_i} t_i
 \end{equation}
-where, again, $\mathrm{T}$ can be $\TX$ or $\TI$ and $t_j$ the respective component measured by means of the simple method described above.
+where, again, $\mathrm{T}$ can be $\TX$ or $\TI$ and $t_i$ the respective component determined by means of the method described above.
 
-An insight on the systematic uncertainties on the knowledge of the material can be derived by maximizing or minimizing $\TX$ and $\TI$ with respect to the possible the density variations within an allowed domain:
+An insight on the systematic uncertainties on the knowledge of the material can be derived by maximizing or minimizing $\TX$ and $\TI$ with respect to the possible density variations within an allowed domain:
 \begin{equation}
 \mathrm{\TX} + \Delta \mathrm{\TX} = \sum_i \frac{\ell_i}{X_{0 i}} \left( \rho_i + \Delta \rho_i \right) = \sum_i \tX_i k_i,
 \end{equation}
@@ -362,25 +445,25 @@ An insight on the systematic uncertainties on the knowledge of the material can 
 \mathrm{\TI} + \Delta \mathrm{\TI} = \sum_i \frac{\ell_i}{\lambda_{{\mathrm I} i}} \left( \rho_i + \Delta \rho_i \right) = \sum_i \tI_i k_i.
 \end{equation}
 
-The aim of the present study is to derive the set of k-factors $\{k^0_{\rm min}\}$ ({\em minimal $X_0$ scenario}) and $\{k^0_{\rm max}\}$ ({\em maximal $X_0$ scenario})  corresponding to the minimal and maximal variations $\Delta \TX_{\rm min}$ and $\Delta \TX_{\rm max}$ compatible with the systematic uncertainties. Similar entities can be defined with respect to $\lambda_{\rm I}$ in place of $X_0$: $\{k^{\rm I}_{\rm min}\}$ ({\em minimal $\lambda_{\rm I}$ scenario}) and $\{k^{\rm I}_{\rm max}\}$ ({\em maximal $\lambda_{\rm I}$ scenario}) corresponding to the minimal and maximal variations $\Delta \TI_{\rm min}$ and $\Delta \TI_{\rm max}$. The variation is defined as the average of $\Delta \TX$ or $\Delta \TI$ over the $\eta$ range comprised between $-3$ and $3$. 
+The aim of the present study is to derive the set of k-factors $\kvect^{\rm R}_{\rm min}$ ({\em minimal $X_0$ scenario}) and $\kvect^{\rm R}_{\rm max}$ ({\em maximal $X_0$ scenario})  corresponding to the minimal and maximal variations $\Delta \TX_{\rm min}$ and $\Delta \TX_{\rm max}$ compatible with the systematic uncertainties. Similar entities can be defined with respect to $\lambda_{\rm I}$ in place of $X_0$: $\kvect^{\rm I}_{\rm min}$ ({\em minimal $\lambda_{\rm I}$ scenario}) and $\kvect^{\rm I}_{\rm max}$ ({\em maximal $\lambda_{\rm I}$ scenario}) corresponding to the minimal and maximal variations $\Delta \TI_{\rm min}$ and $\Delta \TI_{\rm max}$. The variation is defined as the average of $\Delta \TX$ or $\Delta \TI$ over the $\eta$ range comprised between $-3$ and $3$. 
 
-The derivation of the maximal and minimal scenarios results from an extrema finding problem with respect to the variation of material densities intended to represent the effects of the systematic uncertainties. To ease the minimization and maximization procedures the material categories are used in place of the basic materials, much larger in number. The approach is soound since similar materials have been grouped on purpose into homogeneous categories.
+The derivation of the maximal and minimal scenarios results from an extrema finding problem with respect to the variation of material densities intended to represent the effects of the systematic uncertainties. To ease the optimization procedure, the material categories are used in place of the basic materials, much larger in number. The approach is sound since similar materials have been grouped on purpose into homogeneous categories.
 
 The density variation domain results by the imposition of an appropriate set of constraints. These are listed below.
 \begin{itemize}
 %
 % http://indico.cern.ch/getFile.py/access?contribId=6&resId=0&materialId=slides&confId=26422
-\item The overall difference between measured mass and total simulated mass is kept fixed by imposing
+\item The overall difference between weighted mass and total simulated mass is kept fixed by imposing
  \begin{equation}
 \Delta M = \sum_i \frac{\Delta \rho_i}{\rho_i} m_i.
 \end{equation}
-The Silicon Strip Tracker weight as estimated during the integration and installation is $3996^{+88}_{-132}\kg$; the Pixel detector, installed in a later time, is not included in this estimation; the corresponding weigth in the simulation is $4037\kg$. The resulting relative measured versus simulated weigth difference is $-1^{+2}_{-3}\%$ suggesting an agreement between measured and simulated weigths within the estimation error.
+The Silicon Strip Tracker mass as estimated during the integration and installation is 3996$^{+88}_{-132}$ kg the Pixel detector, installed in a later time, is not included in this estimation; the corresponding mass in the simulation is 4037 kg. The resulting relative weighted versus simulated mass difference is $-1^{+2}_{-3}\%$ suggesting an agreement between weighted and simulated masses within the estimation error.
 
 
-Similar estimation performed over single subdetector indicate possible localized larger discrepancies. For example the TIB/TID subdetector plus some ancillary pieces have been weigthed. The result is $450^{+12}_{-20}\kg$ to be compared with $427.0\kg$, the simulated mass of the corresponding volumes. The resulting measured versus simulated weigth difference is $5^{+3}_{-4}\%$. As far as the TEC subdetector is concerned an uncertainty of about $\sim 3\%$ is claimed by the experts.
+Similar estimation performed over single subdetector indicate possible localized larger discrepancies. For example the TIB/TID subdetector plus some ancillary pieces have been weighted. The result is 450$^{+12}_{-20}$ kg to be compared with 427.0 kg  the simulated mass of the corresponding volumes. The resulting weighted versus simulated mass difference is $5^{+3}_{-4}\%$. As far as the TEC subdetector is concerned an uncertainty of about $\sim 3\%$ is claimed by the experts.
 
-As a consequence a conservative approach has been choosen in this study: it is assumed that the actual tracker mass is $5\%$ larger than the mass on the corresponding volumes in the simulation. {\bf FIXME FIXME FIXME}
-\item The density variation ranges within each category are constrained depending on the charachteristic and typical use of the materials contained in the categories. A large amount of direct experience in integrating and assemblying the tracker is used in defining these numbers. They are listed in table~\ref{table:catVariations}.
+As a consequence a conservative approach has been chosen in this study: it is assumed that the actual Tracker mass is $5\%$ larger than the mass on the corresponding volumes in the simulation. {\bf FIXME FIXME FIXME}
+\item The density variation ranges within each category are constrained depending on the characteristic and typical use of the materials contained in the categories. A large amount of direct experience in integrating and assembling the Tracker is used in defining these numbers. They are listed in table~\ref{table:catVariations}.
 
 Composite materials for which the chemical composition can vary substantially and used in shapes with not well defined geometry that can be difficult to represent in the simulation can vary up to $\pm 15\%$; typical examples in this typology is the carbon fiber and the organic material (i.e. plastics).
 
@@ -392,6 +475,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \end{itemize} 
 
 
+
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{clc}
@@ -401,7 +485,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
   1 & Carbon Fiber               & $\pm15$ \\
   2 & Other mechanical structure & $\pm15$ \\
   3 & Copper and copper alloys   & $\pm5$ \\
-  4 & Aluminum                   & $\pm5$\\ 
+  4 & Aluminium                   & $\pm5$\\ 
   5 & Organic materials          & $\pm15$ \\
   6 & C6F14                      & $\pm10$\\
   7 & Silicon sensitive          & Fixed                       \\
@@ -419,12 +503,115 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 
 \subsection{The extrema finding problem}
 
+The determination of the k-factors was done with a
+standard technique used for solving optimization problems with inequality
+constraints, the so-called penalty function method. This method
+consists in defining as  objective function the sum of the actual
+function $f(x)$ to be minimized and a term penalizing the
+objective whenever the constraint $g(x)\le 0$ is violated. 
+The minimization of the objective function is then performed
+iteratively, at every iteration starting from the value of $x$ found
+in the previous step and progressively increasing the penalty term.
 
+Here, the objective functions to be minimized were defined as: 
+\begin{eqnarray*}
+\TX(\kvect^{\rm R}) = \sum^N_i k_i t_{{\rm R}j} +
+\epsilon^{\rm R}_r \left[ \left(\sum^N_i (k_i-1.05) \rho_i V_i\right)^2  + \sum^N_i
+  g(k_i)^2 \right] \quad \text{for determining $\kvect^{\rm R}_{\rm min}$,}\\
+\TX(\kvect^{\rm R}) = -\sum^N_i k_i t_{{\rm R}j}, +
+\epsilon^{\rm R}_r \left[ \left(\sum^N_i (k_i-1.05) \rho_i V_i\right)^2  + \sum^N_i
+  g(k_i)^2 \right] \quad \text{for determining $\kvect^{\rm R}_{\rm max}$,}\\
+\TI(\kvect^{\rm I}) = \sum^N_i k_i t_{{\rm I}j} +
+\epsilon^{\rm I}_r \left[ \left(\sum^N_i (k_i-1.05) \rho_i V_i\right)^2  + \sum^N_i
+  g(k_i)^2 \right] \quad \text{for determining $\kvect^{\rm I}_{\rm min}$,}\\
+\TI(\kvect^{\rm I}) = -\sum^N_i k_i t_{{\rm I},} +
+\epsilon^{\rm I}_r \left[ \left(\sum^N_i (k_i-1.05) \rho_i V_i\right)^2  + \sum^N_i
+  g(k_i)^2 \right] \quad \text{for determining $\kvect^{\rm I}_{\rm max}$.}
+\end{eqnarray*}
+
+In the above relations, the first term is the thickness to be
+minimized, the second term represents the constraint on the change of
+the total mass of the Tracker, and the last term the constraint from the
+allowed range of variations of the k-factor of the category $i$
+defined in table~\ref{table:catVariations}, e.g. $k_{i,min}\le  k_i\le
+k_{i,max}$ where the constraint inequality are defined by the function:
+\[
+g(k_i)=
+\begin{cases}
+k_i-k_{i,min}&  \text{if $k_i<k_{i,min}$,} \\
+k_{i,max}-k_i,&  \text{if $k_i>k_{i,max}$,} \\
+0 & \text{otherwise.}
+\end{cases}
+\]
+The evolution of the penalty functions are given by 
+$\epsilon_r^{\rm R}=2^r$  and $\epsilon_r^{\rm I}=2^{r-1}$, with $r$
+being the iteration number, defined to give 
+contributions to the objective function of the same order of the
+actual function to be minimized during the first iterations. A minimum satisfying the
+constraints is reached in about ten iterations.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{lcccc}
+   Category    & $\kvect^{\rm R}_{max}$ &  $\kvect^{\rm R}_{min}$ &  $\kvect^{\rm I}_{max}$ &  $\kvect^{\rm I}_{min}$ 
+\\ 
+  \hline 
+CarbonFiber             &  1.140  & 1.150  & 1.150 & 1.007 \\
+OtherMechStruct         &  0.850  & 1.150  & 0.862 & 1.150 \\
+CopperAndCuAlloys       &  1.050  & 0.950  & 0.950 & 1.050 \\           
+Aluminium               &  1.050  & 1.004  & 0.950 & 1.050 \\           
+OrganicMaterials        &  0.850  & 1.150  & 1.150 & 1.150 \\
+C6F14                   &  1.100  & 1.100  & 1.100 & 1.100 \\
+Silicon                 &  Fixed  & Fixed  & Fixed & Fixed \\
+InorganicOxides         &  1.050  & 0.950  & 1.049 & 1.050 \\           
+FiberGlassLaminated     &  1.100  & 0.902  & 1.100 & 1.013 \\   
+OtherMetals             &  1.100  & 0.900  & 0.900 & 1.100 \\   
+GlueAndResins           &  1.200  & 0.800  & 1.200 & 0.800 \\
+ElectronicComponents    &  1.100  & 0.900  & 0.900 & 1.100 \\           
+Air                     &  Fixed  & Fixed  & Fixed & Fixed \\
+\hline
+$\TX$ (default 1.184$\pm$0.002)    &1.249   &1.201  &  1.211  & 1.238 \\
+$\TI$ (default 0.3495$\pm$0.0006)  &0.3683  &0.3705 &  0.3751 & 0.3645\\
+
+\end{tabular}
+\caption{Allowed density variation of the various material categories in the minimization/maximization problem.}
+\label{table:catVariationsMinMax}
+\end{center}
+\end{table}
+
+The average $\TX$ and $\TI$ for the four extrema scenarios are 
+listed in table~\ref{table:catVariationsMinMax} and the fractional
+changes in  the $\eta$  distributions are shown in figures~\ref{fig:x0minmax}
+and~\ref{fig:lambda0minmax}. 
+
+
+\begin{figure}[th]
+\begin{center}
+\includegraphics[width=0.5\textwidth,angle=90]{fig/x0minmax.pdf}
+\end{center}
+\caption{Fractional change of $\TX$ with respect the CMSSW setting
+  for the $\kvect^{\rm R}_{max}$ and $\kvect^{\rm R}_{min}$ scenarios.
+  An uniform increase of the Tracker mass of 5\% would correspond
+  to a horizontal line at 1.05.}
+\label{fig:x0minmax}
+\end{figure}
+
+\begin{figure}[bh]
+\begin{center}
+\includegraphics[width=0.5\textwidth,angle=90]{fig/lambda0minmax.pdf}
+\end{center}
+\caption{Fractional change of $\TI$ with respect the CMSSW setting
+  for the $\kvect^{\rm I}_{max}$ and $\kvect^{\rm I}_{min}$ scenarios.
+  An uniform increase of the Tracker mass of 5\% would correspond
+  to a horizontal line at 1.05.}
+\label{fig:lambda0minmax}
+\end{figure}
 
 \clearpage
 
 \appendix
-\section{Tables of components weight.}
+\numberwithin{table}{section}
+\section{Tables of components mass.}
 \label{compositionAppendix}
 
 \vskip 1cm
@@ -432,19 +619,9 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{clrrrrrr}
-\input{recipes/Tracker}
-\end{tabular}
-\caption{Weight of the basic components in the Tracker volume.}
-\label{table:Tracker}
-\end{center}
-\end{table}
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{clrrrrrr}
 \input{recipes/PixelBarrel}
 \end{tabular}
-\caption{Weight of the basic components in the Pixel Barrel volume.}
+\caption{Mass of the basic components in the Pixel Barrel volume.}
 \end{center}
 \end{table}
 
@@ -453,7 +630,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/PixelForwardZPlus}
 \end{tabular}
-\caption{Weight of the basic components in the Pixel Forward half located at $z>0$; the Pixel Forward half located at $z<0$ is identical.}
+\caption{Mass of the basic components in the Pixel Forward half located at $z>0$; the Pixel Forward half located at $z<0$ is identical.}
 \end{center}
 \end{table}
 
@@ -462,7 +639,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TIB}
 \end{tabular}
-\caption{Weight of the basic components in the TIB volume.}
+\caption{Mass of the basic components in the TIB volume.}
 \end{center}
 \end{table}
 
@@ -471,7 +648,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TIDF}
 \end{tabular}
-\caption{Weight of the basic components in the forward TID volume; backward TID volume is identical.}
+\caption{Mass of the basic components in the forward TID volume; backward TID volume is identical.}
 \end{center}
 \end{table}
 
@@ -480,7 +657,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TIBTIDServicesF}
 \end{tabular}
-\caption{Weight of the basic components in the forward TIB and TID service volume; the backward replica is identical.}
+\caption{Mass of the basic components in the forward TIB and TID service volume; the backward replica is identical.}
 \end{center}
 \end{table}
 
@@ -489,7 +666,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TOB}
 \end{tabular}
-\caption{Weight of the basic components in the TOB volume.}
+\caption{Mass of the basic components in the TOB volume.}
 \end{center}
 \end{table}
 
@@ -498,7 +675,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TEC}
 \end{tabular}
-\caption{Weight of the basic components in one of the two TEC volume replicas.}
+\caption{Mass of the basic components in one of the two TEC volume replicas.}
 \end{center}
 \end{table}
 
@@ -507,7 +684,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TrackerBulkhead}
 \end{tabular}
-\caption{Weight of the basic components in one of the two Tracker Bulkhead volume replicas.}
+\caption{Mass of the basic components in one of the two Tracker Bulkhead volume replicas.}
 \end{center}
 \end{table}
 
@@ -516,13 +693,13 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TrackerOuterCylinder}
 \end{tabular}
-\caption{Weight of the basic components of the Tracker Outer Cylinder volume.}
+\caption{Mass of the basic components of the Tracker Outer Cylinder volume.}
 \end{center}
 \end{table}
 
 \clearpage
 
-\section{Tables of material category weight per subdetector}
+\section{Tables of material category mass per subdetector}
 \label{categoriesAppendix}
 
 \vskip 1cm
@@ -531,18 +708,9 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{clrrrrrr}
-\input{recipes/Tracker.cats}
-\end{tabular}
-\caption{Weight per material category in the Tracker volume.}
-\end{center}
-\end{table}
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{clrrrrrr}
 \input{recipes/PixelBarrel.cats}
 \end{tabular}
-\caption{Weight per material category in the Pixel Barrel volume.}
+\caption{Mass per material category in the Pixel Barrel volume.}
 \end{center}
 \end{table}
 
@@ -551,7 +719,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/PixelForwardZPlus.cats}
 \end{tabular}
-\caption{Weight per material category in the Pixel Forward half located at $z>0$; the Pixel Forward half located at $z<0$ is identical.}
+\caption{Mass per material category in the Pixel Forward half located at $z>0$; the Pixel Forward half located at $z<0$ is identical.}
 \end{center}
 \end{table}
 
@@ -560,7 +728,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TIB.cats}
 \end{tabular}
-\caption{Weight per material category in the TIB volume.}
+\caption{Mass per material category in the TIB volume.}
 \end{center}
 \end{table}
 
@@ -569,7 +737,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TIDF.cats}
 \end{tabular}
-\caption{Weight per material category in the forward TID volume; backward TID volume is identical.}
+\caption{Mass per material category in the forward TID volume; backward TID volume is identical.}
 \end{center}
 \end{table}
 
@@ -578,7 +746,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TIBTIDServicesF.cats}
 \end{tabular}
-\caption{Weight per material category in the forward TIB and TID service volume; the backward replica is identical.}
+\caption{Mass per material category in the forward TIB and TID service volume; the backward replica is identical.}
 \end{center}
 \end{table}
 
@@ -587,7 +755,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TOB.cats}
 \end{tabular}
-\caption{Weight per material category in the TOB volume.}
+\caption{Mass per material category in the TOB volume.}
 \end{center}
 \end{table}
 
@@ -596,7 +764,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TEC.cats}
 \end{tabular}
-\caption{Weight per material category in one of the two TEC volume replicas.}
+\caption{Mass per material category in one of the two TEC volume replicas.}
 \end{center}
 \end{table}
 
@@ -605,7 +773,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TrackerBulkhead.cats}
 \end{tabular}
-\caption{Weight per material category in one of the two Tracker Bulkhead volume replicas.}
+\caption{Mass per material category in one of the two Tracker Bulkhead volume replicas.}
 \end{center}
 \end{table}
 
@@ -614,7 +782,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \begin{tabular}{clrrrrrr}
 \input{recipes/TrackerOuterCylinder.cats}
 \end{tabular}
-\caption{Weight per material category of the Tracker Outer Cylinder volume.}
+\caption{Mass per material category of the Tracker Outer Cylinder volume.}
 \end{center}
 \end{table}
 
