@@ -39,12 +39,12 @@
 \begin{titlepage}
 
 % select one of the following and type in the proper number:
-%   \cmsnote{2005/000}
-  \internalnote{2010/000}
+  \cmsnote{2010/000}
+%  \internalnote{2010/000}
 %  \conferencereport{2005/000}
    \date{1 Brumaio 2010}
 
-  \title{Altered Scenarios for the Material Budget of the CMS Tracker}
+  \title{Altered Scenarios of the\\ CMS Tracker Material for\\ systematic uncertainties studies}
 
   \begin{Authlist}
     Ernesto Migliore
@@ -55,8 +55,8 @@
 
  
   \begin{abstract}
-A method to study the systematic uncertainties related to the Tracker Material Budget simulation has been developed.
-The method can be applied whenever the effect of a known variation of a material budget component has to be studied.
+A method to study the systematic uncertainties related to the Tracker material simulation has been developed.
+The method can be applied whenever the effect of a known variation of a material component has to be studied.
 A set of realistic material alterations to be used by physics analysis groups is proposed.
   \end{abstract} 
 
@@ -66,27 +66,30 @@ A set of realistic material alterations to be used by physics analysis groups is
 
 \section{Introduction}
 
-The description of the Tracker geometry included in the CMS software
+The description of the CMS Tracker~\cite{cmspaper} geometry included in the CMS software
 framework~\cite{CMSSW} to simulate and reconstruct the events includes the
 state-of-the-art knowledge of the passive materials through a set of XML files
-collected in the packages {\tt Geometry/CMSCommonData} and {\tt
-  Geometry/TrackerCommonData}. The relevant figure for determining the
-impact of the material budget on the reconstruction performance is the
+then appropriately interfaced with GEANT4~\cite{g4}, the detector simulation package used in CMS.
+%collected in the packages {\tt Geometry/CMSCommonData} and {\tt
+%  Geometry/TrackerCommonData}.
+
+The relevant quantity for determining the
+impact of the tracker material on the reconstruction performance is the
 thickness, either in units of radiation length $\Xo$, or in units of 
 interaction length $\lI$, crossed by a particle produced at the
-nominal interaction point which coincides with nominal center of the Tracker.
+nominal interaction point which coincides with the nominal center of the Tracker.
 These thicknesses, referred in the following as $\TX$ and $\TI$ respectively,  
-are evaluated simulating a sample of 100 000
+are evaluated simulating a sample of 100,000
 neutrinos generated at the center of the Tracker, with a uniform
 distribution in $-5\le\eta\le5$ and $0\le\phi\le2\pi$. The unperturbed
-trajectory throughout the Tracker volumes can thus be followed and
-distribution of $\TX$ and $\TI$  as a function of $\eta$ produced. 
+trajectory throughout the Tracker volumes can thus be followed, and the
+distributions of $\TX$ and $\TI$ as a function of $\eta$ produced. 
 The distributions of $\TX$ and $\TI$ of the Tracker drop at about $|\eta|$=3.7.
 The $\eta$ range considered in the following analysis will be 
 $-3\le\eta\le3$ where the average thicknesses determined with the procedure
 described above are  $\TX=1.184\pm0.002$ and $\TI=0.3495\pm0.0006$.
 
-%The present geometry contains the state-of-the-art of the Tracker
+The Tracker geometry used by the detector simulation has been deployed by using at best the techical informations, engineering designs, and direct experience of the people contributing to its construction and assembly.
 %material budget description. 
 However there are known issues with this description:
 \begin{itemize}
@@ -94,9 +97,9 @@ However there are known issues with this description:
 \item unavoidable approximations with respect to the actual geometry of the physical volumes and of the material distribution and composition.
 \end{itemize}
 
-This note will discuss a possible way to estimate the uncertainty related to the former of these issues.
+This note will discuss a possible way to estimate the uncertainty related to the former of these issues. Nevertheless the conservative approach choosen allows the results to give also reasonable insigths on systematic uncertainties related to the latter effect.
 
-The most quantitative bases of any answer are the simulated-weighted mass discrepancies $\DM$'s, when available. Nevertheless, the impact of $\DM$ on the total thickness in terms of number of radiation lengths, $\TX$, or in terms of number of interaction lengths, $\TI$, does depend on how the $\DM$ is distributed among the various Tracker components and materials. Once this dependence is known, it can be fed not only with $\DM$'s, but also with any other input useful to understand downstream effects on $\TX$ or $\TI$.
+The quantitative input of the study is the simulated versus weighted mass discrepancies, $\DM$'s, when available. Nevertheless, the impact of $\DM$ on the total thickness in terms of number of radiation lengths, $\TX$, or in terms of number of interaction lengths, $\TI$, does depend on how the $\DM$ is distributed among the various Tracker components and materials. Once this dependence is known, it has been fed with $\DM$'s, but also with any other input useful to understand downstream effects on $\TX$ or $\TI$.
 
 \section{Method}
 
@@ -129,7 +132,9 @@ and
 
 %\section{Parser}
 
-The method described in the previous section can only be practically implemented by modifying the material densities in the DDD xml files describing the detector geometry. This is done by using a software tool written on purpose consisting of a perl xml parser. It takes the DDD material xml files in input and then, according to a {\em scenario} configuration file, changes the effective density of the material under study and of all materials that depend (directly and indirectly) on it; finally the modified xml files are written in output. These modified xml files are fully working in CMSSW.
+In GEANT4 the {\em logical volume} is a solid filled with a given material, either a pure element or a compound of elements or other materials. A detector geometry in GEANT4, and the CMS Tracker makes no exception, is build up by logical volumes placed in the space ({\em physical volumes}) in one or more replicas. Logical volumes as well materials are generally organized hierarchically.
+
+On a very complex GEANT4 detector description as the one of the CMS Tracker, the method above described can only be practically implemented by leaving the solid dimensions unchanged and modifying the densities of the materials associated to solids, i.e. $k_i \rho_i \ell_i \equiv (\rho_i + \Delta \rho_i) \ell_i$. Within CMSSW this is done by altering the XML files used to describe the detector geometry. A software tool written on purpose consisting of a perl XML parser has been developed on purpose. The material XML files in input are parsed and then, according to a {\em scenario} configuration, the effective densities of the material under study and of all materials that depend on it (directly and indirectly) are changed; finally the modified XML files are written in output. These modified XML files are fully working in CMSSW and actually represent a CMS Tracker with some of its material component altered with respect to the nominal description.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %The detailed modification procedure is the following:
@@ -254,18 +259,17 @@ The method described in the previous section can only be practically implemented
 
 \section{The Tracker Recipe}
 
-As  first application of the method, the Tracker
+As a first application of the method, the Tracker
 composition in the simulation was evaluated. GEANT4 tools, in fact, 
-make easy to dump the total mass and the composition only in terms of
-chemical elements of a given physical volume, and thus also of
-the entire Tracker. More interesting is the understanding of the composition of
+make easy to dump the total mass and the composition of a logical volume, the entire Tracker for example, but only in terms of
+chemical elements. More interesting is the understanding of the composition of 
 the Tracker in terms of basic materials, commonly encountered in the construction, e.g.:
 \begin{itemize}
 \item[-] pure chemical elements, as aluminium, copper, or silicon;
-\item[-] simple compounds like alumina (${\rm Al}_2{\rm O}_3$) or glass;
+\item[-] simple compounds like alumina (${\rm Al}_2{\rm O}_3$), glass, or metal alloys;
 \item[-] more complicated compounds like carbon fiber, FR4 or plastics. 
 \end{itemize}
-The total mass of the Tracker is \fixme
+The total mass of the Tracker results from the sum of the mass contributions, i.e.
 \begin{equation}
 M({\rm Tracker}) = \sum_i m_i = \sum_i \rho_i V_i,
 \end{equation}
@@ -274,23 +278,23 @@ $\rho_i$ and $V_i$ are, respectively, the mass, the density, and the
 volume of the component $i$.
 
 To extract the contribution of a specific material $j$,
-the method can be applied with the k-factor different from unity only
+the alteration method can be applied with the k-factor different from unity only
 for the material under investigation. In this case the resulting total mass
-of the entire Tracker volume becomes:
+of the entire Tracker logical volume becomes:
 \begin{equation}
 M_{\vec{k}=(..., 1, k_j, 1, ...)} (\mathrm{Tracker}) = M +
-( k_j - 1) m_j,
+( k_j - 1) m_j.
 \end{equation}
-from which it is straightforward to derive the mass of the component $j$: 
+It is straightforward to derive the mass of the component $j$: 
 \begin{equation}
 m_j = \frac{M_{\vec{k}=(..., 1, k_j, 1, ...)} - M}{k_j
   - 1}.
 \end{equation}
 The procedure, repeated for all the material components, allows the Tracker composition to be derived. 
 %The sum of the component masses estimated in this way is equal to the total Tracker mass within 1ppm. The exercise confirms that the method is correctly implemented
-The composition of the whole Tracker is given in table~\ref{table:Tracker}: The sum of the component masses derived by this method agrees within 1 ppm with the total Tracker mass as directly given by GEANT4. This exercise is a confirmation that the method works and it is correctly implemented.
+It is reported in detail in table~\ref{table:Tracker}: the sum of the component masses derived by this method agrees within 1 ppm with the total Tracker mass as directly given by GEANT4. This exercise is a confirmation that the method is correctly implemented and working.
 
-The composition of the individual subdetectors are reported in Appendix~\ref{compositionAppendix}.
+The compositions of each individual subdetector are reported in the tables of Appendix~\ref{compositionAppendix}.
 
 \begin{table}[h]
 \begin{center}
@@ -308,7 +312,7 @@ The composition of the individual subdetectors are reported in Appendix~\ref{com
 
 %\subsection{Material classification in categories}
 
-Although the perl xml parser can deal with each of the 37 \fixme  basic materials listed in table~\ref{table:Tracker},
+Although the perl XML parser can deal with each of the 36 basic materials listed in table~\ref{table:Tracker},
 for the following analysis these basic materials were grouped into a limited number of {\it categories} defined as a class of homogeneous and/or similar materials. A category can consist of just one basic material.
 The category definitions are given in table~\ref{table:cat}.
 
@@ -374,7 +378,7 @@ The category definitions are given in table~\ref{table:cat}.
 
 The contributions of each of the above categories to the whole Tracker mass are listed in table~\ref{table:TrackerCat} 
 and illustrated in the top plot of figure~\ref{fig:summaryMaterials}.
-Details for the individual subdetector volumes are reported in Appendix~\ref{categoriesAppendix}.
+Detailed tables for the individual subdetector volumes are reported in Appendix~\ref{categoriesAppendix}.
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{clrrrrrr}
@@ -399,37 +403,8 @@ The contributions of each of the above categories to the $\TX$ and $\TI$, averag
 are illustrated in the middle and bottom plots of figure~\ref{fig:summaryMaterials} respectively.
 Figure~\ref{fig:x0Materials} shows the $\eta$ distributions of $\TX$ for the four categories mostly contributing
 to the Tracker mass, while the distributions of $\TI$ as a function of $\eta$ for the same categories are shown in figure~\ref{fig:lambda0Materials}.
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=\textwidth]{fig/SummaryMaterials.pdf}
-\end{center}
-\caption{Contribution of the categories listed in table~\ref{table:cat} to the total mass of the Tracker (top), average $\TX$ (center) and average $\TI$ (bottom). 
-Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
-\label{fig:summaryMaterials}
-\end{figure}
 
-\begin{figure}[th]
-\begin{center}
-\includegraphics[width=0.7\textwidth,angle=90]{fig/x0Materials.pdf}
-\end{center}
-\caption{Distribution of the average thickness in units of radiation length $\Xo$ as a function of $\eta$ for the four categories of table~\ref{table:cat} mostly contributing to the total mass of the 
-Tracker. 
-Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
-\label{fig:x0Materials}
-\end{figure}
-
-\begin{figure}[bh]
-\begin{center}
-\includegraphics[width=0.7\textwidth,angle=90]{fig/lambda0Materials.pdf}
-\end{center}
-\caption{Distribution of the average thickness in units of interaction length $\lI$ as a function of $\eta$ for the four categories of table~\ref{table:cat} mostly contributing to the total mass of the 
-Tracker. 
-Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
-\label{fig:lambda0Materials}
-\end{figure}
-
-
-\section{Determination of the altered scenarios for the material budget}
+\section{Determination of the altered scenarios for the Tracker material}
 
 The systematic uncertainties on the representation of the material at the level of GEANT4 simulation can be due several sources, as, for example, the lack of knowledge or approximation in the shape and size of the volumes, chemical compositions and mass. Independently of the source, any effect can be represented to the extent of our needs as an appropriate fractional changes $\nicefrac{\Delta \rho_i}{\rho_i}$ on the material densities, resulting in a variation on the total thickness
 \begin{equation}
@@ -457,15 +432,15 @@ The density variation domain results by the imposition of an appropriate set of 
  \begin{equation}
 \Delta M = \sum_i \frac{\Delta \rho_i}{\rho_i} m_i.
 \end{equation}
-The Silicon Strip Tracker mass as estimated during the integration and installation is 3996$^{+88}_{-132}$ kg the Pixel detector, installed in a later time, is not included in this estimation; the corresponding mass in the simulation is 4037 kg. The resulting relative weighted versus simulated mass difference is $-1^{+2}_{-3}\%$ suggesting an agreement between weighted and simulated masses within the estimation error.
+The Silicon Strip Tracker mass as estimated during the integration and installation is $3996^{+88}_{-132}\kg$. The Pixel detector, installed in a later time, is not included in this estimation. The corresponding mass in the simulation is 4037 kg. The resulting relative weighted versus simulated mass difference is $-1^{+2}_{-3}\%$ suggesting an agreement between weighted and simulated masses within the estimation error.
 
+Similar estimation performed over single subdetector indicate possible localized larger discrepancies. For example, the TIB/TID subdetector plus some ancillary pieces have been weighted. The result is $450^{+12}_{-20}\kg$ to be compared with $427.0\kg$  the simulated mass of the corresponding volumes. The resulting weighted versus simulated mass difference is $5^{+3}_{-4}\%$. As far as the TEC subdetector is concerned an uncertainty of about $\sim 3\%$ is claimed by the experts.
 
-Similar estimation performed over single subdetector indicate possible localized larger discrepancies. For example the TIB/TID subdetector plus some ancillary pieces have been weighted. The result is 450$^{+12}_{-20}$ kg to be compared with 427.0 kg  the simulated mass of the corresponding volumes. The resulting weighted versus simulated mass difference is $5^{+3}_{-4}\%$. As far as the TEC subdetector is concerned an uncertainty of about $\sim 3\%$ is claimed by the experts.
+As a consequence a conservative approach has been chosen in this study: it is assumed that the actual Tracker mass is $5\%$ larger than the mass on the corresponding volumes in the simulation.
 
-As a consequence a conservative approach has been chosen in this study: it is assumed that the actual Tracker mass is $5\%$ larger than the mass on the corresponding volumes in the simulation. {\bf FIXME FIXME FIXME}
-\item The density variation ranges within each category are constrained depending on the characteristic and typical use of the materials contained in the categories. A large amount of direct experience in integrating and assembling the Tracker is used in defining these numbers. They are listed in table~\ref{table:catVariations}.
+\item The density variation ranges within each category are constrained depending on the characteristic and the typical use of the materials contained in each category. A large amount of direct experience in designing, integrating and assembling the Tracker is used in defining these numbers. They are listed in table~\ref{table:catVariations}.
 
-Composite materials for which the chemical composition can vary substantially and used in shapes with not well defined geometry that can be difficult to represent in the simulation can vary up to $\pm 15\%$; typical examples in this typology is the carbon fiber and the organic material (i.e. plastics).
+Composite materials for which the chemical composition can vary substantially and used in shapes with not well defined geometry that can be difficult to represent in the simulation can vary up to $\pm 15\%$; typical examples in this typology are the carbon fiber and the organic materials (i.e. plastics).
 
 Pure materials and metals are typically well known chemically and easier to represent. The cooling fluid is an exception since its amount is estimated by the internal volume of the pipes that build up the cooling system, often with shapes very complicated. This estimation is difficult.
 
@@ -506,7 +481,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 The determination of the k-factors was done with a
 standard technique used for solving optimization problems with inequality
 constraints, the so-called penalty function method. This method
-consists in defining as  objective function the sum of the actual
+consists in defining as objective function the sum of the actual
 function $f(x)$ to be minimized and a term penalizing the
 objective whenever the constraint $g(x)\le 0$ is violated. 
 The minimization of the objective function is then performed
@@ -550,7 +525,7 @@ contributions to the objective function of the same order of the
 actual function to be minimized during the first iterations. A minimum satisfying the
 constraints is reached in about ten iterations.
 
-\begin{table}[h]
+\begin{table}[b]
 \begin{center}
 \begin{tabular}{lcccc}
    Category    & $\kvect^{\rm R}_{max}$ &  $\kvect^{\rm R}_{min}$ &  $\kvect^{\rm I}_{max}$ &  $\kvect^{\rm I}_{min}$ 
@@ -570,22 +545,75 @@ GlueAndResins           &  1.200  & 0.800  & 1.200 & 0.800 \\
 ElectronicComponents    &  1.100  & 0.900  & 0.900 & 1.100 \\           
 Air                     &  Fixed  & Fixed  & Fixed & Fixed \\
 \hline
-$\TX$ (default 1.184$\pm$0.002)    &1.249   &1.201  &  1.211  & 1.238 \\
-$\TI$ (default 0.3495$\pm$0.0006)  &0.3683  &0.3705 &  0.3751 & 0.3645\\
-
+$<\TX>$ (default 1.184$\pm$0.002)    &1.249   &1.201  &  1.211  & 1.238 \\
+$<\TI>$ (default 0.3495$\pm$0.0006)  &0.3683  &0.3705 &  0.3751 & 0.3645\\
 \end{tabular}
-\caption{Allowed density variation of the various material categories in the minimization/maximization problem.}
+\caption{Outcome of the extrema finding problem expressed as a set of k-factors in case of maximization ($\kvect^{\rm R}_{max}$) and minimization ($\kvect^{\rm R}_{min}$) of the average $\TX$ and in case of maximization ($\kvect^{\rm I}_{max}$) and minimization ($\kvect^{\rm I}_{min}$) of the average $\TI$.}
 \label{table:catVariationsMinMax}
 \end{center}
 \end{table}
 
 The average $\TX$ and $\TI$ for the four extrema scenarios are 
 listed in table~\ref{table:catVariationsMinMax} and the fractional
-changes in  the $\eta$  distributions are shown in figures~\ref{fig:x0minmax}
-and~\ref{fig:lambda0minmax}. 
+changes of $\TX$ and $\TI$ in the $\eta$  distributions are shown in figures~\ref{fig:x0minmax}
+and~\ref{fig:lambda0minmax}. It is worth notice how a global mass change of $+5\%$ can traslate into a local fractional change of $\TX$ and $\TI$ in the range $-3\%$ to $+8\%$ and $-3\%$ to $+10\%$, respectively, and a non trivial $\eta$ dependance.
 
+The four sets of k-factors $\kvect^{\rm R}_{max}$, $\kvect^{\rm R}_{min}$, $\kvect^{\rm I}_{max}$ and $\kvect^{\rm I}_{min}$ can be easily used to configure the parser and produce as many sets of geometry XML files, each corresponding to a specific geometry scenario altered with respect to the default that can be considered representative of the potential systematic uncertainties related to the description of the Tracker material.
 
-\begin{figure}[th]
+The altered geometries can be used to produce Monte Carlo samples and directly estimate the effect of the Tracker material uncertainties on physics analysis selections.
+Moreover the approach presented is very flexible, well beyond the four proposed alteration scenarios. In fact, the deployed tools can easily traslate into fully working geometry XML files any given alteration found interesting to be studied.
+
+\section{Conclusions}
+
+A method to change in a controlled way the description of the Tracker materials has been set up. The method allows to quantify in $-3\%$ to $+8\%$ and $-3\%$ to $+10\%$ the maximal local variations in terms of $X_0$ and $\lI$, respectively, starting from the realistic assumption of having $5\%$ of the Tracker mass not represented into the simulation. The potential extreme configurations have been translated into working Tracker geometries to be used for Monte Carlo based studies of Tracker material related systematic uncertainties.
+
+\begin{thebibliography}{9}
+\bibitem{cmspaper} CMS~Collaboration, {\em The CMS experiment at
+    the CERN LHC}, 2008 JINST 3 S08004.
+\bibitem{CMSSW} CMS Collaboration, {\em CMS Physics TDR}, Volume 1, CERN-LHCC-2006-001 (2006).
+\bibitem{g4} S.~Agostinelli et al., GEANT4 Collaboration, {\em GEANT4 -- a simulation toolkit}, Nucl. Inst. and Meth. A 506 (2003) 250; J.~Allison et al., {\em GEANT4 developments and applications}, IEEE Trans. Nucl. Sci. 53 (2006) 270.
+% \bibitem{tdr} CMS~Collaboration, {\em CMS: The Tracker Project
+%     Technical Design Report}, CERN/LHCC 98-06, CMS TDR 5, 15 April
+%   1998; CMS Collaboration, {\em Addendum to the CMS Tracker TDR}, CERN/LHCC
+%   2000-016, CMS TDR 5 Addendum 1, 21 February 2000.
+\end{thebibliography}
+
+\clearpage
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=\textwidth]{fig/SummaryMaterials.pdf}
+\end{center}
+\caption{Contribution of the categories listed in table~\ref{table:cat} to the total mass of the Tracker (top), average $\TX$ (center) and average $\TI$ (bottom). 
+Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
+\label{fig:summaryMaterials}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=0.7\textwidth,angle=90]{fig/x0Materials.pdf}
+\end{center}
+\caption{Distribution of the average thickness in units of radiation length $\Xo$ as a function of $\eta$ for the four categories of table~\ref{table:cat} mostly contributing to the total mass of the 
+Tracker. 
+Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
+\label{fig:x0Materials}
+\end{figure}
+
+\begin{figure}[b]
+\begin{center}
+\includegraphics[width=0.7\textwidth,angle=90]{fig/lambda0Materials.pdf}
+\end{center}
+\caption{Distribution of the average thickness in units of interaction length $\lI$ as a function of $\eta$ for the four categories of table~\ref{table:cat} mostly contributing to the total mass of the 
+Tracker. 
+Values on the left vertical axis indicates absolute contributions while relative contributions are indicated on the right.}
+\label{fig:lambda0Materials}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[t]
 \begin{center}
 \includegraphics[width=0.5\textwidth,angle=90]{fig/x0minmax.pdf}
 \end{center}
@@ -596,7 +624,7 @@ and~\ref{fig:lambda0minmax}.
 \label{fig:x0minmax}
 \end{figure}
 
-\begin{figure}[bh]
+\begin{figure}[b]
 \begin{center}
 \includegraphics[width=0.5\textwidth,angle=90]{fig/lambda0minmax.pdf}
 \end{center}
@@ -610,6 +638,7 @@ and~\ref{fig:lambda0minmax}.
 \clearpage
 
 \appendix
+
 \numberwithin{table}{section}
 \section{Tables of components mass.}
 \label{compositionAppendix}
