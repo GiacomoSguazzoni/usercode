@@ -6,7 +6,7 @@
 \usepackage{fancyvrb}
 \usepackage{units}
 \usepackage{amsmath}
-
+%\usepackage{drftcite}
 
 \begin{document}
 
@@ -66,9 +66,9 @@ A set of realistic material modifications to be used by physics analysis groups 
 
 \section{Introduction}
 
-The description of the CMS Tracker~\cite{cmspaper} geometry included in the CMS software
-framework~\cite{CMSSW} to simulate and reconstruct the events includes the
-state-of-the-art knowledge of the passive materials through a set of XML files
+The description of the CMS Tracker~\cite{cmspaper} geometry implemented in CMSSW, the CMS software
+framework~\cite{CMSSW}, to simulate and reconstruct the events includes the
+state-of-the-art knowledge~\cite{rr} of the passive materials through a set of XML files~\cite{ddd}
 then appropriately interfaced with GEANT4~\cite{g4}, the detector simulation package used in CMS.
 %collected in the packages {\tt Geometry/CMSCommonData} and {\tt
 %  Geometry/TrackerCommonData}.
@@ -433,9 +433,9 @@ The density variation domain results by the imposition of an appropriate set of 
  \begin{equation}
 \Delta M = \sum_i \frac{\Delta \rho_i}{\rho_i} m_i.
 \end{equation}
-The Silicon Strip Tracker mass as estimated during the integration and installation is $3996^{+88}_{-132}$ kg. The Pixel detector, installed in a later time, is not included in this estimation. The corresponding mass in the simulation is 4037 kg. The resulting relative weighted versus simulated mass difference is $-1^{+2}_{-3}\%$ suggesting an agreement between weighted and simulated masses within the estimation error.
+The Silicon Strip Tracker mass as estimated during the integration and installation is $3996^{+88}_{-132}\kg$. The Pixel detector, installed in a later time, is not included in this estimation. The corresponding mass in the simulation is $4037\kg$. The resulting relative weighted versus simulated mass difference is $-1^{+2}_{-3}\%$ suggesting an agreement between weighted and simulated masses within the estimation error.
 
-Similar estimation performed over single subdetector indicate possible localized larger discrepancies. For example, the TIB/TID subdetector plus some ancillary pieces have been weighted. The result is $450^{+12}_{-20}$ kg to be compared with 427.0 kg the simulated mass of the corresponding volumes. The resulting weighted versus simulated mass difference is $5^{+3}_{-4}\%$. As far as the TEC subdetector is concerned an uncertainty of about 3\% is claimed by the experts.
+Similar estimation performed over single subdetector indicate possible localized larger discrepancies. For example, the TIB/TID subdetector plus some ancillary pieces have been weighted. The result is $450^{+12}_{-20}\kg$ to be compared with $427.0\kg$ the simulated mass of the corresponding volumes. The resulting weighted versus simulated mass difference is $5^{+3}_{-4}\%$. As far as the TEC subdetector is concerned an uncertainty of about 3\% is claimed by the experts.
 
 As a consequence, a conservative approach has been chosen in this study: It is assumed that the actual Tracker mass is 5\% larger than the mass on the corresponding volumes in the simulation.
 
@@ -572,6 +572,8 @@ A method to change in a controlled way the description of the Tracker materials 
 \bibitem{cmspaper} CMS~Collaboration, {\em The CMS experiment at
     the CERN LHC}, 2008 JINST 3 S08004.
 \bibitem{CMSSW} CMS Collaboration, {\em CMS Physics TDR}, Volume 1, CERN-LHCC-2006-001 (2006).
+\bibitem{rr} R.~Ranieri for the CMS Collaboration, {\em The Simulation of the CMS Silicon Tracker}, CERN-CMS-CR-2008-007 (2008) and proceedings of IEEE Nuclear Science Symposium and Medical Imaging Conference, Honolulu, HI, USA, 2007.
+\bibitem{ddd} M. Case, M.~Liendl and F.~van~Lingen, {\em Detector Description Domain Architecture \& Data Model}, CMS NOTE-2001/057, (2001).
 \bibitem{g4} S.~Agostinelli et al., GEANT4 Collaboration, {\em GEANT4 -- a simulation toolkit}, Nucl. Inst. and Meth. A 506 (2003) 250; J.~Allison et al., {\em GEANT4 developments and applications}, IEEE Trans. Nucl. Sci. 53 (2006) 270.
 % \bibitem{tdr} CMS~Collaboration, {\em CMS: The Tracker Project
 %     Technical Design Report}, CERN/LHCC 98-06, CMS TDR 5, 15 April
