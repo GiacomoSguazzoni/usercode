@@ -1,3 +1,8 @@
+% To replace ``Weight'' with ``Mass'' in Appendix A and B
+% sed -i 's/Weight/Mass/g' *tex
+% To replace ``Silicon'' with ``SiliconSensitive'' in Appendix B
+% sed -i 's/Silicon/SiliconSensitive/g' *cats.tex
+
 \documentclass{cmspaper}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -81,12 +86,12 @@ nominal interaction point which coincides with the nominal center of the Tracker
 These thicknesses, referred in the following as $\TX$ and $\TI$ respectively,  
 are evaluated simulating a sample of 100,000
 neutrinos generated at the center of the Tracker, with a uniform
-distribution in $-5\le\eta\le5$ and $0\le\phi\le2\pi$. The unperturbed
+distribution in $|\eta|\le$ 5 and $0\le\phi\le2\pi$. The unperturbed
 trajectory throughout the Tracker volumes can thus be followed, and the
 distributions of $\TX$ and $\TI$ as a function of $\eta$ produced. 
 The distributions of $\TX$ and $\TI$ of the Tracker drop at about $|\eta|$=3.7.
-The $\eta$ range considered in the following analysis will be 
-$-3\le\eta\le3$ where the average thicknesses determined with the procedure
+The $\eta$ range considered in the analysis of Section~\ref{sec:maxmin} will be 
+$|\eta|\le$3 where the average thicknesses determined with the procedure
 described above are  $\TX=1.184\pm0.002$ and $\TI=0.3495\pm0.0006$.
 
 The Tracker geometry used by the detector simulation has been deployed by using at best the techical informations, engineering designs, and direct experience of the people contributing to its construction and assembly.
@@ -343,7 +348,7 @@ The category definitions are given in table~\ref{table:cat}.
   \hline 
 6 & C6F14 & C6F14 & C6F14 \\
   \hline 
-7 & Silicon sensitive & Silicon & Silicon \\
+7 & Silicon sensitive & SiliconSensitive & Silicon \\
   \hline 
 8 & Fiber Glass laminated & FiberGlassLaminated & FR4 \\
 & & &                  G10 \\
@@ -377,7 +382,7 @@ The category definitions are given in table~\ref{table:cat}.
 \end{table}
 
 The contributions of each of the above categories to the whole Tracker mass are listed in table~\ref{table:TrackerCat} 
-and illustrated in the top plot of figure~\ref{fig:summaryMaterials}.
+and illustrated in figure~\ref{fig:summaryMaterialsMass}.
 Detailed tables for the individual subdetector volumes are reported in Appendix~\ref{categoriesAppendix}.
 \begin{table}[h]
 \begin{center}
@@ -399,8 +404,8 @@ from which it is straightforward to derive the respective component $t_{Rj}$:
 \begin{equation}
 t_{{\rm R}j} = \frac{\mathrm{\TX}_{(...,1,k_j,1...)} - \mathrm{\TX}}{k_j - 1} .
 \end{equation}
-The contributions of each of the above categories to the $\TX$ and $\TI$, averaged on the overall Tracker volume, 
-are illustrated in the middle and bottom plots of figure~\ref{fig:summaryMaterials} respectively.
+The contributions of each of the above categories to the $\TX$ and $\TI$, averaged on the volume $|\eta|\le$3, 
+are illustrated in the top and bottom plots of figure~\ref{fig:summaryMaterialsTXTI} respectively.
 Figure~\ref{fig:x0Materials} shows the $\eta$ distributions of $\TX$ for the four categories mostly contributing
 to the Tracker mass, while the distributions of $\TI$ as a function of $\eta$ for the same categories are shown in figure~\ref{fig:lambda0Materials}.
 
@@ -447,7 +452,7 @@ Pure materials and metals are typically well known chemically and easier to repr
 
 The category ``Glue and resins'' is assigned with a variation range as large as $\pm 20\%$ because volumes of glues, resins, silicone gel heavily used for assemblying modules and in the integration activity in general were not at all controlled with respect to the amounts used and very dependent of many parameters like temperature.
 
-The density of the sensitive Silicon volume is kept fixed to avoid affecting the signal generated in the active volumes. Nevertheless it is worth noticing that also silicon detector thicknesses can vary up to $\sim 10\%$.
+The density of the sensitive SiliconSensitive volume is kept fixed to avoid affecting the signal generated in the active volumes. Nevertheless it is worth noticing that also silicon detector thicknesses can vary up to $\sim 10\%$.
 \end{itemize} 
 
 
@@ -478,7 +483,7 @@ The density of the sensitive Silicon volume is kept fixed to avoid affecting the
 \end{table}
 
 \subsection{The extrema finding problem}
-
+\label{sec:maxmin}
 The determination of the k-factors was done with a
 standard technique used for solving optimization problems with inequality
 constraints, the so-called penalty function method. This method
@@ -538,7 +543,7 @@ CopperAndCuAlloys       &  1.050  & 0.950  & 0.950 & 1.050 \\
 Aluminium               &  1.050  & 1.004  & 0.950 & 1.050 \\           
 OrganicMaterials        &  0.850  & 1.150  & 1.150 & 1.150 \\
 C6F14                   &  1.100  & 1.100  & 1.100 & 1.100 \\
-Silicon                 &  Fixed  & Fixed  & Fixed & Fixed \\
+SiliconSemsitive        &  Fixed  & Fixed  & Fixed & Fixed \\
 InorganicOxides         &  1.050  & 0.950  & 1.049 & 1.050 \\           
 FiberGlassLaminated     &  1.100  & 0.902  & 1.100 & 1.013 \\   
 OtherMetals             &  1.100  & 0.900  & 0.900 & 1.100 \\   
@@ -585,11 +590,21 @@ A method to change in a controlled way the description of the Tracker materials 
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=\textwidth]{fig/SummaryMaterials.pdf}
+\includegraphics[width=0.8\textwidth]{fig/SummaryMaterialsMass.pdf}
 \end{center}
-\caption{Contribution of the categories listed in table~\ref{table:cat} to the total mass of the Tracker (top), average $\TX$ (center) and average $\TI$ (bottom). 
+\caption{Contribution of the categories listed in table~\ref{table:cat} to the total mass of the Tracker. 
 Values on the left vertical axis indicates absolute contributions (black) while relative contributions are indicated on the right (red).}
-\label{fig:summaryMaterials}
+\label{fig:summaryMaterialsMass}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{fig/SummaryMaterialsX0.pdf}
+\includegraphics[width=0.8\textwidth]{fig/SummaryMaterialsLambda0.pdf}
+\end{center}
+\caption{Contribution of the categories listed in table~\ref{table:cat} to the average $\TX$ (top) and average $\TI$ (bottom) in the range $|\eta|\le$3. 
+Values on the left vertical axis indicates absolute contributions (black) while relative contributions are indicated on the right (red).}
+\label{fig:summaryMaterialsTXTI}
 \end{figure}
 
 \clearpage
