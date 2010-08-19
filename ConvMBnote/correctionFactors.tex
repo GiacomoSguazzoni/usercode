@@ -170,15 +170,15 @@ it follows that
 \begin{equation}
 \begin{split}
 dN_\gamma & = N_\gamma(\eta) d\eta  =
-N_\gamma(\eta)\frac{d\eta}{d\theta} d\theta  = N_\gamma(\eta)\frac{1+\tan^2\nicefrac[]{\theta}{2}
- }{2\tan\nicefrac{\theta}{2}}  d\theta =\\ 
- & =
- N_\gamma(\eta)\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}}  d\theta  
- = N_\gamma(\eta)\frac{1}{\sin\theta}  d\theta .
+N_\gamma(\eta)\frac{d\eta}{d\cos\theta} d\cos\theta = N_\gamma(\eta)\frac{d\eta}{d\theta}\frac{d\theta}{d\cos\theta} d\cos\theta=\\ 
+ & =N_\gamma(\eta)\frac{1+\tan^2\nicefrac[]{\theta}{2}
+ }{2\tan\nicefrac{\theta}{2}} \frac{1}{\sin\theta} d\cos\theta =
+ N_\gamma(\eta)\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}} \frac{1}{\sin\theta}  d\cos\theta  
+ = N_\gamma(\eta)\frac{1}{\sin^2\theta}  d\cos\theta .
 \label{eq:8}
 \end{split}
 \end{equation}
-Eq.~(\ref{eq:8}) allows to identify $N_\gamma(\theta)$ with $N_\gamma(\eta(\theta))/\sin{\theta}$.
+Eq.~(\ref{eq:8}) allows to identify $N_\gamma(\theta)$ with $N_\gamma(\eta(\theta))/\sin^2{\theta}$.
 %\begin{equation}
 %\begin{split}
 %dN_\gamma(\theta) & = \frac{dN_\gamma}{d\theta} d\theta  =
@@ -194,12 +194,12 @@ Since 'all' photons come from $\pi_0$'s that show an almost flat
 distribution vs. $\eta$, also photon $\eta$-distribution is flat as
 well and $N_\gamma(\eta)$ does not depend on $\eta$, thus:
 \begin{equation}
-N_\gamma(\theta) \propto \frac{1}{\sin \theta} = \frac{\sqrt{x^2+y^2+z^2}}{\sqrt{x^2+y^2}}.
+N_\gamma(\theta) \propto \frac{1}{\sin^2 \theta} = \frac{x^2+y^2+z^2}{x^2+y^2}.
 \label{eq:9}
 \end{equation}
 Putting~(\ref{eq:6}) and~(\ref{eq:9}) together we get 
 \begin{equation}
-N_{\gamma} (R, \theta, \phi) = k \frac{1}{R^2\sin \theta} \, \, \, ,
+N_{\gamma} (R, \theta, \phi) = k \frac{1}{R^2\sin^2 \theta} \, \, \, ,
 \label{eq:10pre}
 \end{equation}
 % \begin{equation}
@@ -207,12 +207,12 @@ N_{\gamma} (R, \theta, \phi) = k \frac{1}{R^2\sin \theta} \, \, \, ,
 % \label{eq:10}
 % \end{equation}
 \begin{equation}
-N_{\gamma} (r, z, \phi) = k \frac{1}{r\sqrt{r^2+z^2}} \,\,\, ,
+N_{\gamma} (r, z, \phi) = k \frac{1}{r^2} \,\,\, ,
 \label{eq:10bis}
 \end{equation}
 and
 \begin{equation}
-N_{\gamma} (x, y, z) = k \frac{1}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}} \,\,\, ,
+N_{\gamma} (x, y, z) = k \frac{1}{x^2+y^2} \,\,\, ,
 \label{eq:10tris}
 \end{equation}
 for spherical,
@@ -226,23 +226,17 @@ Equations
 %~(\ref{eq:5}) with~(\ref{eq:10}),
 ~(\ref{eq:5bis})
 with~(\ref{eq:10bis}), and~(\ref{eq:5tris}) with~(\ref{eq:10tris}),
-respectively, allow the following expressions for the number of photon
+respectively, allow for the following expressions for the number of photon
 conversion to be written:
-% \begin{equation}
-% d N_{\rm conv} = k \frac{\sin \theta}{r^2} 
-% \frac{P}{X_0} \frac{r^2}{\sin^2\theta}\, dr\, d\theta\, d\phi = k
-% \frac{P}{X_0} \frac{1}{\sin\theta}\, dr\, d\theta\, d\phi ,
-% \label{eq:11}
-% \end{equation}
 \begin{equation}
-d N_{\rm conv} = k \frac{1}{r\sqrt{r^2+z^2}} 
+d N_{\rm conv} = k \frac{1}{r^2} 
 \frac{P}{X_0} r dr\, dz\, d\phi = k
-\frac{P}{X_0} \frac{1}{\sqrt{r^2+z^2}}\, dr\, dz\, d\phi ,
+\frac{P}{X_0} \frac{1}{r}\, dr\, dz\, d\phi ,
 \label{eq:11bis}
 \end{equation}
 \begin{equation}
 \begin{split}
-d N_{\rm conv} & = k \frac{P}{X_0} \frac{1}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}} \,dx\,dy\,dz .
+d N_{\rm conv} & = k \frac{P}{X_0} \frac{1}{x^2+y^2} \,dx\,dy\,dz .
 \end{split}
 \label{eq:11tris}
 \end{equation}
@@ -268,57 +262,104 @@ Few relevant examples follow.
 % \end{split}
 % \label{eq:12}
 % \end{equation}
+%
+%%%%% Versione precendete (ma da conservare perche` forse e` il conteggio dei fotoni)
+%
 \item[$r_1<r<r_2$,~$\, z_1<z<z_2$,~$\, 0<\phi<2\pi$;]
   from~Eq.~(\ref{eq:11bis}): 
 \begin{equation}
 \begin{split}
 N_{\rm conv} & = k
-\frac{P}{X_0} \int_{r_1}^{r_2} \int_{z_1}^{z_2} \frac{dr \, dz}{\sqrt{r^2+z^2}}
+\frac{P}{X_0} \int_{r_1}^{r_2} \frac{dr}{r} \int_{z_1}^{z_2} dz
 \int_0^{2\pi} d\phi = \\
-& = 2\pi k \frac{P}{X_0} \int_{r_1}^{r_2} dr \left. \ln \left( 2\sqrt{r^2+z^2}+2z \right) \right|_{z_1}^{z_2} = \\
-& = 2\pi k \frac{P}{X_0} \int_{r_1}^{r_2} dr \ln \frac{\sqrt{r^2+{z_2}^2}+z_2}{\sqrt{r^2+{z_1}^2}+{z_1}} = \\ 
-& = 2\pi k \frac{P}{X_0} \left[ r \ln \frac{\sqrt{r^2+{z_2}^2}+z_2}{\sqrt{r^2+{z_1}^2}+{z_1}} + \right. \\
-& - z_1 \ln \left( 2\sqrt{r^2+{z_1}^2}+r \right)  + \Biggl. \Biggl. z_2 \ln \left( 2\sqrt{r^2+{z_2}^2}+r \right) \Biggr] \Biggr|_{r_1}^{r_2} = \\
-& = 2\pi k \frac{P}{X_0} \left[ r_2 \ln \frac{\sqrt{{r_2}^2+{z_2}^2}+z_2}{\sqrt{{r_2}^2+{z_1}^2}+z_1} - r_1 \ln \frac{\sqrt{{r_1}^2+{z_2}^2}+z_2}{\sqrt{{r_1}^2+{z_1}^2}+z_1} + \right. \\
-& \left. + z_2 \ln \frac{\sqrt{{r_2}^2+{z_2}^2}+r_2}{\sqrt{{r_1}^2+{z_2}^2}+r_1} - z_1 \ln \frac{\sqrt{{r_2}^2+{z_1}^2}+r_2}{\sqrt{{r_1}^2+{z_1}^2}+r_1} \right] \\
-& \equiv k \frac{P}{X_0} f^{r, z}_{\rm geom}.\\
+& = 2\pi k \frac{P}{X_0}  (z_2 - z_1) \ln \frac{r_2}{r_1} \equiv k \frac{P}{X_0} f^{r, z}_{\rm geom}.\\
 \end{split}
 \label{eq:13}
 \end{equation}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% Versione precendete (ma da conservare perche` forse e` il conteggio dei fotoni)
+%
+% \item[$r_1<r<r_2$,~$\, z_1<z<z_2$,~$\, 0<\phi<2\pi$;]
+%   from~Eq.~(\ref{eq:11bis}): 
+% \begin{equation}
+% \begin{split}
+% N_{\rm conv} & = k
+% \frac{P}{X_0} \int_{r_1}^{r_2} \int_{z_1}^{z_2} \frac{dr \, dz}{\sqrt{r^2+z^2}}
+% \int_0^{2\pi} d\phi = \\
+% & = 2\pi k \frac{P}{X_0} \int_{r_1}^{r_2} dr \left. \ln \left( 2\sqrt{r^2+z^2}+2z \right) \right|_{z_1}^{z_2} = \\
+% & = 2\pi k \frac{P}{X_0} \int_{r_1}^{r_2} dr \ln \frac{\sqrt{r^2+{z_2}^2}+z_2}{\sqrt{r^2+{z_1}^2}+{z_1}} = \\ 
+% & = 2\pi k \frac{P}{X_0} \left[ r \ln \frac{\sqrt{r^2+{z_2}^2}+z_2}{\sqrt{r^2+{z_1}^2}+{z_1}} + \right. \\
+% & - z_1 \ln \left( 2\sqrt{r^2+{z_1}^2}+r \right)  + \Biggl. \Biggl. z_2 \ln \left( 2\sqrt{r^2+{z_2}^2}+r \right) \Biggr] \Biggr|_{r_1}^{r_2} = \\
+% & = 2\pi k \frac{P}{X_0} \left[ r_2 \ln \frac{\sqrt{{r_2}^2+{z_2}^2}+z_2}{\sqrt{{r_2}^2+{z_1}^2}+z_1} - r_1 \ln \frac{\sqrt{{r_1}^2+{z_2}^2}+z_2}{\sqrt{{r_1}^2+{z_1}^2}+z_1} + \right. \\
+% & \left. + z_2 \ln \frac{\sqrt{{r_2}^2+{z_2}^2}+r_2}{\sqrt{{r_1}^2+{z_2}^2}+r_1} - z_1 \ln \frac{\sqrt{{r_2}^2+{z_1}^2}+r_2}{\sqrt{{r_1}^2+{z_1}^2}+r_1} \right] \\
+% & \equiv k \frac{P}{X_0} f^{r, z}_{\rm geom}.\\
+% \end{split}
+% \label{eq:13}
+% \end{equation}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 \item[$x_1<x<x_2$,~$\, y_1<y<y_2$,~$\, z_1<z<z_2$;]
   from~Eq.~(\ref{eq:11tris}): 
 \begin{equation}
 \begin{split}
 N_{\rm conv} & = k
-\frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} \int_{z_1}^{z_2}  \frac{dx\,
-  dy \, dz}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}}. 
+\frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} \frac{dx\,
+  dy }{x^2+y^2} \int_{z_1}^{z_2} dz  . 
 \end{split}
 \label{eq:14}
 \end{equation}
-The analytical solution of the integral does not exist~\cite{integrals}. Within
-our needs (i.e. for a scatter plot in the $xy$ plane) we can integrate first in $dz$:
-\begin{equation}
-\begin{split}
-N_{\rm conv} & = k
-\frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} dx \, dy \left. \frac{1}{r} \ln \left( 2\sqrt{r^2+z^2} + 2z \right) \right|_{z_1}^{z_2} \\
-& = k \frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} dx \, dy  \ln \frac{\sqrt{r^2+{z_2}^2} + z_2}{\sqrt{r^2+{z_1}^2} + z_1} ,
-\end{split}
-\label{eq:15pre}
-\end{equation}
-where $r=\sqrt{x^2+y^2}$. If $r\gg |x_2-x_1|$ and $r\gg |y_2
+The analytical solution~\cite{integrals} of the integral would require the computation of polylogarithmic functions. Within
+our needs (i.e. for a scatter plot in the $xy$ plane), if $r\gg |x_2-x_1|$ and $r\gg |y_2
 - y_1|$, a likely sufficient approximate
 solution is
 \begin{equation}
-\begin{split}
-N_{\rm conv} & = k
-\frac{P}{X_0} \Delta x\, \Delta y\,  \ln \frac{\sqrt{\overline{r}^2+{z_2}^2} + z_2}{\sqrt{\overline{r}^2+{z_1}^2} + z_1} \\
-& \equiv k \frac{P}{X_0} f^{x, y}_{\rm geom}
-\end{split}
+N_{\rm conv} = k
+\frac{P}{X_0} \frac{\Delta x\, \Delta y\, \Delta z}{\overline{r}^2} \equiv k \frac{P}{X_0} f^{x, y}_{\rm geom}
 \label{eq:15}
 \end{equation}
-where $\overline{r}$ is the ``average'' radius, i.e. the one taken on
-the middle of the ``box'', $\overline{r}=\nicefrac{1}{2}\sqrt{(x_1+x_2)^2+(y_1+y_2)^2}$.
+where $\overline{r}$ is the ``average'' transverse radius, i.e. the one taken on
+the middle of the ``box'':
+\begin{equation}
+ \overline{r}=\nicefrac{1}{2}\sqrt{(x_1+x_2)^2+(y_1+y_2)^2}.
+\label{eq:16}
+\end{equation}
 %$\overline{r}=\sqrt{\nicefrac{(x_1+x_2)^2}{4}+\nicefrac{(y_1+y_2)^2}{4}}$.
+% \item[$x_1<x<x_2$,~$\, y_1<y<y_2$,~$\, z_1<z<z_2$;]
+%   from~Eq.~(\ref{eq:11tris}): 
+% \begin{equation}
+% \begin{split}
+% N_{\rm conv} & = k
+% \frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} \int_{z_1}^{z_2}  \frac{dx\,
+%   dy \, dz}{\sqrt{x^2+y^2}\sqrt{x^2+y^2+z^2}}. 
+% \end{split}
+% \label{eq:14}
+% \end{equation}
+% The analytical solution of the integral does not exist~\cite{integrals}. Within
+% our needs (i.e. for a scatter plot in the $xy$ plane) we can integrate first in $dz$:
+% \begin{equation}
+% \begin{split}
+% N_{\rm conv} & = k
+% \frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} dx \, dy \left. \frac{1}{r} \ln \left( 2\sqrt{r^2+z^2} + 2z \right) \right|_{z_1}^{z_2} \\
+% & = k \frac{P}{X_0} \int_{x_1}^{x_2} \int_{y_1}^{y_2} dx \, dy  \frac{1}{r} \ln \frac{\sqrt{r^2+{z_2}^2} + z_2}{\sqrt{r^2+{z_1}^2} + z_1} ,
+% \end{split}
+% \label{eq:15pre}
+% \end{equation}
+% where $r=\sqrt{x^2+y^2}$. If $r\gg |x_2-x_1|$ and $r\gg |y_2
+% - y_1|$, a likely sufficient approximate
+% solution is
+% \begin{equation}
+% \begin{split}
+% N_{\rm conv} & = k
+% \frac{P}{X_0} \frac{\Delta x\, \Delta y}{\overline{r}} \,  \ln \frac{\sqrt{\overline{r}^2+{z_2}^2} + z_2}{\sqrt{\overline{r}^2+{z_1}^2} + z_1} \\
+% & \equiv k \frac{P}{X_0} f^{x, y}_{\rm geom}
+% \end{split}
+% \label{eq:15}
+% \end{equation}
+% where $\overline{r}$ is the ``average'' radius, i.e. the one taken on
+% the middle of the ``box'', $\overline{r}=\nicefrac{1}{2}\sqrt{(x_1+x_2)^2+(y_1+y_2)^2}$.
+% %$\overline{r}=\sqrt{\nicefrac{(x_1+x_2)^2}{4}+\nicefrac{(y_1+y_2)^2}{4}}$.
 \end{description}
 
 %\end{document}
