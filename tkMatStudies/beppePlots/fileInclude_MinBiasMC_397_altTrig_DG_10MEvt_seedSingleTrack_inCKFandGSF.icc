@@ -1,0 +1,11 @@
+  // Common includes
+  //
+  //MC reco
+    mc->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_01.root");
+    mc->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_02.root");
+    mc->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_03.root");
+    mc->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_04.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_01.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_02.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_03.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_inCKFandGSF/ntuple_conversion_MinBiasMC_04.root");

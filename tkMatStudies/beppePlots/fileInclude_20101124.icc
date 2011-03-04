@@ -1,0 +1,31 @@
+  // Common includes
+  //
+  //MC reco (processing of 24112010 with 386p1)
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_01.root"); //35584867
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_02.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_03.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_04.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_05.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_06.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_07.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_08.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_09.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_10.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_11.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_12.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_13.root");
+    mc->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_14.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_01.root"); //35584867
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_02.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_03.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_04.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_05.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_06.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_07.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_08.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_09.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_10.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_11.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_12.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_13.root");
+    mcEvt->Add("/raid/sguazz/MinBiasMC_386p1_altTrig/ntuple_conversion_MinBiasMC_14.root");
