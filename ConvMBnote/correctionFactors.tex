@@ -161,38 +161,46 @@ N_{\gamma}(R) \propto \frac{1}{R^2} = \frac{\sin^2 \theta}{r^2} = \frac{1}{x^2+y
 As a consequence of the cylindrical symmetry of pp interactions
 $N_\gamma$ does not depend on $\phi$.
 
-As far as the $\theta$ dependance is concerned, given that 
+%As far as the $\theta$ dependance is concerned
+Given the definition of pseudorapidity, 
 \begin{equation}
 \eta = -\ln \left( \tan \nicefrac{\theta}{2} \right)
 \label{eq:7}
 \end{equation}
-it follows that
+it follows that the differential in $\eta$ is related to the differential in $\cos\theta$:
+% \begin{equation}
+% \begin{split}
+% dN_\gamma & = N_\gamma(\eta) d\eta  =
+% N_\gamma(\eta)\frac{d\eta}{d\cos\theta} d\cos\theta = N_\gamma(\eta)\frac{d\eta}{d\theta}\frac{d\theta}{d\cos\theta} d\cos\theta=\\ 
+%  & =N_\gamma(\eta)\frac{1+\tan^2\nicefrac[]{\theta}{2}
+%  }{2\tan\nicefrac{\theta}{2}} \frac{1}{\sin\theta} d\cos\theta =
+%  N_\gamma(\eta)\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}} \frac{1}{\sin\theta}  d\cos\theta  
+%  = N_\gamma(\eta)\frac{1}{\sin^2\theta}  d\cos\theta .
+% \label{eq:8}
+% \end{split}
+% \end{equation}
 \begin{equation}
 \begin{split}
-dN_\gamma & = N_\gamma(\eta) d\eta  =
-N_\gamma(\eta)\frac{d\eta}{d\cos\theta} d\cos\theta = N_\gamma(\eta)\frac{d\eta}{d\theta}\frac{d\theta}{d\cos\theta} d\cos\theta=\\ 
- & =N_\gamma(\eta)\frac{1+\tan^2\nicefrac[]{\theta}{2}
+d\eta  = &
+\frac{d\eta}{d\cos\theta} d\cos\theta = \frac{d\eta}{d\theta}\frac{d\theta}{d\cos\theta} d\cos\theta=\\ 
+ & =\frac{1+\tan^2\nicefrac[]{\theta}{2}
  }{2\tan\nicefrac{\theta}{2}} \frac{1}{\sin\theta} d\cos\theta =
- N_\gamma(\eta)\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}} \frac{1}{\sin\theta}  d\cos\theta  
- = N_\gamma(\eta)\frac{1}{\sin^2\theta}  d\cos\theta .
+ \frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}} \frac{1}{\sin\theta}  d\cos\theta  
+ = \frac{1}{\sin^2\theta}  d\cos\theta .
+\label{eq:8pre}
+\end{split}
+\end{equation}
+Since 'all' photons come from $\pi_0$'s that show a flat
+distribution as the function of rapidity that here is confused with $\eta$, also photon $\eta$-distribution is flat.
+This fact can be used, together with relation~(\ref{eq:8pre}), can be used as follows:
+\begin{equation}
+\begin{split}
+{\rm cost}\cdot\left( \eta_2 - \eta_1 \right)\cdot\left( \phi_2 - \phi_1 \right) = & \int_{\eta_1}^{\eta_2}\int_{\phi_1}^{\phi_2} {\rm cost}\cdot d\eta\, d\phi = \int_{\eta_1}^{\eta_2}\int_{\phi_1}^{\phi_2} {\rm cost}\cdot \frac{d\cos \theta}{\sin^2 \theta} d\phi = \\
+= & \int_{\theta(\eta_1)}^{\theta(\eta_2)}\int_{\phi_1}^{\phi_2} N_\gamma(\theta)\cdot d\cos \theta\, d\phi .
 \label{eq:8}
 \end{split}
 \end{equation}
-Eq.~(\ref{eq:8}) allows to identify $N_\gamma(\theta)$ with $N_\gamma(\eta(\theta))/\sin^2{\theta}$.
-%\begin{equation}
-%\begin{split}
-%dN_\gamma(\theta) & = \frac{dN_\gamma}{d\theta} d\theta  =
-%\frac{dN_\gamma}{d\eta}\frac{d\eta}{d\theta}  d\theta  = %\frac{dN_\gamma}{d\eta}\frac{1+\tan^2\nicefrac[]{\theta}{2}
-% }{2\tan\nicefrac{\theta}{2}}  d\theta =\\ 
-% & =
-% \frac{dN_\gamma}{d\eta}\frac{1}{2\sin\nicefrac[]{\theta}{2}\cos\nicefrac[]{\theta}{2}}  d\theta  
-% = \frac{dN_\gamma}{d\eta}\frac{1}{\sin\theta}  d\theta .
-%\label{eq:8}
-%\end{split}
-%\end{equation}
-Since 'all' photons come from $\pi_0$'s that show an almost flat
-distribution vs. $\eta$, also photon $\eta$-distribution is flat as
-well and $N_\gamma(\eta)$ does not depend on $\eta$, thus:
+Relation~(\ref{eq:8}) allows to identify $N_\gamma(\theta)$ with ${\rm cost}/\sin^2{\theta}$ so that
 \begin{equation}
 N_\gamma(\theta) \propto \frac{1}{\sin^2 \theta} = \frac{x^2+y^2+z^2}{x^2+y^2}.
 \label{eq:9}
