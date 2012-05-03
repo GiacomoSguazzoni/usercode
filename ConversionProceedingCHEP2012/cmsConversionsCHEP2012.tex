@@ -37,16 +37,362 @@ The conversion of photons into electron-positron pairs in the detector material 
 \end{abstract}
 
 
-\include{introduction}
+%\thispagestyle{empty}
+\section{Introduction}
+\label{introductions}
 
-\include{standard}
+The Compact Muon Solenoid (CMS)~\cite{JINST} is one of two general-purpose
+detectors operating at the Large Hadron Collider (LHC) facility at CERN.
+One of the central features of the CMS detector is a $6$-m diameter solenoidal
+magnet operating at $3.8\,{\rm T}$, which enables the measurement of charged
+particle momenta over more than four orders of magnitude, from less than
+$100\MeVc$ to more than $1\TeVc$, by reconstructing their trajectories as they
+traverse the CMS inner tracking system. The CMS Tracker, shown
+in~Fig.~\ref{fig:tklayout}, consists of two main detectors: three
+barrel layers and two endcap disks per side of silicon pixel detectors, covering
+the region from $4\cm$ to $15\cm$ in radius, and within $49\cm$ on either
+side of the collision point along the LHC beam axis; ten barrel layers and
+twelve endcap disks per side of silicon strip detectors, covering the
+region from $25$ to $110\cm$ in radius, and within $280\cm$ on either
+side of the collision point along the LHC beam axis. The Tracker
+acceptance extends up to a pseudo-rapidity of $\left | \eta \right | < 2.5$.
 
-\include{singleleg}
 
-\include{otherseed}
+The precise and efficient determination of charged-particle momenta is a
+critical component of the physics program of CMS, as it impacts the ability to
+reconstruct leptons, charged hadrons, jets, and photon conversions, which
+are the basic physics objects needed to understand $pp$ collisions at the LHC.
+Standard reconstruction of tracks in
+the CMS Tracker is seeded by the hits in the
+detector~\cite{TRK-10-001}.  Seeds are then
+propagated outward, adding compatible hits and updating the trajectory
+until either the detector boundary is reached, or no additional
+compatible hits can be found.  In the final stage, the collection of
+hits is fit to obtain the best estimate of the track parameters.
 
-\include{conclusions}
+Material within the tracking volume, however, affects the overall
+event topology, reconstruction and analysis, through electron
+bremsstrahlung, photon conversions and nuclear interactions. It also
+affects the trajectories of charged tracks because of multiple
+scattering and energy loss.
 
-\include{bibliography}
+\begin{figure}[h!]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{fig/general_layout.pdf}
+    \caption{Schematic cross section of the CMS Tracker.}
+    \label{fig:tklayout}
+  \end{center}
+\end{figure}
 
+
+The detection of photon conversions and nuclear interactions both rely
+on the reconstruction of displaced secondary vertices, and the track
+reconstruction algorithm described in~\cite{TRK-10-001} has been tuned
+to allow reconstruction of tracks originated into the tracking volume,
+as far as at a radius of $60\cm$.
+
+
+
+
+{\bf lo usiamo questo che segue???}
+
+The CMS tracker material is not negligible as a consequence of the
+massive mechanical structure and the amount of services needed to
+support and run such a large, complex and highly granular tracking device.
+
+As a consequence of that, the effect of the interactions of particles
+with the material are not negligible. 
+
+
+A robust method for the Material Budget estimation, exploited by many
+past experiments, is based on photon conversions. The idea is that the
+material radiography, provided by the position of reconstructed photon
+conversion vertices, allows for the visualisation of detector layers
+and service structures and that the conversions rate, if properly
+accounted, provides an estimate of the amount of material in the
+detector volume.
+
+At the LHC many photons are produced from $\pi^0$ decays in minimum bias events; 
+as shown in Figure~\ref{ptMC}, the $p_T$ spectrum of such photons is
+very soft and the electron and positron produced in the conversion 
+do not have enough transverse momentum to reach the CMS electromagnetic calorimeter.
+Therefore, conversions need to be reconstructed with a tracker standalone algorithm.
+
+\begin{figure}[!hbtp]
+\centering
+%\includegraphics[width=.45\textwidth]{ptMC.png}
+\caption{Transverse momentum spectrum of converted photons in minimum
+  bias MC events at $\sqrt{s}=900\GeV$.}
+\label{ptMC}
+\end{figure}
+
+The present analysis makes use of the algorithm described in~\cite{nancy}.
+It allows the reconstruction of low-$p_T$ photons ($\geq 0.4\GeV$)
+without any request of ECAL match. The main signature for the
+conversion identification is the reconstruction of two opposite
+charged tracks with tangent direction at the point where they form a
+detached vertex. The vertex fit is performed with the \emph{Kinematic
+  Constraint Vertex Fitter}.
+
+
+
+
+\section{Photon Conversion Reconstruction}
+\label{standard}
+
+
+Up to 70\% of photons traversing the Tracker material converts into  $e^+ e^-$ pairs.
+In the Minimum Bias events collected during the  first phase of CMS data taking, photons, mainly coming from
+$\pi^0$ decays, are expected to have a very soft spectrum. The electron pairs from conversions are very unlikely to
+reach the Electromagnetic Calorimeter (ECAL) and the ECAL cluster-driven track and seed finding method~\cite{NOTE2006005, EGM-10-005}
+cannot be applied. The development of the iterative tracking described in~\cite{TRK-10-001}
+largely extended the capability of reconstructing low-\pt tracks and displaced vertices.
+Furthermore, for the work presented in this Analysis Summary, additional seeding steps were introduced as described in Sec.~\ref{sec:newSeedingSteps}
+and exploited here to improve the identification of conversions at large radii.
+The tracker-only conversion reconstruction was already partially commissioned with limited statistics
+during the LHC runs at $\sqrt{s}=900\GeV$ data~\cite{TRK-10-001}.
+
+
+The conversion information can be obtained by the reconstruction of the e+ and e? tracks of the
+	conversion. Two methods are used and compared, ECAL-seeded conversion method and combined conversion method. One method only uses the conversion ECAL-seeded tracks and the 	other takes into account conversion track pairs reconstructed from a combination of standard 	tracks, Gaussian sum filter (Gsf) tracks and conversion ECAL-seeded tracks. We first check various kinematical distributions of selected photons in ECAL-seeded conversion method, followed by combined conversion method.
+
+
+Both methods (ECAL-seeded and combined) 	fit two oppositely charged tracks to a common vertex with the constraint that the two tracks 	are parallel at the vertex, in both the transverse and longitudinal planes. The methods differ 	mainly in the preselection of the track pairs.
+
+%\subsection{Selection and results}                                                                                                                                                                
+
+
+Photon conversions are characterized by a pair of
+oppositely charged secondary tracks, originating from the photon vertex with an
+invariant mass consistent with zero,  which are therefore parallel
+to each other at production vertex. The electron-positron pair, then,
+opens only in the transverse plane because of the solenoidal magnetic field.
+
+
+
+In this analysis we use the tracker-driven conversion reconstruction,
+already described in~\cite{TRK-10-001}, in~\cite{trk10001} and in~\cite{TRK-10-003}. We
+summarize the method here mentioning the further requirements needed to  
+specialize the tracker conversion reconstruction to the $\chi_c$
+case. The algorithm relies on the capability of iterative tracking,
+discussed in~\cite{TRK-10-001}, to efficiently reconstruct low-\pt and
+displaced tracks, as the ones coming from a photon conversion.
+
+Opposite-sign track pairs are firstly required to satisfy basic
+quality criteria, i.e. have more than four hits and a normalised
+$\chi^2$ less than 10. Then
+the tracker-only conversion finding exploits the conversion pair
+signature to distinguish genuine pairs from fake pairs.
+Tracks are required to have positive charge-signed transverse impact
+parameter (the primary vertex lies outside the track trajectory helix)
+and the distance of minimum approach in the $xy$ plane, $d_m$, between $-0.25\cm$
+and $1\cm$ where $d_m$ is
+%defined as $d_{O_1-O_2} - (R_1 - R_2)$ where
+%$d_{O_1-O_2}$ is the distance between the centres of the two track
+%circles in the transverse plane and $R_1$ and $R_2$ are the two
+%circles radii.
+the distance between the two points of tangent approach in the
+transverse plane for the helices of the two tracks.
+
+
+
+
+Track pairs surviving the selection are then fitted to a common
+3D-constrained kinematic vertex fitter. The 3D constraints imposes the
+tracks to be parallel in both the transverse and longitudinal planes.
+The pair is retained if the fit converges and its $\chi^2$ probability
+is greater than $5\times10^{-4}$.
+
+
+
+Conversion vertices are reconstructed with an excellent precision:
+the angular resolution is about $1{\rm mrad}$ while the radial resolution varies from about~$0.2\cm$ to about~$0.5\cm$, primarily
+as a function of pseudo-rapidity.
+In Fig.~\ref{fig:convXY} the position of conversion vertices reconstructed in data is shown in the $(x,y)$ plane:
+in Fig.~\ref{subfig:convXY_a} the structure at the very centre is the Pixel detector,
+surrounded by the shell and rails supporting the Pixel detector, four layers of the Inner Tracker and the first layer of the Outer Tracker.
+When restricting the $(x,y)$ view to $\pm 12\cm$, Fig.~\ref{subfig:convXY_c}, the beam pipe is clearly visible, off-centered with respect to
+the Pixel detector. More details on the features visible on the ``radiographies'' are given in Sec.~\ref{sec:mat}.
+
+The  $(z, R)$  view of conversion vertices reconstructed in data is finally shown in Fig.~\ref{fig:convRZ};  the less populated
+areas  around $|\eta|\sim1.2$, also present in simulation, correspond to transition regions between the Tracker
+barrel and endcap sub-components for which the additional track seeding
+iterations described in Sec.~\ref{sec:newSeedingSteps} have not been optimized and the conversion reconstruction efficiency is smaller.
+
+\begin{figure}[h!]
+  \begin{center}
+   \vspace{-0.6cm}
+   \subfigure[]{
+   \label{subfig:convXY_a}
+    \includegraphics[width=0.40\textwidth]{fig/conversions/ptCut/data_xy.png}}
+   \subfigure[]{
+   \label{subfig:convXY_b}
+    \includegraphics[width=0.40\textwidth]{fig/conversions/ptCut/data_xy_zoom.png}}
+   \subfigure[]{
+   \label{subfig:convXY_c}
+    \includegraphics[width=0.40\textwidth]{fig/conversions/ptCut/data_xy_pixel_eta.png}}
+    \caption{Conversion vertices in data in the $(x,y)$ plane for $|z|<26\cm$; zoom increases from (a) to (c).}
+    \label{fig:convXY}
+  \end{center}
+\end{figure}
+
+\begin{figure}[h!]
+  \begin{center}
+     \includegraphics[width=15cm,height=5.5cm]{fig/conversions/ptCut/data_rz.png}
+      \caption{Conversion vertices in data the $(z,R)$ plane.}
+    \label{fig:convRZ}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[!hbtp]
+\centering
+\subfigure[]{
+\label{subfig:TIBL1Int_LocView_sim}
+\includegraphics[width=.32\textwidth]{fig/L1_INT_sim_mod.png}}
+\subfigure[]{
+\label{subfig:TIBL1Int_LocView_mc}
+\includegraphics[width=.32\textwidth]{fig/L1_INT_mc_mod.png}}
+\subfigure[]{
+\label{subfig:TIBL1Int_LocView_data}
+\includegraphics[width=.32\textwidth]{fig/L1_INT_data_mod.png}}
+\caption{Nuclear interaction local view of the $x_{\rm local}$ vs. $z_{\rm local}$ projection related to the Inner Tracker Layer 1, internal part: \subref{subfig:TIBL1Int_LocView_sim}~simulation\
+ truth; \subref{subfig:TIBL1Int_LocView_mc}~simulation reconstructed; \subref{subfig:TIBL1Int_LocView_data}~data.}
+\label{fig:TIBL1Int_LocView}
+\end{figure}
+
+As an example of this technique, the local transverse view, $x_{\rm local}$ vs. $z_{\rm local}$ with respect to the R$\phi$ module, of the Inner Strip Tracker Layer 1, internal, is shown in Fig.\
+~\ref{fig:TIBL1Int_LocView} for nuclear interaction vertices. Each plot features the single module local view replicated three times, with the appropriate relative geometry, to mock-up a portion\
+ of the structure.
+The data based plot of Fig.~\ref{fig:TIBL1Int_LocView}~\subref{subfig:TIBL1Int_LocView_data} shows the structures expected in the simulation but affected by the smearing due to misalignment and \
+unavoidable irregularities of the passive structures.
+
+
+
+\section{Tracking Improvement}
+\label{singleleg}
+
+
+The standard CMS tracking is made of six iterative steps, numbered
+from 0 to 5, designed to obtain high efficiency and low fake rate for
+tracks coming either from the primary vertex or from displaced decay
+vertices while maintaining the overall computing time within the
+requirements of CMS offline reconstruction centre.
+Because of this constraint, the standard implementation is not optimal
+to reconstruct with high efficiency tracks from photon conversions and
+nuclear interactions since the cuts applied in the standard
+reconstruction are too tight for these processes. In fact, those
+tracks have usually very low momentum and, especially for displaced
+vertices at large radii, they do not point  back to the primary
+vertex; therefore, they could be reconstructed only with very relaxed
+cuts that would result into unacceptably large computing time during
+the pattern recognition.
+
+For the purpose of the present study, two additional dedicated
+tracking steps are added to the track reconstruction sequence.
+These were specifically designed to increase the number of
+reconstructed conversion vertices in the barrel region,
+but they have been found to be very useful for nuclear interaction as
+well. A first additional step (step 6) is seeded from triplets of hits
+in the Pixel barrel and/or in the Strip Tracker Inner barrel
+detectors; a second additional step (step 7) is seeded from hit-pairs
+in the Strip Tracker barrel detectors and/or in the Strip Tracker Inner disks.
+The seed trajectories are required
+%to originate from a region of radius $25\cm$ and longitudinal half length of $0.5\cm$ and are required                                                                                            
+to have a minimum transverse momentum of $0.1$ and $0.2\GeVc$ for the
+step 6 and 7, respectively. The resulting large number of seeds is
+reduced by selecting topologies compatible with a photon conversion
+pair: the total charge has to be zero,
+the azimuthal angle difference less than $1.5$ radians, the difference
+in the cotangent of the polar angle less than $0.25$ radians, and the
+differences of the radial and longitudinal coordinates of the
+innermost hit have to be less then $5\cm$.
+The pattern recognition is then performed allowing for at most one
+lost hit and requiring at least three hits. Finally the standard track
+fit provides the best estimate of the track parameters.
+
+The impact of the additional steps to the reconstruction of conversion
+and nuclear interaction vertices can be seen on Fig.~\ref{fig:matItTk}
+showing the contribution of the different steps to the vertices
+reconstruction, as estimated by the simulation.
+Step 7 increases by more than a factor two the number of conversions
+outside the Pixel detector region and contributes significantly to nuclear
+interaction vertices at all radii; step 6 mainly helps finding
+conversions in the second and third Pixel detector layers. Further details
+about the reconstruction of conversions and nuclear interactions will
+be given in the following sections.
+\begin{figure}[!hbtp]
+\centering
+\subfigure[]{
+\label{subfig:convItTk}
+\includegraphics[width=.7\textwidth]{fig/r_algo_BasicCutsJuly12.png}}
+\subfigure[]{
+\label{subfig:nuclItTk}
+\includegraphics[width=.7\textwidth]{fig/r_algo_2010-06-04_NI.png}}
+\caption{Fraction of reconstructed vertices as a function of the radius of the vertex
+for conversions~\subref{subfig:convItTk} and nuclear
+interactions~\subref{subfig:nuclItTk}, for  $|\eta|<1.4$, as estimated
+from simulation. The different colors correspond to the largest
+iterative step needed to reconstruct the tracks at the vertex.}
+\label{fig:matItTk}
+\end{figure}
+
+\section{otherseed}
+
+\section{results}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.6\textwidth]{fig/Chic1fb.png}
+    \caption{Invariant mass spectrum for $\chi_c$ candidates with $p_T^{\JPsi}$ between 7.0 and 25.0\GeVc.}
+    \label{fig:chic}
+\end{figure} 
+
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.6\textwidth]{fig/EvtDisplay.png}
+    \caption{Event Display}
+    \label{fig:evtdisplay}
+\end{figure} 
+
+\section{Conclusions}
+\label{section_conclusions}
+
+A first attempt of estimating the Tracker Material Budget using photon conversions with 2009 $\sqrt{s}=900\GeV$ CMS 
+data has been completed.
+Results are still qualitative since the statistics is too low. 
+However, a good match with MC data is already visible in a region including the beam pipe and the two innermost pixel barrel layer.
+
+The method here presented provides an uncalibrated measurement of the material, after correcting the number of conversions per unit volume 
+for appropriate factors due to reconstruction efficiency, photon flux and geometrical effects. 
+
+Current problems of this method are the low photon reconstruction efficiency at radii exceeding the first pixel barrel layer, the poor
+conversion radius resolution and the lack of an absolute measurement scale.
+The conversion reconstruction efficiency could be improved by retuning the track reconstruction parameters and 
+by looking for possible constraints provided by the second photon from the pion decay 
+(which may have reached the calorimeter or converted in a different part of the tracker).
+The poor resolution can be improved by accounting for hits possibly shared by the two electron legs and properly take into account by means of 
+unfolding techniques.
+An absolute scale of the material estimation could be provided by the knowledge of the photon flux or by gauging the measurement 
+counting the number of conversions in a volume of known radiation length.
+
+Final remark is that the validity of the proposed method is not necessarily limited to converted photons and could be applied to
+nuclear interactions as well.
+
+
+\begin{thebibliography}{99}
+
+\bibitem{steve} S.~Wasserbaech, {\em Computeraized tomography of the
+    ALEPH detector}, ALEPH Internal Note, {\tt ALEPH 97-08} (1997);
+\bibitem{nancy} N.~Marinelli et al, {\em Photon conversion algorithm},
+  CMS Analysis note in preparation;
+\bibitem{integrals} H.B.~Dwight, {\em Tables of Integrals and Other
+    Mathematical Data}, New York and London, The Macmillan Company (1957);\\
+  M.~Abramowitz, I.A.~Stegun, {\em Handbook of Mathematical
+  Functions with Formulas, Graphs, and Mathematical Tables}, New York,
+  Dover Publications (1972), ISBN 978-0-486-61272-0;
+%\emph{}
+
+\end{thebibliography}
 \end{document}
