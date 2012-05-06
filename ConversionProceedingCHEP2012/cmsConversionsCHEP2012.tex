@@ -188,7 +188,7 @@ The dedicated seeding described in Sec.~\ref{sec:newSeedingStep} provides a reas
 
 \begin{figure}[h!]
   \begin{center}
-     \includegraphics[width=15cm,height=5.5cm]{fig/conversions/ptCut/data_rz.png}
+     \includegraphics[width=17cm,height=5.7cm]{fig/conversions/ptCut/data_rz.png}
       \caption{Conversion vertices in data the $(z,R)$ plane.}
     \label{fig:convRZ}
   \end{center}
@@ -217,11 +217,15 @@ when the photon energy is measured through the tracking of the
 electron-positron pair originating from a conversion of the photon.
 Figure~\ref{fig:chic} shows the invariant mass distribution for $\chi_c$ candidates
 observed through their radiative decay in $\JPsi + \cPgg$. The excellent momentum resolution of the reconstructed photon conversions translates in a mass resolution of less then 10~MeV, what is enough to disentangle  the states $\Chione$ and $\Chitwo$, whose masses differ by only 45\MeV.
-
-
+%
 Furthermore, the  converted photons have an accurate assignment of the interaction vertex where they come from, allowing  to limit the combinatorial background in the invariant mass spectrum of Fig.~\ref{fig:chic}
 rejecting wrong combinations of  dimuons  and photons produced in different $pp$ collision at the same bunch crossing (something especially important in the
 presence of a large number of pileup collisions). 
+
+
+The drawback of the usage of photon conversions for a physics measurement 
+is the reduced yield caused by the low efficiency of their reconstruction as pairs of low momentum tracks displaced with respect to the beam axis. Typical efficiency is of the order of $0.1 \div 5\%$ for photon \pt  $< 5 \GeVc$. It is then evident that any new algorithm contributing to increase this efficiency has a direct impact in the physics analyses.
+
 
 
 
@@ -234,6 +238,7 @@ presence of a large number of pileup collisions).
 \end{figure} 
 
 
+%---------------------------------------------------------------------------------------------------------------
 
 \section{Photon Conversion Reconstruction}
 \label{standard}
@@ -249,7 +254,7 @@ opens only in the transverse plane because of the solenoidal magnetic field.
 The general reconstruction approach is to preselect pairs of oppositely charged tracks satisfying the quality and topological criteria of photon conversions and to fit each of these pairs by a 3D-constrained kinematic vertex 
 fitter that imposes the two tracks to be parallel at the vertex. 
 
-Two methods are used in CMS to generate the collection of potential conversion tracks: the ECAL-seeded conversion method~\cite{ecalseeded}  and the combined conversion method. The former starts from calorimetric cluster and is optimized for very displaced conversion vertexes as well as high-\pt photons.
+Two methods are used in CMS to generate the collection of potential conversion tracks: the ECAL-seeded conversion method~\cite{ecalseeded}  and the combined conversion method. The former starts from calorimetric cluster and is optimized for very displaced conversion vertexes as well as high-\pt photons (\pt$>~10~\GeVc$).
 To reconstruct photon conversions within a soft-\pt spectrum (such as the majority of the photons from $\pi^0$ decays in minimum bias events or from quarkonia excited states) the ECAL cluster-driven track cannot be used,  because the electron pairs from conversions are very unlikely to reach the electromagnetic calorimeter.
 Therefore  conversions need to be reconstructed pairing tracks from the standard CMS track reconstruction~\cite{TRK-10-001}. This last produces an inclusive collection of pixel and tracker-seeded tracks resulting from an iterative procedure to incorporate increasingly displaced and/or low-\pt tracks.
 The collection of tracks in the combined method is obtained from a combination of standard 	tracks,  conversion ECAL-seeded tracks and Gaussian sum filter (Gsf) tracks, specific for the reconstruction of electron candidates with a Gaussian Sum Filter (GSF) fit, which employs a weighted  	sum of Gaussian components to model the non-Gaussian energy loss distribution for electrons passing through the material. 
@@ -257,110 +262,146 @@ The collection of tracks in the combined method is obtained from a combination o
 
 QUI CI METTIAMO UN CERATI PLOT PER LE TRE COMPONENTI GSF, ECAL, ITERATIVE?
 
-\section{Tracking Improvement}
+%---------------------------------------------------------------------------------------------------------------
+
+\section{Tracking algorithm for photon conversions}
 \label{sec:newSeedingStep}
+ 
 
-
- The drawback 
-is the reduced yield, caused by the the low efficiency of their reconstruction as pairs of low momentum tracks displaced with respect to the beam axis.
-
-
-We use only tracker driven conversion reconstruction since we are dealing with low pT photons and some of them does not even reach the electromagnetic calorimeter; in this transverse momentum region ECAL seeded conversion reconstruction has a very low reconstruction efficiency, being optimized to reconstruct conversion in a region of pT > 10 GeV/c.
-
-
-
-Furthermore, for the work presented in this Analysis Summary, additional seeding steps were introduced as described in Sec.~\ref{sec:newSeedingSteps}
-and exploited here to improve the identification of conversions at large radii.
-
-
-Prompt photons in the event undergoes asymmetric conversion in the tracker material producing one electron carrying the majority of the photon energy. The second electron from the conversion has too low momentum, or the conversion vertex is not reconstructed well, and as a result these events are not found by the conversion finding algorithm and will be identified as a prompt electron.
-
-Hard bremstrahlung photon: There are cases where a lepton undergoes hard bremstrahlung in the tracker material producing a photon with large momentum. This photon undergoes conversion again in subsequent layers of the tracker material in the same way described for the prompt photon category.
-
-photon then converts in the tracker material in an asymmetric fashion such that an electron carrying most of the photon energy is produced. This leaves the electron track matching to the rest of the electromagnetic energy deposition with a reasonable energy over momentum fraction,
-
-
-
-The tracks of the resulting electrons from a conversion decay are parallel to each other at the decay point, and re- main so in the r?z plane. This is a unique feature that is the basis of the algorithm we use. To exploit this geometry, all Combinatorial Track Fitter (CTF) tracks within a cone of ÆR < 0.3 around the electronÕs GSF track and with
-charge opposite that of the GSF track, are pre-selected. For each of fined
-
-
-The standard CMS tracking is made of six iterative steps, numbered
-from 0 to 5, designed to obtain high efficiency and low fake rate for
+The standard CMS tracking is made of consecutive iterative steps designed to obtain high efficiency and low fake rate for
 tracks coming either from the primary vertex or from displaced decay
 vertices while maintaining the overall computing time within the
-requirements of CMS offline reconstruction centre.
+requirements of the CMS offline reconstruction.
 Because of this constraint, the standard implementation is not optimal
 to reconstruct with high efficiency tracks from photon conversions
- since the cuts applied in the standard
-reconstruction are too tight for these processes. In fact, those
+since the cuts applied in the standard
+reconstruction are too tight for these processes. Those
 tracks have usually very low momentum and, especially for displaced
-vertices at large radii, they do not point  back to the primary
-vertex; therefore, they could be reconstructed only with very relaxed
-cuts that would result into unacceptably large computing time during
-the pattern recognition.
+vertices at large radii, they have a large transverse impact parameter.
 
-For the purpose of the present study, an additional dedicated
-tracking step is added to the track reconstruction sequence.
+Beside the soft-\pt spectrum of the majority of the photons produced at LHC, another reason why the produced tracks have low momentum is the asymmetric distribution of the energy among the $e^+e^-$ pairs~\cite{pdg}, implying that one lepton carries most of the photon energy, leaving the second lepton with a too low momentum to be reconstructed. As a result these photons are not found by the conversion finding algorithms because only one of the two tracks is missing, whereas the leading track has been reconstructed.
+
+Exploiting this feature, we have developed a dedicated track reconstruction that recovers those photon conversions for which the 
+leading  track has been already reconstructed. The leading track is used to drive the seeding of the second track, for this reason we refer to the algorithm as track-driven.
+
+The dedicated tracking algorithm is configured as an additional step of the CMS iterative tracking. Having to use all the available reconstructed tracks, it is the last to run, after all the other standard iterative tracking steps.
+
+Similarly to  the other steps, the track-driven algorithm starts from identifying trajectory seeds from which to build the full trajectories using the standard CMS tracking sequence, based on Kalman filter method in the pattern recognition and track refitting.
+Trajectory seeds are built from pairs of hits
+in the Pixel and/or in the Strip Tracker detectors. 
+In order to reduce the number of hits to combine as well as to avoid to reconstruct already built tracks,  only hits not associated to other tracks are used in the seeding search.
+
+Due to the massless photon, the tracks of the resulting electrons from a photon conversion are parallel to each other at the conversion vertex, and open in two opposite arcs of circle in the  plane transverse to the magnetic field (xy plane in Fig.~\ref{fig:algo}~\subref{subfig:algoXY}).
+whereas they  remain parallel in the  longitudinal plane (rz plane in Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}). This is a unique feature that is the basis of the algorithm we use. 
 
 
- is seeded from pairs of hits
-in the Pixel barrel and/or in the Strip Tracker Inner barrel
-detectors; 
+\begin{figure}[]
+\centering
+\subfigure[]{
+\label{subfig:algoXY}
+\includegraphics[trim=7cm 0cm 7cm 0cm, clip=true,width=.4\textwidth]{fig/singleLegAlgoXY.pdf}}
+\subfigure[]{
+\label{subfig:algoRZ}
+\includegraphics[trim=7cm 0cm 7cm 0cm, clip=true,width=.4\textwidth]{fig/singleLegAlgoRZ.pdf}}
+\caption{~\subref{subfig:algoXY}}
+\label{fig:algo}
+\end{figure}
 
-in the Strip Tracker barrel detectors and/or in the Strip Tracker Inner disks.
+Not all the tracks from  the standard collection are used to drive our seeding. The tracks are selected applying the geometrical conditions imposed by the hypothesis of being a conversion track from prompt photon. As described in Fig.~\ref{fig:algo}~\subref{subfig:algoXY} the photon direction VC is tangent to both tracks in the conversion point C. Starting from a track and its associated primary vertex (V), with pure geometrical considerations the estimated position of the conversion vertex (C) is obtained. Given that a photon conversion happens in the material inside the tracker volume, from the beampipe onwards, tracks compatible with the conversion hypothesis cannot have the estimated position C at a distance from the beamline inferior to the radius of the beampipe. Applying this condition, relaxed of 0.5~cm to take into account the approximation of our geometrical estimation,  prompt tracks from primary vertices are rejected, and only potential candidates from conversions are kept.
+
+With the same approach, for a given selected track  having  estimated position of the conversion vertex (C) only the pairs of consecutive layers located at a radial distance from the beamline above $\rm r_C$ are used to build the hit pair seeds. 
+Having to reconstruct a track of opposite charge respect to the seeding track, only hit pairs in the semi-plane defined by the VC direction and opposite to the seeding track are considered. The search is limited to an maximum opening angle correlated to the minimum \pt to be reconstructed, that in our case is $100~\MeVc$.
+
+The requirement that the two conversion tracks are parallel to the photon direction in the rz plane ( Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}) allows to further (drammatically) reduce the number of hit combinations to keep into account, limiting the region of interest to a cone (WHICH SIZE???) around the seeding track.
+
+
+For each seeding track a collection of hit pairs compatible with the previous hypothesis is identified and used to construct the trajectory seeds: the proto-tracks providing the initial kinematic needed for the trajectory building step.
+At least three points are requested to evaluate the 5 parameters of the initial kinematic, but only two hits are provided per hit pair, and some of them have a coarse resolution in z. The third measurement is provide again by the conversion hypothesis, through the estimated position of the conversion vertex (C). The coordinates of these three points in the xy plane allow to estimate the \pt of the trajectory seed. The direction of the trajectory seed in RZ is imposed parallel to the seeding track.
+
 
 The seed trajectories are required
-%to originate from a region of radius $25\cm$ and longitudinal half length of $0.5\cm$ and are required                                                                                            
-to have a minimum transverse momentum of $0.1$ and $0.2\GeVc$ for the
-step 6 and 7, respectively. 
-
-To limit  the large number of seeds is
-reduced by selecting topologies compatible with a photon conversion
-pair: the total charge has to be zero,
-
-
-
+to have a minimum transverse momentum of $XXXX~\GeVc$ .
 Seeds are then
 propagated outward, adding compatible hits and updating the trajectory
 until either the detector boundary is reached, or no additional
 compatible hits can be found.  In the final stage, the collection of
 hits is fit to obtain the best estimate of the track parameters.
 
+\section{Results - DA FINIRE}
 
+The impact of the dedicated tracking algorithm  to the reconstruction of photon conversions
+ can be seen on Fig.~\ref{fig:barrelPerf} and Fig.~\ref{fig:endcapPerf} 
+showing the contribution of the different tracking steps to the photon conversion
+reconstruction, as estimated by the simulation, for the Tracker Barrel and Tracker EndCap respectively.
+The additional step increases by more than a factor two the number of conversions at large radii --
+outside the Pixel detector region -- and contributes significantly ($\sim 20\%$ in the Pixel detector layers.
  
- 
-The pattern recognition is then performed allowing for at most one
-lost hit and requiring at least three hits. Finally the standard track
-fit provides the best estimate of the track parameters.
-
-The impact of the additional step to the reconstruction of conversion
-and nuclear interaction vertices can be seen on Fig.~\ref{fig:matItTk}
-showing the contribution of the different steps to the vertices
-reconstruction, as estimated by the simulation.
-The additional step increases by more than a factor two the number of conversions
-outside the Pixel detector region and contributes significantly to nuclear
-interaction vertices at all radii; step 6 mainly helps finding
-conversions in the second and third Pixel detector layers.
+The dedicated Tracking sequence is reasonably fast 
+Mean Number of TrajSeeds per event (in events with at least one TrajSeed): ~20
+Mean number of tracks in these events : ~ 50
+The majority of the seeding-tracks is rejected by the rC < 3 cm cut
 
 
-\begin{figure}[!hbtp]
+ESEMPIO DI QUANTO E' COMPLESSA LA RECOSTRUZIOEN DI UN FOTONE CONVERTITTO: la cascata di conversioni. trovare un evento simulato
+
+There are cases where a lepton undergoes hard bremstrahlung in the tracker material producing a photon with large momentum. This photon undergoes conversion again in subsequent layers of the tracker material.
+
+
+\begin{figure}[h]
 \centering
 \subfigure[]{
 \label{subfig:convItTk}
-\includegraphics[width=.7\textwidth]{fig/r_algo_BasicCutsJuly12.png}}
-\subfigure[]{
-\label{subfig:nuclItTk}
-\includegraphics[width=.7\textwidth]{fig/r_algo_2010-06-04_NI.png}}
+\includegraphics[width=.7\textwidth]{fig/singleLegBarrelEffect.pdf}}
 \caption{Fraction of reconstructed vertices as a function of the radius of the vertex
-for conversions~\subref{subfig:convItTk} and nuclear
-interactions~\subref{subfig:nuclItTk}, for  $|\eta|<1.4$, as estimated
+for conversions~\subref{subfig:convItTk}, for  $|\eta|<1.4$, as estimated
 from simulation. The different colors correspond to the largest
 iterative step needed to reconstruct the tracks at the vertex.}
-\label{fig:matItTk}
+\label{fig:barrelPerf}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\subfigure[]{
+\label{subfig:convItTk}
+\includegraphics[width=.7\textwidth]{fig/singleLegEndCapEffect.pdf}}
+\caption{Fraction of reconstructed vertices as a function of the radius of the vertex
+for conversions~\subref{subfig:convItTk}, for  $|\eta|<1.4$, as estimated
+from simulation. The different colors correspond to the largest
+iterative step needed to reconstruct the tracks at the vertex.}
+\label{fig:endcapPerf}
+\end{figure}
+
+
+
+
+
+
+
+
+\begin{figure}[h]
+\centering
+\subfigure[]{
+\label{atable}
+\includegraphics[width=.7\textwidth]{fig/Performance.pdf}}
+\caption{converti in table}
+\label{fig:atable}
+\end{figure}
+
+
+
+\begin{figure}[h]
+\centering
+\subfigure[]{
+\label{subfig:convItTk}
+\includegraphics[width=.7\textwidth]{fig/singleLegCoverage.pdf}}
+\caption{coverage}
+\label{fig:RZCoverage}
 \end{figure}
 
 \section{otherseed}
+
+DOBBIAMO AGGIUNGERE QUAD? o ALTRO?
+abbiamo tempo per farcelo approvare? non credo?
 
 \section{Conclusions}
 \label{section_conclusions}
