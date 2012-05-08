@@ -266,8 +266,6 @@ The general track collection is
 %
 The collection of tracks in the combined conversion method is obtained from a combination of general tracks,  conversion ECAL-seeded tracks and GSF tracks.
 
-QUI CI METTIAMO UN CERATI PLOT PER LE TRE COMPONENTI GSF, ECAL, ITERATIVE?
-
 %---------------------------------------------------------------------------------------------------------------
 
 \section{Tracking algorithm for photon conversions}
@@ -297,7 +295,7 @@ Trajectory seeds are built from pairs of hits
 in the Pixel and/or in the Strip Tracker detectors. 
 In order to reduce the number of hits to combine as well as to avoid to reconstruct already built tracks,  only hits not associated to other tracks are used in the seeding search.
 
-Due to the massless photon, the tracks of the resulting electrons from a photon conversion are parallel to each other at the conversion vertex, and open in two opposite arcs of circumference in the  plane transverse to the CMS magnetic field ($(x,y)$ plane in Fig.~\ref{fig:algo}~\subref{subfig:algoXY}).
+Due to the massless photon, the tracks of the resulting electrons from a photon conversion are parallel to each other at the conversion vertex, and open in two opposite arcs of circumference in the  plane transverse to the CMS magnetic field ($(x,y)$ plane in Fig.~\ref{fig:algo}~\subref{subfig:algoXY}),
 whereas they  remain parallel in the  longitudinal plane ($(z,r)$ plane in Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}). This is a unique feature that is the basis of the algorithm we developed. 
 
 
@@ -309,7 +307,9 @@ whereas they  remain parallel in the  longitudinal plane ($(z,r)$ plane in Fig.~
 \subfigure[]{
 \label{subfig:algoRZ}
 \includegraphics[trim=7cm 0cm 7cm 0cm, clip=true,width=.4\textwidth]{fig/singleLegAlgoRZ.pdf}}
-\caption{~\subref{subfig:algoXY}}
+\caption{Cartoon showing the photon conversion topology in a solenoidal magnetic field,
+shown in the plane transverse  to the CMS magnetic field~\subref{subfig:algoXY}, as well as  in the longitudinal plane~\subref{subfig:algoRZ}.}
+
 \label{fig:algo}
 \end{figure}
 
@@ -321,7 +321,7 @@ With the same approach, for a given seeding track  having  the estimated positio
 %
 Having to reconstruct a track of opposite charge respect to the seeding track, only hit pairs in the semi-plane defined by the VC direction and opposite to the seeding track are considered. The search is limited to an maximum opening angle -- with respect to the direction VC -- correlated to the minimum \pt to be reconstructed, that in our case is $100~\MeVc$.
 
-The requirement that the two conversion tracks are parallel to the photon direction in the rz plane (Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}) allows to further   reduce the number of hit combinations to keep into account, limiting the region of interest to a cone (WHICH SIZE???) around the seeding track.
+The requirement that the two conversion tracks are parallel to the photon direction in the rz plane (Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}) allows to further   reduce the number of hit combinations to keep into account, limiting the region of interest to a cone around the seeding track, such that the track extrapolated position to the hit surface is compatible with the hit position in 3 standard deviations.  
 
 
 For each seeding track a collection of hit pairs satisfying the above requirements  is identified and used to construct the trajectory seeds, i.e. the proto-tracks providing the initial kinematic parameters needed for the trajectory propagation.
@@ -380,9 +380,7 @@ In the overall increase of reconstruction efficiency we account also the improve
 Figure~\ref{fig:RZCoverage} shows the reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageStd} ) or including our dedicated algorithm (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageDed} ). An increase of efficiency is visible in less populated area around $|\eta| \sim 1.2$ when the dedicated algorithm is adopted. This improvement is extremely useful to determine  the amount of material in the transition region as well as to increase the detector acceptance for physics studies.
 
 
-The dedicated Tracking sequence is reasonably fast BLA BLA BLA 
-Mean Number of TrajSeeds per event (in events with at least one TrajSeed):  about 20.
-Mean number of tracks in these events : about  50.
+In terms of processing time per event, this dedicated tracking sequence well fits the available time quota imposed by the reconstruction constraints in the LHC high luminosity  environment.  The good time performance is again a consequence of the demanding requirements applied to limit the number of combinations to examine.
 
 
 
@@ -411,7 +409,7 @@ endcap & +26\% & +83\% & +11\% & +67\%
 \subfigure[]{
 \label{subfig:RZCoverageDed}
 \includegraphics[trim=18.5cm 3cm 0cm 9cm, clip=true,width=.4\textwidth]{fig/singleLegCoverage.pdf}}
-\caption{reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms~\subref{subfig:RZCoverageStd}  or including the dedicated conversion algorithm~\subref{subfig:RZCoverageDed}. }
+\caption{Reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms~\subref{subfig:RZCoverageStd}  or including the dedicated conversion algorithm~\subref{subfig:RZCoverageDed}. }
 \label{fig:RZCoverage}
 \end{figure}
 
@@ -420,10 +418,7 @@ endcap & +26\% & +83\% & +11\% & +67\%
 \section{Conclusions}
 \label{section_conclusions}
 
-
-The method here presented provides ...
-
-
+The photon conversions in the detector material is not just a nuisance in the event reconstruction of HEP experiments, but can be also extremely useful We have developed in CMS	a dedicated tracking for photon  conversions that,exploiting their topology, enhances the reconstruction efficiency by a factor of 20\% to 200\% depending on the radial distance from the beamline.
 
 
 \begin{figure}[b]
