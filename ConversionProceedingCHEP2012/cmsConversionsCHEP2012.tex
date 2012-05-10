@@ -74,7 +74,7 @@ This material  affects also the overall event topology and its reconstruction be
 
 This unavoidable detector effect   can be also turned into an extremely useful tool. For instance the reconstruction of photon conversions can be used to probe the detector material and to accurately measure soft photons produced in radiative decays of heavy flavor particles. %In fact a converted photon can be measured with very high momentum resolution by exploiting the excellent reconstruction of charged tracks by the tracking detector. 
  
-In this paper we will discuss the impact of the photon conversions in the event reconstruction at LHC.  We will refer to the CMS detector~\cite{cms} , even if most of the concepts discussed can be applied also to other detectors. 
+In this paper we will discuss the impact of the photon conversions in the event reconstruction at LHC.  We will refer to the CMS detector~\cite{JINST} , even if most of the concepts discussed can be applied also to other detectors. 
 In the following sections a description of the CMS detector will be provided as well as some examples of the  problems and bonus due to the photon conversions inside the tracking volume.
 We will summarize the current methods for the reconstruction of photon conversions and describe an innovative additional technique that allows to increase their reconstruction efficiency.
 
@@ -111,7 +111,7 @@ The calorimeter towers are projective and finely segmented, with $\rm \Delta\phi
 \begin{figure}[h!]
   \begin{center}
     \includegraphics[width=0.4\textwidth]{fig/trackerMaterialbudget.png}
-    \caption{Material budget inside the CMS Tracker volume in units of radiation length as a function of pseudorapidity $\eta$ broken down into the functional contributions .}
+    \caption{Material budget inside the CMS Tracker volume in units of radiation length as a function of pseudorapidity $\eta$ broken down into the functional contributions.}
     \label{fig:tkmaterial}
   \end{center}
 \end{figure}
@@ -151,7 +151,7 @@ Until here we have described the inconvenient effects of the photon conversions.
 
 %\subsection{Tracker material budget}
 A robust method for the material budget estimation, exploited also by many
-past experiments, is based on photon conversions. 
+past experiments~\cite{steve} , is based on photon conversions~\cite{TRK-10-003}. 
 Conversion vertices are reconstructed with a typical radial resolution of $\rm \sigma_r = 0.2 \div 0.5~cm$ and  angular resolution of  $1~{\rm mrad}$, primarily
 as a function of pseudo-rapidity.
 The idea is that the
@@ -208,7 +208,7 @@ The CMS experiment is well capable
 of detecting and accurately reconstructing the $\chi_{c}$ ($\chi_{b}$)
 states, through their radiative decays to the $\JPsi$ ($\Upsilon$)
 state with the low-energy photons being detected through their conversion 
-in electron-positron pairs. 
+in electron-positron pairs~\cite{chic}. 
 
 At  low energies (rarely above 
 $2.5\GeV$ in the laboratory), the calorimetric
@@ -255,7 +255,7 @@ opens only in the transverse plane because of the solenoidal magnetic field.
 The general reconstruction approach is to preselect pairs of oppositely charged tracks satisfying the quality and topological criteria of photon conversions and to fit each of these pairs by a 3D-constrained kinematic vertex 
 fitter that imposes the two tracks to be parallel at the vertex. 
 
-Two methods are used in CMS to generate the collection of potential conversion tracks: the ECAL-seeded conversion method~\cite{ecalseeded}  and the combined conversion method. The former starts from calorimetric clusters and is optimized for very displaced conversion vertexes as well as high-\pt photons ($p_{\rm T} >10\GeVc$).
+Two methods are used in CMS to generate the collection of potential conversion tracks: the ECAL-seeded conversion method~\cite{EGM-10-005}  and the combined conversion method. The former starts from calorimetric clusters and is optimized for very displaced conversion vertexes as well as high-\pt photons ($p_{\rm T} >10\GeVc$).
 To reconstruct photon conversions within a soft-\pt spectrum (such as the majority of the photons from $\pi^0$ decays in minimum bias events or from quarkonia excited states) the ECAL cluster-driven track cannot be used,  because the electron pairs from conversions are very unlikely to reach the electromagnetic calorimeter.
 Therefore  conversions need to be reconstructed pairing tracks from the  CMS general track and electron track (GSF) collections.
 The general track collection is 
@@ -336,13 +336,17 @@ hits is fit to obtain the best estimate of the track parameters.
 \section{Results}
 
 The impact of the dedicated tracking algorithm  to the reconstruction of photon conversions
- can be seen on Fig.~\ref{fig:effPerf} and Fig.~\ref{fig:fakePerf} 
+ can be seen on Fig.~\ref{fig:effPerf} 
 showing the contribution of the different tracking steps to the photon conversion
-reconstruction, as estimated by the simulation, for the Tracker Barrel and Tracker EndCap respectively.
-The additional step increases by more than a factor two the number of conversions at large radii -- outside the Pixel detector region -- and contributes significantly ($\sim 20\%$) in the Pixel detector layers.
- %
- At the same time the additional number of reconstructed fake photon conversions is kept low (Fig.~\ref{fig:fakePerf}), thanks to the demanding geometrical requirements adopted.
+reconstruction as estimated by the simulation  for a detector region  $|\eta|<1.4$.
+The additional step increases by more than a factor two the number of conversions at large radii -- outside the Pixel detector region -- and contributes significantly ($\sim 20\%$) in the Pixel detector layers. 
+ At the same time the additional number of reconstructed fake photon conversions is kept low (Fig.~\ref{fig:effPerf}~\subref{subfig:fakeBarrel}), thanks to the demanding geometrical requirements adopted.
  
+
+ Table ~\ref{tab:perfTable} summarises the reconstruction performance of our algorithm in terms of the increased number of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($r < 15 \rm cm$) or in the remaining Tracker volume.
+ 
+ %
+  
 
 \begin{figure}[h]
 \centering
@@ -350,43 +354,31 @@ The additional step increases by more than a factor two the number of conversion
 \label{subfig:effBarrel}
 \includegraphics[trim=0cm 5.2cm 18.5cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegBarrelEffect.pdf}}
 \subfigure[]{
-\label{subfig:effEndCap}
-\includegraphics[trim=0cm 5.2cm 18.5cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegEndCapEffect.pdf}}
-\caption{Fraction of the reconstructed photon conversions per event as  a function of the radial position of the conversion vertex, for the barrel~\subref{subfig:effBarrel} and the endcap~\subref{subfig:effEndCap} regions, as estimated
-from simulation. The different colors correspond to the largest
-iterative step needed to reconstruct the tracks at the vertex.}
+\label{subfig:fakeBarrel}
+\includegraphics[trim=18.5cm 5.2cm 0cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegEndCapEffect.pdf}}
+\caption{Fraction of the reconstructed photon conversions per event as  a function of the radial position of the conversion vertex,   for  $|\eta|<1.4$ , as estimated
+from simulation. The different colors correspond to the standard reconstruction algorithms only (green) and to the contribution of the new reconstruction algorithm (purple).}
 \label{fig:effPerf}
 \end{figure}
 
 
-\begin{figure}[h]
-\centering
-\subfigure[]{
-\label{subfig:fakeBarrel}
-\includegraphics[trim=18.5cm 5.2cm 0cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegBarrelEffect.pdf}}
-\subfigure[]{
-\label{subfig:fakeEndCap}
-\includegraphics[trim=18.5cm 5.2cm 0cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegEndCapEffect.pdf}}
-\caption{Fraction of the reconstructed fake photon conversions per event as  a function of the radial position of the conversion vertex, for the barrel~\subref{subfig:fakeBarrel} and the endcap~\subref{subfig:fakeEndCap} regions, as estimated
-from simulation. The different colors correspond to the largest
-iterative step needed to reconstruct the tracks at the vertex.}
-\label{fig:fakePerf}
-\end{figure}
-
-
- Table ~\ref{tab:perfTable} summarises the reconstruction performance of our algorithm in terms of the increased number of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($r < 15 \rm cm$) or in the remaining Tracker volume.
-
-In the overall increase of reconstruction efficiency we account also the improved efficiency in the transition region between the Tracker barrel and endcap.  
-Figure~\ref{fig:RZCoverage} shows the reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageStd} ) or including our dedicated algorithm (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageDed} ). An increase of efficiency is visible in less populated area around $|\eta| \sim 1.2$ when the dedicated algorithm is adopted. This improvement is extremely useful to determine  the amount of material in the transition region as well as to increase the detector acceptance for physics studies.
-
-
-In terms of processing time per event, this dedicated tracking sequence well fits the available time quota imposed by the reconstruction constraints in the LHC high luminosity  environment.  The good time performance is again a consequence of the demanding requirements applied to limit the number of combinations to examine.
-
-
+%\begin{figure}[h]
+%\centering
+%\subfigure[]{
+%\label{subfig:fakeBarrel}
+%\includegraphics[trim=18.5cm 5.2cm 0cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegBarrelEffect.pdf}}
+%\subfigure[]{
+%\label{subfig:fakeEndCap}
+%\includegraphics[trim=18.5cm 5.2cm 0cm 7.5cm, clip=true,width=.4\textwidth]{fig/singleLegEndCapEffect.pdf}}
+%\caption{Fraction of the reconstructed fake photon conversions per event as  a function of the radial position of the conversion vertex, for the barrel~\subref{subfig:fakeBarrel} and the endcap~\subref{subfig:fakeEndCap} regions, as estimated
+%from simulation. The different colors correspond to the largest
+%iterative step needed to reconstruct the tracks at the vertex.}
+%\label{fig:fakePerf}
+%\end{figure}
 
 
 \begin{table}[htdp]
-\caption{Reconstruction performance of the dedicated algorithm in terms of the increase factor of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($r < 15 \rm cm$) or in the remaining Tracker volume.
+\caption{Reconstruction performance of the dedicated algorithm in terms of the increase fraction of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($r < 15 \rm cm$) or in the remaining Tracker volume.
 }
 \begin{center}
 \begin{tabular}{c|c|c|c|c}
@@ -414,60 +406,42 @@ endcap & +26\% & +83\% & +11\% & +67\%
 \end{figure}
 
 
+In the overall increase of reconstruction efficiency we account also the improved efficiency in the transition region between the Tracker barrel and endcap.  
+Figure~\ref{fig:RZCoverage} shows the reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageStd} ) or including our dedicated algorithm (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageDed} ). An increase of efficiency is visible in less populated area around $|\eta| \sim 1.2$ when the dedicated algorithm is adopted. This improvement is extremely useful to determine  the amount of material in the transition region as well as to increase the detector acceptance for physics studies.
+
+
+
+Figure.~\ref{fig:ptPerf} shows the reconstruction efficiency enhancement due to the  dedicated algorithm as a function of the transverse momentum of the produced lepton tracks. The algorithm contributes to reconstruct mainly the low $\rm p_T$ tracks, whereas the leading track is, by design, reconstructed by the standard algorithms.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.4\textwidth]{fig/singleLegPt.png}
+\caption{Fraction of simulated and reconstructed photon conversions as a function of the transverse momentum of the produced lepton tracks, using only standard tracking algorithms (green) or also the dedicated algorithm (purple). }
+\label{fig:ptPerf}
+\end{figure}
+
+
+
+
+
+In terms of processing time per event, this dedicated tracking sequence well fits the available time quota imposed by the reconstruction constraints in the LHC high luminosity  environment.  The good time performance is again a consequence of the demanding requirements applied to limit the number of combinations to examine.
+Moreover some of the topological concepts exploited by our algorithm have been adopted also to optimize the processing time of the standard photon conversion reconstruction  in CMS, allowing to gain a factor of 15 in processing time with a smarter preselection of the tracks to be paired~\cite{recoImprovement}. This preselection is built on the same criteria used to identify the expected position of a conversion vertex from a single track. It avoid to pair a track with all the opposite-charge tracks before rejecting it as not compatible with a conversion in the Tracker material.
 
 \section{Conclusions}
 \label{section_conclusions}
 
-The photon conversions in the detector material is not just a nuisance in the event reconstruction of HEP experiments, but can be also extremely useful We have developed in CMS	a dedicated tracking for photon  conversions that,exploiting their topology, enhances the reconstruction efficiency by a factor of 20\% to 200\% depending on the radial distance from the beamline.
-
-
-\begin{figure}[b]
-    \centering
-    \label{fig:evtdisplay}
-    \includegraphics[width=0.8\textwidth]{fig/EvtDisplay.png}
-   \caption{SPOSTARE??? TOGLIERE???}
-    
-    \end{figure} 
-
-
-
-
+The photon conversions in the detector material is not just a nuisance in the event reconstruction of HEP experiments, but can be also extremely useful 
+We have developed in CMS	a dedicated tracking for photon  conversions that,
+exploiting their topology, enhances the reconstruction efficiency by a factor of 20\% to 200\% depending on the radial distance from the beamline.
 
 \section*{References}
+\bibliographystyle{unsrt}
+\bibliography{biblio}{}
 
-\begin{thebibliography}{99}
-
-
-\bibitem{cms}{CMS Collaboration}.
-\newblock {The CMS experiment at the CERN LHC}.
-\Journal{\em JINST}{0803}{S08004}{2008}.
-
-\bibitem{steve} S.~Wasserbaech, {\em Computeraized tomography of the
-    ALEPH detector}, ALEPH Internal Note, {\tt ALEPH 97-08} (1997);
-\bibitem{nancy} N.~Marinelli et al, {\em Photon conversion algorithm},
-  CMS Analysis note in preparation;
-\bibitem{integrals} H.B.~Dwight, {\em Tables of Integrals and Other
-    Mathematical Data}, New York and London, The Macmillan Company (1957);\\
-  M.~Abramowitz, I.A.~Stegun, {\em Handbook of Mathematical
-  Functions with Formulas, Graphs, and Mathematical Tables}, New York,
-  Dover Publications (1972), ISBN 978-0-486-61272-0;
-%\emph{}
-
-
-\bibitem{CMS_NOTE_2006_041}
-W.~Adam, B.~Mangano, Th. Speer, and T.~Todorov.
-\newblock {Track Reconstruction in the CMS Tracker}.
-\Journal {\em CMS Note}{2006/041}{}{2006}.
-
-
-\bibitem{CMS_PAS_TRK_10_001}
-{CMS Collaboration}
-\newblock{Tracking and Vertexing Results from First Collisions}.
-\\
-\newblock{http://cms-physics.web.cern.ch/cms-physics/public/TRK-10-001-pas.pdf}
-\\
-\Journal{\em CMS Physics Analysis Summary}{TRK-10-001}{}{2010}
-
-
-\end{thebibliography}
+%
+%\bibitem{chic}
+%{CMS Collaboration},
+%\newblock{Observation of the $\chi_c$ states with 1.1 fb$^{-1}$},
+%\Journal{CMS Detector Performance Summaries}{CMS-DP-2011-011}{http://cdsweb.cern.ch/record/1369247}{2011}
+%
 \end{document}
