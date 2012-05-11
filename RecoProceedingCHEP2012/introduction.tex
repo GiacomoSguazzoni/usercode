@@ -1,6 +1,146 @@
 \section{Introduction}
-\label{introductions}
+\label{introduction}
 
+The Compact Muon Solenoid, CMS, is one of the two general-purpose
+experiments installed at the Large Hadron Collider (LHC) at
+CERN~\cite{cms}. The core of the CMS detector is
+the superconducting solenoid, $6\m$ in diameter and $13\m$ long, that
+produces a magnetic field of $3.8\T$. The solenoid contains, from
+outside to inside, the calorimeter system and the silicon 
+tracking system for the reconstruction of charged particles
+trajectories.
+ 
+The silicon tracking system, shown in Fig.~\ref{fig:tracker}, is composed of a Pixel
+Silicon detector with three barrel layers at radii between $4.4\cm$
+and $10.2\cm$ and two endcap disks at each end. Pixel sensors feature single pixel size
+of $100\times150\um^2$ for a total of 66M channels.  
+\begin{figure}[t]
+\begin{center}
+%\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
+%\hskip 2mm
+\includegraphics*[width=0.65\textwidth]{figs/layout_rz.pdf}
+\caption{A simplified sketch of a quadrant
+of the $Rz$ section of the CMS Tracker (bold lines
+represent double sided module assemblies).}
+\label{fig:tracker}
+%\vskip -5mm
+\end{center}
+\end{figure}
+The Silicon Strip Tracker
+covers the radial range between $20\cm$ and $110\cm$ around the LHC
+interaction point. The barrel region ($| z |  < 110\cm$) is split into
+a Tracker Inner Barrel (TIB), made of four detector layers, and a
+Tracker Outer Barrel (TOB), made of six detector layers. The TIB is
+complemented by three Tracker Inner Disks 
+per side (TID). The forward and backward
+regions ($120\cm < |z| < 280\cm$) are covered by nine Tracker
+End-Cap (TEC) disks per side
+thus extending the overall acceptance to cover the region
+$|\eta|<2.5$. In some of the layers and in the innermost 
+rings, special double-sided modules
+%(Fig.~\ref{fig:sst}, right panel)
+are able to provide accurate three-dimensional position measurement of the charged
+particle hits.  The Silicon Strip Tracker is the world's largest silicon
+strip detector with a volume of approximately $23\m^3$, instrumented by about 15,000 modules
+with different strip pitches ranging from 80 to $180\um$, for a total
+of 198$\m^2$ of Silicon active area and about 9.6 million channels with full optical analog readout~\cite{cms}\cite{TkTDR}\cite{TkTDRadd}.
+%The granularity was chosen to balance the need
+%for a low occupancy, which is estimated to be a few percent at the
+%largest expected LHC luminosity, and the requirement of minimising the
+%power density and the amount of 
+%material.
 
+%The tracking detector features a 
+%transverse momentum resolution of about 1-2\% for muons of
+%$P_T\sim100\GeV$, an impact parameter resolution of about $10-20\um$
+%for tracks with $P_T\sim10-20\GeV$, a reconstruction efficiency of
+%tracks within jets of about 0.85-0.90 with a few percent fake rate.
 
+%The operation of the CMS Pixel detector and of the CMS Silicon Tracker
+%is described elsewhere~\cite{pxlop}~\cite{tkop}.
 
+The CMS track reconstruction~\cite{trackreco} starts with the appropriate grouping of the hits
+in the innermost layers to build up {\em seeds}. The seed is an initial track
+estimate and consists of a pair or a triplet of hits, sufficient for a
+basic prediction of the trajectory parameters if the primary vertex is
+ also used. Starting from a given seed, pattern recognition using a Kalman Filter
+is performed to build inside-out trajectories. Then each identified
+track undergoes a procedure to reject possible outlier hits and is
+refitted, also using a Kalman Filter. Finally, a quality selection is
+performed. Reconstruction efficiency relies on several iterations (steps) of the
+tracking procedure; every step, except the first, works on the
+not-yet-associated hits surviving the previous step. Each step is
+optimized with respect to the seeding topology and to the final
+quality cuts. This recursive procedure is referred to as {\em
+  iterative tracking}.
+
+The algorithms that build up the CMS event reconstruction software, CMSSW~\cite{cmssw},
+output physics objects (e.g., tracks, electrons, jets, ...) from the
+raw data recorded by the detector. Ideally, all events collected by CMS are
+reconstructed by the CMS prompt reconstruction system quasi real-time, soon after being
+collected. The prompt reconstruction stream is of masterpiece
+importance for a discovery experiment and prompt reconstruction data
+samples have been the base of most of the CMS physics results so
+far. Clearly, they are also crucial for fast and accurate feedback on detector
+conditions.
+
+The complexity and the granularity of the tracker system in
+connection with the large LHC instantaneous luminosity, resulting in a
+large number of interactions (pile-up) per bunch crossing, make the
+track reconstruction largely dominanting the entire reconstruction
+chain memory-wise and in terms of CPU time.
+
+%In addition, a subset of the event reconstruction
+%algorithms make up part of the high-level trigger system (HLT), which
+%reduces the data recording rate from approximately 100 kHz of the Level-1
+%trigger accepts down to a few hundred events/second of data written to
+%tape rate. 
+
+The LHC instanteneous luminosity is steadily growing since the
+beginning of the run in 2010. In Fig.~\ref{fig:LHCinstLumi2011} and
+Fig.~\ref{fig:LHCinstLumi2012} the maximum LHC instantaneous
+luminosity per day delivered to CMS is shown as a function of time for 2011 and 
+2012, respectively. During the 2012 the LHC instantaneous luminosity is expected to
+reach a value of $7\cdot10^{33}\cm^{-2}\sec^{-1}$ that corresponds to a number
+of primary vertices per bunch crossing of about 25.
+\begin{figure}[t]
+\begin{center}
+\includegraphics*[width=0.5\textwidth]{figs/lumipeak-2011.png}
+\caption{Maximum Instantaneous luminosity per day delivered to CMS for
+  pp running at $7\TeV$ centre-of-mass energy in 2011.} 
+\label{fig:LHCinstLumi2011}
+%\vskip -5mm
+\end{center}
+\end{figure}
+\begin{figure}[b]
+\begin{center}
+\includegraphics*[width=0.5\textwidth]{figs/lumipeak-pp-2012.png}
+\caption{Maximum Instantaneous luminosity per day delivered to CMS for
+  pp running at $8\TeV$ centre-of-mass energy in 2012.} 
+\label{fig:LHCinstLumi2012}
+%\vskip -5mm
+\end{center}
+\end{figure}
+
+The other worsening factor that was not foreseen at the design level
+of LHC and consenquently not taken into account in writing first
+versions of reconstruction software, is the bunch crossing
+frequency. LHC was supposed to run with 25ns between subsequent bunch
+crossings. But as a consequence of the LHC operating conditions and
+beam optics, it is preferable to run with 50ns between bunch
+crossings. This allows for fatter bunches in the machine and,
+eventually, for a larger overall delivered luminosity. On the other
+hand, this results into a larger pileup per bunch crossing and
+considerably increases the computing time per event that, being due to
+combinatorics, scales faster than purely linear dependence.
+During 2011 it was soon clear that the current version of
+reconstruction software was not performing well enough to withstand prompt
+reconstruction for last part of 2011 and 2012. 
+
+This paper describes the actions that have been put in place to
+improve the tracking reconstruction software, the major responsible of
+the CPU load at the reconstruction level, in order to be compliant
+with the expected luminosity in 2011 and 2012. This improvement
+campaign took place in two phases: the first during the 2011 and
+completed in September 2011 (Fall~2011), the second started at the
+beginning of 2012 and completed in March 2012 (Spring~2012).

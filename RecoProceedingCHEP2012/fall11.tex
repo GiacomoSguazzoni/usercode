@@ -1,6 +1,229 @@
 \section{Fall 2011}
 \label{fall11}
 
+The modifications put in place and optimized in the first phase of the
+improvement campaign have been developed on top of CMSSW version 4.2.x
+and implemented in the CMSSW version 4.4.x. 
+
+A first group of improvements are purely based on smarter coding
+and better algorithm implementation and do not
+change the physics outcome of the tracking reconstruction
+workflow. They are mainly targeted to reduction and better handling of
+the memory and in fact they allow for a 40\% cut of the
+memory budget. More in detail, these modifications are described below.
+\begin{description}
+\item[Copy-less cluster masking within the iterative tracking.] Each
+  step of the iterative tracking, but the first, works on the hits not
+  yet associated to any track. Technically this was implemented by
+  creating a new collection of surviving hits at each step. To save
+  memory, a masking algorithm has been implemented adding to the hit
+  object an appropriate data member for the masking bits. Results are
+  unchanged with a major reduction of the allocated memory.
+\item[Batch cleaning of track candidates.] The track candidate results
+  from a seed that has been successfully propagated. Before being
+  declared as a reconstructed track the track candidate must undergo
+  a filtering selection to reject fakes. To
+  avoid storing too much track candidates in memory the
+  cleaning procedure is done once a subsample of 1000 track candidates
+  has been accumulated with large benefit on the overall required memory.
+\item[Efficient quality assignment.] Each step in
+  the iterative tracking assigns tracks to a quality tier. Old
+  implementation of the algorithm just created a copy of the same
+  track per each quality tier it was belonging to; this has been
+  modified by removing the copying and adding an appropriate data
+  member to store the quality tier bits with an obvious advantage on
+  the memory consumption.
+\item[Efficient track merging.] After all iterative steps, the
+  resulting track collections have to be merged and further cleaned up
+  by potential fake tracks and duplicated tracks. In fact, only hits
+  associated to tracks with highest quality, know in CMS as {\em high 
+    purity tracks}, are not used in the following steps. But hits
+  associated to lower quality tracks are retained, in the attempt to
+  build better tracks out of them with different seed and propagation
+  parameters. Old implementation of merging algorithm compared the
+  collection created by the various steps in pairs creating intermediate
+  collections to be further compared with other collections up to the
+  end of the process. In the updated version all track collections
+  feed a merging module that works without creating any intermediate
+  collection. This is pictorially shown in Fig.~\ref{fig:merge}.
+\end{description}
+\begin{figure}[h]
+\begin{center}
+\includegraphics*[width=0.492\textwidth]{figs/oldMerge.png}
+\hskip 0.5mm
+\includegraphics*[width=0.492\textwidth]{figs/newMerge.png}
+\caption{Schematical representation of the old 
+  (left) and the new (right) merging algorithm for an hypothetical
+  iterative tracking with five steps; ``intermediate'' track
+  collections are avoided in the new
+  algorithm and this allows for consistent memory savings.}
+\label{fig:merge}
+%\vskip -5mm
+\end{center}
+\end{figure}
 
 
+The second group of ameliorations directly affects
+the algorithms and thus the outcome on observables and have to
+be evaluated also with respect to performances on physics. These
+modifications target the CMSSW modules related to tracking that are
+dominating, in terms of CPU time, the entire reconstruction chain and are
+described in the following.
+\begin{description}
+\item[Iterative tracking.] A factor 2.5 of improvement in the CPU time
+  has been obtained by optimizing the iterative tracking, as detailed
+  in Table~\ref{table:44xIterativeSteps} to be compared with
+  Table~\ref{table:42xIterativeSteps} that summarizes the baseline
+  configuration of CMSSW 42x. As can be seen, the net effect is an
+  increase of the effective $P_T$ threshold for track reconstruction
+  together with tighter constraint on impact parameter. This
+  configuration results into a reduced efficiency for $P_T$ lower than
+  $300\MeVcc$ but a larger efficiency for $P_T$ greater than
+  $0.9\GeVcc$.  
+%
+\begin{table}[b]
+  \centering
+  \begin{tabular}{cccccc}
+  \#step & seed type & seed subdetectors & $P^{\rm min}_T$ [$\GeVc$] &
+  $d_0$ cut & $z_0$ cut \\ \hline  
+  0 & triplet & pixel & 0.8 & 0.2$\cm$ & 3.0$\sigma$ \\
+  1 & pair    & pixel/TEC & 0.6 & 0.05$\cm$ & 0.6$\cm$ \\
+  2 & triplet & pixel & 0.075 & 0.2$\cm$ & 3.3$\sigma$ \\
+  3 & triplet & pixel/TIB/TID/TEC & 0.25-0.35 & 2.0$\cm$ & 10.0$\cm$ \\
+  4 & pair    & TIB/TID/TEC & 0.5 & 2.0$\cm$ & 12.0$\cm$ \\
+  5 & pair    & TOB/TEC & 0.6 & 6.0$\cm$ & 30.0$\cm$ \\
+\end{tabular}
+  \caption{Relevant parameters of the six tracking iterative steps in
+    CMSSW 42x, i.e. before the reconstruction improvement campaign
+    described in this paper; $\sigma$ represent the beam spot size
+    along the $z$ axis.}
+  \label{table:42xIterativeSteps}
+\end{table}
+%
+\begin{table}[b]
+  \centering
+  \begin{tabular}{cccccc}
+  \#step & seed type & seed subdetectors & $P^{\rm min}_T$ [$\GeVc$] &
+  $d_0$ cut & $z_0$ cut \\ \hline  
+  0 & triplet             & pixel & {\bf 0.6} & {\bf 0.03}$\cm$ & {\bf 4.0}$\sigma$ \\
+  1 & {\bf triplet} & {\bf pixel} & {\bf 0.2} & {\bf 0.03}$\cm$ & {\bf 4.0}$\sigma$ \\
+  2 & pair          & {\bf pixel} & 0.6       & {\bf 0.01}$\cm$ & {\bf 0.09}$\cm$ \\
+  3 & triplet             & pixel & {\bf 0.2} & {\bf 1.0}$\cm$ & {\bf 4.0}$\sigma$ \\
+  4 & triplet & pixel/TIB/TID/TEC & {\bf 0.35-0.5} & 2.0$\cm$ & 10.0$\cm$ \\
+  5 & pair    & TIB/TID/TEC       & {\bf 0.6} & 2.0$\cm$ & {\bf 10.0}$\cm$ \\
+  6 & pair    & TOB/TEC           & 0.6       & 2.0$\cm$ & 30.0$\cm$ \\
+\end{tabular}
+  \caption{Relevant parameters of the seven tracking iterative steps in
+    CMSSW 44x, after the first phase of the improvement campaign in
+    fall 2011; in bold the parameters changed with respect to the
+    corresponding steps in CMSSW 42x (see
+    Table~\ref{table:42xIterativeSteps}); step \#1 is brand new with
+    respect to CMSSW 42x; $\sigma$ represent the beam spot size
+    along the $z$ axis.}
+  \label{table:44xIterativeSteps}
+\end{table}
+%
+\item[Reconstruction of photon conversions.] Reconstruction of photon
+  conversion in the tracker volume results heavily affected by the
+  higher $P_T$ threshold and by the tighter impact parameter cuts
+  since conversion leg tracks are tipically soft and displaced. To
+  recover this loss, a dedicated seeding has been
+  deployed~\cite{posterConv} and the photon conversion reconstruction
+  has been further optimized resulting in a factor 12 improvment of
+  the CPU time for conversion reconstruction.
+\item[Reconstruction of primary vertices.] The reconstruction of
+  primary vertices in the event has been optimized by integrating into
+  the same module all the different reconstruction methods; the
+  removal of the overhead due to the module split we had beforehand
+  was enough to gain a factor two in CPU time in this specific context.
+\item[Reconstruction of nuclear interactions.] Similarly to photon
+  conversions, also nuclear interactions are reconstructed for tracker
+  material studies and to correctly estimate the hadronic energy
+  fraction in jets within the Particle Flow, a sophisticated event
+  reconstruction that consists in reconstructing and identifying each
+  single particle with an optimised combination of all subdetector
+  information. To avoid consuming CPU
+  time in the heavy vertex fit with candidates that are very likely to
+  be fakes, a very simple preselection has been implemented: a nuclear
+  interaction candidate track is kept only if $P_T$ exceeds
+  $800\MeVcc$, in case of primary tracks, or if $d_0$ is larger then
+  $2\mm$ for secondary tracks; the vertex candidate must have at least
+  three tracks (one primary and two secondaries or three secondary)
+  and, finally, candidates are discarded if the
+  secondary vertex estimate falls within the beam pipe. These simple
+  criteria are enough to reduce the combinatorics such that the
+  nuclear interaction reconstructions gains a factor 5 in CPU time with
+  no sensible degradation in physics performances.
+\item[Particle flow links.] The Particle Flow algorithm needs to link
+  tracks to calorimetric clusters in the $(\eta, \phi)$ parameter space. This
+  problem of nearest neighbor search 
+  over a large number of objects in CMSSW 42x is implemented with
+  nested loops and results to be rather time intensive. Moreover the
+  complexity scale quadratically ($N^2$) as the object multiplicity
+  $N$ increases. In CMSSW 44x the well known linearization technique
+  known as {\em kd-tree}~\cite{kdtree} has been introduced to replace nested
+  loops. The method consists in an algorithm that, starting from a
+  collection of objects (calorimetric cluster, for example),
+  dinamically splits the $(\eta, \phi)$ space into appropriate domains,
+  each containing one single object, organised in a tree. The closest
+  cluster to a given track can be found by 
+  exploring the $(\eta, \phi)$ space with a very fast binary search
+  that ends up in the closest neighbor domain. This algorithm,
+  schematically represented in Fig.~\ref{fig:kdtree}, has a complexity
+  that scales as $N\cdot\log N$, thus more convenient with respect to
+  standard nested loops especially for large multiplicity, and allows to
+  gain a factor 4 in CPU time in this specific application. Its
+  extension to other modules of CMSSW is being studied.
+\end{description}
+\begin{figure}[b]
+\begin{center}
+\includegraphics*[width=0.75\textwidth]{figs/kdtree.png}
+\caption{Pictorial representation of the kd-tree algorithm in the case
+  of a very simple neighbor search problem in the $(\eta, \phi)$
+  plane: a track (represented by the ``$\times$'' symbol) needs to be
+  associated to one of the calorimetric clusters represented by the
+  dots labelled with letters. On the left panel it is shown the way
+  $(\eta, \phi)$ is splitted into domains and the resulting navigation tree is
+  sketched on the right.}
+\label{fig:kdtree}
+%\vskip -5mm
+\end{center}
+\end{figure}
+
+
+
+The results of the improvements just described are graphically
+represented in Fig.~\ref{fig:fall11} and Fig.~\ref{fig:fall11vsPU}. In the
+former the breakdown of the CPU time for each improvement area before
+and after each improvement is reported for simulated QCD events with
+30 pile-up interactions per event; in the latter the total CPU time is
+shown as a function of pile-up events fpr simulated QCD events.
+\begin{figure}[t]
+\begin{center}
+%\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
+%\hskip 2mm
+\includegraphics*[width=0.6\textwidth]{figs/recotime.png}
+\caption{Breakdown of the average CPU time per event before and after
+  `Fall 2011' in each area of the tracking related reconstruction
+  software where the the improvements have been deployed; time figures are
+  shown for simulated QCD events with 30 pile-up interactions per
+event and have not to be intended as absolute measurement but just to
+illustrate the relative gain.}
+\label{fig:fall11}
+%\vskip -5mm
+\end{center}
+\end{figure}
+\begin{figure}[b]
+\begin{center}
+%\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
+%\hskip 2mm
+\includegraphics*[width=0.6\textwidth]{figs/recotime_vs_pu.png}
+\caption{Total CPU time for reconstruction as a function of
+pile-up events for simulated QCD events for the baseline CMSSW and the
+improvment version; time figures have not to be intended as absolute
+measurement but just to illustrate the relative gain.}
+\label{fig:fall11vsPU}
+%\vskip -5mm
+\end{center}
+\end{figure}
 
