@@ -45,9 +45,9 @@ memory budget. More in detail, these modifications are described below.
   collections to be further compared with other collections up to the
   end of the process. In the updated version all track collections
   feed a merging module that works without creating any intermediate
-  collection. This is pictorially shown in Fig.~\ref{fig:merge}.
+  collection. This is pictorially shown in figure~\ref{fig:merge}.
 \end{description}
-\begin{figure}[h]
+\begin{figure}[b]
 \begin{center}
 \includegraphics*[width=0.492\textwidth]{figs/oldMerge.png}
 \hskip 0.5mm
@@ -72,39 +72,50 @@ described in the following.
 \begin{description}
 \item[Iterative tracking.] A factor 2.5 of improvement in the CPU time
   has been obtained by optimizing the iterative tracking, as detailed
-  in Table~\ref{table:44xIterativeSteps} to be compared with
-  Table~\ref{table:42xIterativeSteps} that summarizes the baseline
+  in table~\ref{table:44xIterativeSteps} to be compared with
+  table~\ref{table:42xIterativeSteps} that summarizes the baseline
   configuration of CMSSW 42x. As can be seen, the net effect is an
   increase of the effective $P_T$ threshold for track reconstruction
   together with tighter constraint on impact parameter. This
   configuration results into a reduced efficiency for $P_T$ lower than
-  $300\MeVcc$ but a larger efficiency for $P_T$ greater than
-  $0.9\GeVcc$.  
+  $300\MeVc$ but a larger efficiency for $P_T$ greater than
+  $0.9\GeVc$.  
 %
 \begin{table}[b]
+  \caption{  \label{table:42xIterativeSteps}Relevant parameters of the
+    six tracking iterative steps in 
+    CMSSW 42x, i.e. before the reconstruction improvement campaign
+    described in this paper; $\sigma$ represent the beam spot size
+    along the $z$ axis.}
   \centering
-  \begin{tabular}{cccccc}
+  \begin{tabular}{llllll}
+\br
   \#step & seed type & seed subdetectors & $P^{\rm min}_T$ [$\GeVc$] &
-  $d_0$ cut & $z_0$ cut \\ \hline  
+  $d_0$ cut & $z_0$ cut \\ \mr
   0 & triplet & pixel & 0.8 & 0.2$\cm$ & 3.0$\sigma$ \\
   1 & pair    & pixel/TEC & 0.6 & 0.05$\cm$ & 0.6$\cm$ \\
   2 & triplet & pixel & 0.075 & 0.2$\cm$ & 3.3$\sigma$ \\
   3 & triplet & pixel/TIB/TID/TEC & 0.25-0.35 & 2.0$\cm$ & 10.0$\cm$ \\
   4 & pair    & TIB/TID/TEC & 0.5 & 2.0$\cm$ & 12.0$\cm$ \\
   5 & pair    & TOB/TEC & 0.6 & 6.0$\cm$ & 30.0$\cm$ \\
+\br
 \end{tabular}
-  \caption{Relevant parameters of the six tracking iterative steps in
-    CMSSW 42x, i.e. before the reconstruction improvement campaign
-    described in this paper; $\sigma$ represent the beam spot size
-    along the $z$ axis.}
-  \label{table:42xIterativeSteps}
 \end{table}
 %
 \begin{table}[b]
+  \caption{  \label{table:44xIterativeSteps} Relevant parameters of
+    the seven tracking iterative steps in 
+    CMSSW 44x, after the first phase of the improvement campaign in
+    fall 2011; in bold the parameters changed with respect to the
+    corresponding steps in CMSSW 42x (see
+    table~\ref{table:42xIterativeSteps}); step \#1 is brand new with
+    respect to CMSSW 42x; $\sigma$ represent the beam spot size
+    along the $z$ axis.}
   \centering
-  \begin{tabular}{cccccc}
+  \begin{tabular}{llllll}
+\br
   \#step & seed type & seed subdetectors & $P^{\rm min}_T$ [$\GeVc$] &
-  $d_0$ cut & $z_0$ cut \\ \hline  
+  $d_0$ cut & $z_0$ cut \\ \mr
   0 & triplet             & pixel & {\bf 0.6} & {\bf 0.03}$\cm$ & {\bf 4.0}$\sigma$ \\
   1 & {\bf triplet} & {\bf pixel} & {\bf 0.2} & {\bf 0.03}$\cm$ & {\bf 4.0}$\sigma$ \\
   2 & pair          & {\bf pixel} & 0.6       & {\bf 0.01}$\cm$ & {\bf 0.09}$\cm$ \\
@@ -112,24 +123,17 @@ described in the following.
   4 & triplet & pixel/TIB/TID/TEC & {\bf 0.35-0.5} & 2.0$\cm$ & 10.0$\cm$ \\
   5 & pair    & TIB/TID/TEC       & {\bf 0.6} & 2.0$\cm$ & {\bf 10.0}$\cm$ \\
   6 & pair    & TOB/TEC           & 0.6       & 2.0$\cm$ & 30.0$\cm$ \\
+\br
 \end{tabular}
-  \caption{Relevant parameters of the seven tracking iterative steps in
-    CMSSW 44x, after the first phase of the improvement campaign in
-    fall 2011; in bold the parameters changed with respect to the
-    corresponding steps in CMSSW 42x (see
-    Table~\ref{table:42xIterativeSteps}); step \#1 is brand new with
-    respect to CMSSW 42x; $\sigma$ represent the beam spot size
-    along the $z$ axis.}
-  \label{table:44xIterativeSteps}
 \end{table}
 %
 \item[Reconstruction of photon conversions.] Reconstruction of photon
   conversion in the tracker volume results heavily affected by the
   higher $P_T$ threshold and by the tighter impact parameter cuts
-  since conversion leg tracks are tipically soft and displaced. To
+  since conversion leg tracks are typically soft and displaced. To
   recover this loss, a dedicated seeding has been
   deployed~\cite{posterConv} and the photon conversion reconstruction
-  has been further optimized resulting in a factor 12 improvment of
+  has been further optimized resulting in a factor 12 improvement of
   the CPU time for conversion reconstruction.
 \item[Reconstruction of primary vertices.] The reconstruction of
   primary vertices in the event has been optimized by integrating into
@@ -141,12 +145,12 @@ described in the following.
   material studies and to correctly estimate the hadronic energy
   fraction in jets within the Particle Flow, a sophisticated event
   reconstruction that consists in reconstructing and identifying each
-  single particle with an optimised combination of all subdetector
+  single particle with an optimized combination of all subdetector
   information. To avoid consuming CPU
   time in the heavy vertex fit with candidates that are very likely to
   be fakes, a very simple preselection has been implemented: a nuclear
   interaction candidate track is kept only if $P_T$ exceeds
-  $800\MeVcc$, in case of primary tracks, or if $d_0$ is larger then
+  $800\MeVc$, in case of primary tracks, or if $d_0$ is larger then
   $2\mm$ for secondary tracks; the vertex candidate must have at least
   three tracks (one primary and two secondaries or three secondary)
   and, finally, candidates are discarded if the
@@ -154,6 +158,33 @@ described in the following.
   criteria are enough to reduce the combinatorics such that the
   nuclear interaction reconstructions gains a factor 5 in CPU time with
   no sensible degradation in physics performances.
+\begin{figure}[t]
+\begin{center}
+\includegraphics*[width=0.65\textwidth]{figs/kdtree.png}
+\caption{Pictorial representation of the kd-tree algorithm in the case
+  of a very simple neighbor search problem in the $(\eta, \phi)$
+  plane: a track (represented by the ``$\times$'' symbol) needs to be
+  associated to one of the calorimetric clusters represented by the
+  dots labelled with letters. On the left panel it is shown the way
+  $(\eta, \phi)$ is split into domains and the resulting navigation tree is
+  sketched on the right.}
+\label{fig:kdtree}
+%\vskip -5mm
+\end{center}
+\end{figure}
+\begin{figure}[b]
+%\begin{center}
+%\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
+%\hskip 2mm
+\includegraphics*[width=0.55\textwidth]{figs/recotime.pdf}\hspace{0.02\textwidth}%
+\begin{minipage}[b]{0.38\textwidth}\caption{\label{fig:fall11}Breakdown
+    of the average CPU time per event in arbitrary units before and after 
+  `Fall 2011' for each improvement area of the tracking reconstruction
+  software (simulated QCD events with 30 pile-up interactions).}
+\end{minipage}
+%\vskip -5mm
+%\end{center}
+\end{figure}
 \item[Particle flow links.] The Particle Flow algorithm needs to link
   tracks to calorimetric clusters in the $(\eta, \phi)$ parameter space. This
   problem of nearest neighbor search 
@@ -164,66 +195,34 @@ described in the following.
   known as {\em kd-tree}~\cite{kdtree} has been introduced to replace nested
   loops. The method consists in an algorithm that, starting from a
   collection of objects (calorimetric cluster, for example),
-  dinamically splits the $(\eta, \phi)$ space into appropriate domains,
-  each containing one single object, organised in a tree. The closest
+  dynamically splits the $(\eta, \phi)$ space into appropriate domains,
+  each containing one single object, organized in a tree. The closest
   cluster to a given track can be found by 
   exploring the $(\eta, \phi)$ space with a very fast binary search
   that ends up in the closest neighbor domain. This algorithm,
-  schematically represented in Fig.~\ref{fig:kdtree}, has a complexity
+  schematically represented in figure~\ref{fig:kdtree}, has a complexity
   that scales as $N\cdot\log N$, thus more convenient with respect to
   standard nested loops especially for large multiplicity, and allows to
   gain a factor 4 in CPU time in this specific application. Its
   extension to other modules of CMSSW is being studied.
 \end{description}
-\begin{figure}[b]
-\begin{center}
-\includegraphics*[width=0.75\textwidth]{figs/kdtree.png}
-\caption{Pictorial representation of the kd-tree algorithm in the case
-  of a very simple neighbor search problem in the $(\eta, \phi)$
-  plane: a track (represented by the ``$\times$'' symbol) needs to be
-  associated to one of the calorimetric clusters represented by the
-  dots labelled with letters. On the left panel it is shown the way
-  $(\eta, \phi)$ is splitted into domains and the resulting navigation tree is
-  sketched on the right.}
-\label{fig:kdtree}
-%\vskip -5mm
-\end{center}
-\end{figure}
-
-
-
-The results of the improvements just described are graphically
-represented in Fig.~\ref{fig:fall11} and Fig.~\ref{fig:fall11vsPU}. In the
+ The results of the improvements just described are graphically
+represented in figure~\ref{fig:fall11} and figure~\ref{fig:fall11vsPU}. In the
 former the breakdown of the CPU time for each improvement area before
 and after each improvement is reported for simulated QCD events with
 30 pile-up interactions per event; in the latter the total CPU time is
-shown as a function of pile-up events fpr simulated QCD events.
+shown as a function of the number of pile-up interactions for simulated QCD events.
 \begin{figure}[t]
-\begin{center}
+%\begin{center}
 %\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
 %\hskip 2mm
-\includegraphics*[width=0.6\textwidth]{figs/recotime.png}
-\caption{Breakdown of the average CPU time per event before and after
-  `Fall 2011' in each area of the tracking related reconstruction
-  software where the the improvements have been deployed; time figures are
-  shown for simulated QCD events with 30 pile-up interactions per
-event and have not to be intended as absolute measurement but just to
-illustrate the relative gain.}
-\label{fig:fall11}
+\includegraphics*[width=0.55\textwidth]{figs/recotime_vs_pu.pdf}\hspace{0.02\textwidth}%
+\begin{minipage}[b]{0.38\textwidth}\caption{\label{fig:fall11vsPU}Total reconstruction CPU time per event (in arbitrary units)
+  for as a function of pile-up events for simulated QCD
+  events for the baseline CMSSW and the 
+improved version.}
+\end{minipage}
 %\vskip -5mm
-\end{center}
-\end{figure}
-\begin{figure}[b]
-\begin{center}
-%\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
-%\hskip 2mm
-\includegraphics*[width=0.6\textwidth]{figs/recotime_vs_pu.png}
-\caption{Total CPU time for reconstruction as a function of
-pile-up events for simulated QCD events for the baseline CMSSW and the
-improvment version; time figures have not to be intended as absolute
-measurement but just to illustrate the relative gain.}
-\label{fig:fall11vsPU}
-%\vskip -5mm
-\end{center}
+%\end{center}
 \end{figure}
 
