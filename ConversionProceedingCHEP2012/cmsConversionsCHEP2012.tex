@@ -48,7 +48,7 @@
 \ead{domenico.giordano@cern.ch, giacomo.sguazzoni@cern.ch}
 
 \begin{abstract}
-The conversion of photons into electron-positron pairs in the detector material is a nuisance in the event reconstruction of high energy physics experiments, since the measurement of the electromagnetic component of interaction products results degraded. Nonetheless this unavoidable detector effect can be also extremely useful. The reconstruction of photon conversions can be used to probe the detector material and to accurately measure soft photons that come from radiative decays in heavy flavor physics. In fact a converted photon can be measured with very high momentum resolution by exploiting the excellent reconstruction of charged tracks of a tracking detector as the one of CMS at LHC. The main issue is that photon conversion tracks are difficult to reconstruct for standard reconstruction algorithms. They are typically soft and very displaced from primary interaction vertex. An innovative seeding technique that exploits the peculiar photon conversion topology, successfully applied in the CMS track reconstruction sequence, is presented. The performances of this technique and the substantial enhancement of photon conversion reconstruction efficiency are discussed. Application examples are given.
+The conversion of photons into electron-positron pairs in the detector material is a nuisance in the event reconstruction of high energy physics experiments, since the measurement of the electromagnetic component of interaction products results degraded. Nonetheless this unavoidable detector effect can also be extremely useful. The reconstruction of photon conversions can be used to probe the detector material and to accurately measure soft photons that come from radiative decays in heavy flavor physics. In fact a converted photon can be measured with very high momentum resolution by exploiting the excellent reconstruction of charged tracks of a tracking detector as the one of CMS at LHC. The main issue is that photon conversion tracks are difficult to reconstruct for standard reconstruction algorithms. They are typically soft and very displaced from the primary interaction vertex. An innovative seeding technique that exploits the peculiar photon conversion topology, successfully applied in the CMS track reconstruction sequence, is presented. The performances of this technique and the substantial enhancement of photon conversion reconstruction efficiency are discussed. Application examples are given.
 \end{abstract}
 
 
@@ -59,21 +59,23 @@ The conversion of photons into electron-positron pairs in the detector material 
 The precise and efficient determination of charged-particle momenta is a
 critical component of the physics program of the LHC experiments, 
 as it impacts the ability to
-reconstruct leptons, charged hadrons and jets which
+reconstruct leptons, charged hadrons and jets, which
 are the basic physics objects needed to study $pp$ collisions.
 Achieving the necessary momentum resolution requires precise tracking in a high magnetic field. This has been obtained by  the two LHC general purpose experiments    adopting a design with the inner tracking systems in a solenoidal magnetic field.
 %, followed by electromagnetic and hadronic calorimeters, and finally by muon detectors. 
 
 What makes  track reconstruction difficult is  
 the large number of hits in the tracking detectors
-produced by the many tracks resulting from several $pp$ interactions in the same bunch crossing. In order to mitigate this issue the hit occupancy is kept low using highly granular sensors and, consequently, a high number of electronic channels (several millions) for their front-end readout at the cost of an increase of material in the tracking volume. These channels need to be powered, controlled, read-out through  complex systems of cables and optical fibers. Moreover they have to dissipate a considerable amount of heat, hence a capillary cooling system is also required.
-The consequent amount of material  contained in the detectors and support structures, the associated electronics, and the power-supply and cooling services is not negligible and has effects on the tracking performance because of multiple scattering, energy loss and electron bremsstrahlung. 
-For this reason the track reconstruction has to properly take into account the amount of material in the tracking volume to be known with extreme accuracy.  
+produced by the many tracks resulting from several $pp$ interactions in the same bunch crossing. In order to mitigate this issue the hit occupancy is kept low using highly granular sensors and, consequently, a high number of electronic channels (several millions) for their front-end readout at the cost of an increase of material in the tracking volume. These channels need to be powered, controlled, and read-out through  complex systems of cables and optical fibers. Moreover they have to dissipate a considerable amount of heat, hence a capillary cooling system is also required.
+The consequent amount of material  contained in the detectors and support structures
+%, the associated electronics, and the power-supply and cooling services 
+is not negligible and has an effect on the tracking performance because of multiple scattering, energy loss and electron bremsstrahlung. 
+For this reason the track reconstruction has to properly take into account the amount of material in the tracking volume, which has to be known with extreme accuracy.  
 This material  affects also the overall event topology and its reconstruction because of photon conversions and nuclear interactions that modify the energy flow through the inner detector.
 
-This unavoidable detector effect   can be also turned into an extremely useful tool. For instance the reconstruction of photon conversions can be used to probe the detector material and to accurately measure soft photons produced in radiative decays of heavy flavor particles. %In fact a converted photon can be measured with very high momentum resolution by exploiting the excellent reconstruction of charged tracks by the tracking detector. 
+This unavoidable detector effect   can also be turned into an extremely useful tool. For instance the reconstruction of photon conversions can be used to probe the detector material and to accurately measure soft photons produced in radiative decays of heavy flavor particles. %In fact a converted photon can be measured with very high momentum resolution by exploiting the excellent reconstruction of charged tracks by the tracking detector. 
  
-In this paper we will discuss the impact of the photon conversions in the event reconstruction at LHC.  We will refer to the CMS detector~\cite{JINST}, even if most of the concepts discussed can be applied also to other detectors. 
+In this paper we will discuss the impact of  photon conversions in the event reconstruction at LHC.  We will refer to the CMS detector~\cite{JINST}, even if most of the concepts discussed can be applied also to other detectors. 
 In the following sections a description of the CMS detector will be provided as well as some examples of the  problems and the advantages due to the photon conversions inside the tracking volume.
 We will summarize the current methods for the reconstruction of photon conversions and describe an innovative additional technique that allows to increase their reconstruction efficiency.
 
@@ -82,7 +84,7 @@ We will summarize the current methods for the reconstruction of photon conversio
 
 
 
-The Compact Muon Solenoid (CMS) features an all-silicon tracker, a lead tungstate crystal electromagnetic calorimeter (ECAL), and a brass-scintillator hadronic calorimeter, all contained inside a  $3.8\,{\rm T}$  superconducting solenoid.
+The Compact Muon Solenoid (CMS) detector features an all-silicon tracker, a lead tungstate crystal electromagnetic calorimeter (ECAL), and a brass-scintillator hadronic calorimeter, all contained inside a  $3.8\,{\rm T}$  superconducting solenoid.
 The strong magnetic field  enables the measurement of charged
 particle momenta over more than four orders of magnitude, from less than
 $100\MeVc$ to more than $1\TeVc$, by reconstructing their trajectories as they
@@ -120,43 +122,43 @@ The ECAL towers are projective and finely segmented, with $\rm \Delta\phi \sim \
 Figure~\ref{fig:tkmaterial} shows the material budget of the CMS tracker in units of radiation length (X$_0$). 
 The overall material crossed by a particle traversing the Tracker volume can exceed 1 X$_0$. 
 It increases from 0.4~X$_0$ at $\eta \sim 0$ to about 1.8~X$_0$ at $|\eta| \sim 1.4$, beyond which it falls to about 1~X$_0$ at $|\eta| \sim 2.5$.
-The largest contribution to the Tracker mass is by far represented by the passive structures having the largest uncertainty on their overall amount and can have a sensible impact on the expected physics performance. 
+The largest contribution to the Tracker mass is by far represented by the passive structures having the largest uncertainty on their overall amount. This uncertainty  can have a sensible impact on the expected physics performance. 
 
 
 
-\section{Effects of the photon conversions}
+\section{Effects of  photon conversions}
 
 
-As a consequence  of the amount of material shown in Fig.~\ref{fig:tkmaterial}, up to 70\% of photons traversing the CMS Tracker material converts into  $e^+ e^-$ pairs, resulting in a large fraction of secondary electrons. 
-Most of these photons are from ${\rm \pi^0}  \to \gamma\gamma$ decays. Other sources are prompt photons and the photon emitted by bremsstrahlung before an electron reaches the electromagnetic calorimeter. 
-These electron pairs are  a non-negligible background to prompt electrons from $pp$ collisions and must be rejected efficiently in many physics analyses which signatures contain prompt electrons.
+As a consequence  of the amount of material shown in Fig.~\ref{fig:tkmaterial}, up to 70\% of photons traversing the CMS Tracker material convert into  $e^+ e^-$ pairs, resulting in a large fraction of secondary electrons. 
+Most of these photons are from ${\rm \pi^0}  \to \gamma\gamma$ decays. Other sources are prompt photons and the photons emitted by bremsstrahlung before an electron reaches the electromagnetic calorimeter. 
+These electron pairs are  a non-negligible background to prompt electrons from $pp$ collisions and must be rejected efficiently in many physics analyses whose signatures contain prompt electrons.
 
 For this purpose 
 CMS has developed several methods  to reduce the electron fake rate by  vetoing electron candidates that match one of the two tracks of a photon conversion. Some methods explicitly identify photon conversions, others use information contained in the electron candidate,  such as the hit-pattern to infer if the track is prompt or not from the  number of inner missing hits.
 
 	
-Converted photons inside jets can affect  the jet energy measurement or the jet mis-identification, if not properly reconstructed. 
-For instance, a leading $\pi^0$ carrying most of the momentum of the jet can decay in two photons such that one photon exhibit the majority of the $\pi^0$ energy. If that photon then converts in the tracker material in an asymmetric fashion, such that an electron carrying most of the photon energy is produced, the electron track will match to the rest of the jet electromagnetic energy deposition, resulting in a misidentification of the genuine jet as an electron.
+Converted photons inside jets can affect  the jet energy measurement or lead to  jet mis-identification, if not properly reconstructed. 
+For instance, a leading $\pi^0$ carrying most of the momentum of the jet can decay in two photons such that one photon exhibits the majority of the $\pi^0$ energy. If that photon then converts in the tracker material in an asymmetric fashion, such that an electron carrying most of the photon energy is produced, the electron track will match to the rest of the jet electromagnetic energy deposition, resulting in a misidentification of the genuine jet as an electron.
 %
 Given the asymmetrical distribution of the energy among the two particles in the $e^+ e^-$ pair, the not-leading track can have a very low \pt and/or a very displaced vertex making its 
  reconstruction inefficient.
  The same challenge subsists for the reconstruction of soft-\pt photon conversions ($\rm \lsim 3 \GeVc$) some of which do not even reach the electromagnetic calorimeter.
 
-Another field of interest is the reconstruction of prompt photons as signature of  physic in studies like $\rm H \to \gamma \gamma$.
-These photons  have in general high-\pt (above $10\GeVc$) and, even if undergo conversion, they can be reconstructed by the electromagnetic calorimeter, as far as both tracks deposit their energy inside the calorimeter.
-However for many analyses it is essential to be able to reconstruct  converted photons through the two produced tracks, to profit of the higher angular resolution of these tracks, in order to  better associate the primary vertex from which the original photon belong.  
+Another field of interest is the reconstruction of prompt photons as a signature of  physic in studies like $\rm H \to \gamma \gamma$.
+These photons  have in general high-\pt (above $10\GeVc$) and even if they undergo conversion they can be reconstructed by the electromagnetic calorimeter, as far as both tracks deposit their energy inside the calorimeter.
+However for many analyses it is essential to be able to reconstruct  converted photons through the two produced tracks, to profit from the higher angular resolution of these tracks, in order to  better associate the primary vertex from which the original photon belongs.  
 
-Other than the drawbacks of photon conversions described above, this phenomenon can be reverted in favor of specific and cutting-edge applications, such as the accurate measurement of the material inside the tracker volume, an aspect that is crucial to have a realistic  material description in the track reconstruction. Or such as the spectroscopy of excited states of heavy flavor particles decaying radiatively. 
+Other than the drawbacks of photon conversions described above, this phenomenon can be reverted in favor of specific and cutting-edge applications, such as the accurate measurement of the material inside the tracker volume, an aspect that is crucial to have a realistic  material description in the track reconstruction, or  the spectroscopy of excited states of heavy flavor particles decaying radiatively. 
 
 %\subsection{Tracker material budget}
 A robust method for the material budget estimation, exploited also by many
 past experiments~\cite{steve}, is based on photon conversions~\cite{TRK-10-003}. 
-Conversion vertices are reconstructed with a typical radial resolution of $\rm \sigma_r = 0.2 \div 0.5~cm$ and  angular resolution of  $1~{\rm mrad}$, primarily
+Conversion vertices are reconstructed with a typical radial resolution of $\rm \sigma_r = 0.2 ~to~  0.5~cm$ and  angular resolution of  $1~{\rm mrad}$, primarily
 as a function of pseudo-rapidity.
 The idea is that the
 material radiography, provided by the position of reconstructed photon
 conversion vertices, allows for the visualisation of detector layers
-and service structures and that the conversions rate provides an estimate of the amount of material in the
+and service structures and that the conversion rate provides an estimate of the amount of material in the
 detector volume in terms of radiation lengths.
 In Fig.~\ref{fig:convXY} the position of conversion vertices reconstructed in CMS data is shown in the $(x,y)$ plane:
 in Fig.~\ref{subfig:convXY_a} the structure at the very centre is the Pixel detector,
@@ -179,7 +181,7 @@ the Pixel detector.
 \end{center}
 \end{figure}
 %
-The  $(z, R)$  view of conversion vertices reconstructed in data is  shown in Fig.~\ref{fig:convRZ};  the less populated
+The  $(z, r)$  view of conversion vertices reconstructed in data is  shown in Fig.~\ref{fig:convRZ};  the less populated
 areas  around $|\eta|\sim1.2$ corresponds to transition regions between the Tracker
 barrel and endcap sub-components where the larger amount of passive material and the change in the active material topology makes more difficult the reconstruction of displaced vertexes. 
 The dedicated seeding described in Sec.~\ref{sec:newSeedingStep} provides a reasonable increase of efficiency, as it will be shown later.
@@ -188,7 +190,7 @@ The dedicated seeding described in Sec.~\ref{sec:newSeedingStep} provides a reas
 \begin{figure}[h!]
   \begin{center}
      \includegraphics[width=17cm,height=5.7cm]{fig/conversions/ptCut/data_rz.png}
-      \caption{Conversion vertices reconstructed in CMS data in the $(z,R)$ plane.}
+      \caption{Conversion vertices reconstructed in CMS data in the $(z,r)$ plane.}
     \label{fig:convRZ}
   \end{center}
 \end{figure}
@@ -209,8 +211,8 @@ states, through their radiative decays to the $\JPsi$ and $\Upsilon$
 state respectively, with the low-energy photons being detected through their conversion 
 in electron-positron pairs~\cite{chic}. 
 
-At  low energies (rarely above 
-$2.5\GeV$ in the laboratory), the calorimetric
+At  low energies %(rarely above $2.5\GeV$ in the laboratory), 
+the calorimetric
 measurements do not have precisions comparable to those obtainable
 when the photon energy is measured through the tracking of the 
 electron-positron pair originating from a conversion of the photon.
@@ -223,7 +225,7 @@ presence of a large number of pileup collisions).
 
 
 The drawback of the usage of photon conversions for a physics measurement 
-is the reduced yield caused by the low efficiency of their reconstruction as pairs of low momentum tracks displaced with respect to the beam axis. Typical efficiency is of the order of $0.1 \div 5\%$ for photon \pt  $< 5 \GeVc$. It is then evident that any new algorithm contributing to increase this efficiency has a direct impact in the physics analyses.
+is the reduced yield caused by the low efficiency of their reconstruction as pairs of low momentum tracks displaced with respect to the beam axis. Typical efficiency is of the order of $\rm 0.1 ~to~ 5\%$ for photon \pt  $< 5 \GeVc$. It is then evident that any new algorithm contributing to increase this efficiency has a direct impact in the physics analyses.
 
 
 
@@ -240,7 +242,7 @@ Invariant mass spectrum for $\chi_{c1}$ ($\rm m_{PDG} = 3.510\GeVcc$) and $\chi_
 
 %---------------------------------------------------------------------------------------------------------------
 
-\section{Photon Conversion Reconstruction}
+\section{Photon conversion reconstruction}
 \label{standard}
 
 
@@ -274,14 +276,14 @@ reconstruction are too tight for these processes. Those
 tracks have usually very low momentum and, especially for displaced
 vertices at large radii, they have a large transverse impact parameter.
 
-Beside the soft-\pt spectrum of the majority of the photons produced at LHC, another reason why the conversion tracks have low momentum is the asymmetric distribution of the energy among the $e^+e^-$ pairs~\cite{pdg}, implying that one lepton carries most of the photon energy, leaving the second lepton with a too low momentum to be reconstructed. As a result these photons are not found by the conversion finding algorithms because only one of the two tracks is missing, whereas the leading track has been reconstructed.
+Beside the soft-\pt spectrum of the majority of the photons produced at LHC, another reason why the conversion tracks have low momentum is the asymmetric distribution of the energy among the $e^+e^-$ pairs~\cite{pdg}, implying that one lepton carries most of the photon energy, leaving the second lepton with a too low momentum to be reconstructed. As a result these photons are not found by the conversion finding algorithms because  one of the two tracks is missing, whereas the leading track has been reconstructed.
 
 Exploiting this feature, we have developed a dedicated track reconstruction that recovers those photon conversions for which the 
 leading  track has been already reconstructed. The leading track is used to drive the reconstruction of the second track, for this reason we refer to the algorithm as track-driven and to the leading track as the seeding track.
 
 Our tracking algorithm is configured as an additional step of the CMS iterative tracking. Having to use all the available reconstructed tracks, it is the last to run after all the other standard iterative tracking steps.
 %
-Similarly to  the other steps, the track-driven algorithm starts from identifying trajectory seeds from which to build the full trajectories using the standard CMS tracking sequence, based on Kalman filter method in the pattern recognition and track refitting.
+Similarly to  the other steps, the track-driven algorithm starts from identifying trajectory seeds from which to build the full trajectories using the standard CMS tracking sequence, based on the Kalman filter method in the pattern recognition and track refitting.
 Trajectory seeds are built from pairs of hits
 in the Pixel and/or in the Strip Tracker detectors. 
 In order to reduce the number of hits to combine as well as to avoid to reconstruct already built tracks,  only hits not associated to other tracks are used in the seeding search.
@@ -298,25 +300,24 @@ whereas they  remain parallel in the  longitudinal plane ($(z,r)$ plane in Fig.~
 \subfigure[]{
 \label{subfig:algoRZ}
 \includegraphics[trim=7cm 0cm 7cm 0cm, clip=true,width=.4\textwidth]{fig/singleLegAlgoRZ.pdf}}
-\caption{Cartoon showing the photon conversion topology in a solenoidal magnetic field,
-shown in the plane transverse  to the CMS magnetic field~\subref{subfig:algoXY}, as well as  in the longitudinal plane~\subref{subfig:algoRZ}.}
+\caption{Cartoon showing the photon conversion topology in a solenoidal magnetic field in the plane transverse  to the CMS magnetic field~\subref{subfig:algoXY}, as well as  in the longitudinal plane~\subref{subfig:algoRZ}.}
 
 \label{fig:algo}
 \end{figure}
 
 Not all the tracks from  the standard collection are used to drive our seeding. The seeding tracks are selected applying the geometrical conditions imposed by the hypothesis of belonging to a prompt-photon conversion. 
 %
-As described in Fig.~\ref{fig:algo}~\subref{subfig:algoXY}, in the transverse plane the photon direction (VC) is tangent to both tracks in the conversion point C. Starting from a track and its associated primary vertex (V), with pure geometrical considerations the estimated position of the conversion vertex (C) is obtained. Given that a photon conversion happens in the material inside the tracker volume, from the beampipe onwards, tracks compatible with the conversion hypothesis cannot have the estimated vertex position (C) at a radial distance from the beamline ($\rm r_C$) inferior to the radius of the beampipe ($\rm r=3$~cm). Applying this condition, relaxed of 0.5~cm to take into account the resolution of our geometrical estimation,  prompt tracks from primary vertices are rejected, and only potential candidates from conversions are kept.
+As described in Fig.~\ref{fig:algo}~\subref{subfig:algoXY}, in the transverse plane the photon direction (VC) is tangent to both tracks in the conversion point C. Starting from a track and its associated primary vertex (V), with pure geometrical considerations the estimated position of the conversion vertex (C) is obtained. Given that a photon conversion happens in the material inside the tracker volume, from the beampipe onwards, tracks compatible with the conversion hypothesis cannot have the estimated vertex position (C) at a radial distance from the beamline ($r\rm _C$) inferior to the radius of the beampipe ($r=3$~cm). Applying this condition, with a tollerance of 0.5~cm to take into account the resolution of our geometrical estimation,  prompt tracks from primary vertices are rejected, and only potential candidates from conversions are kept.
 
-With the same approach, for a given seeding track  having  the estimated position of the conversion vertex at  $\rm r_C$ only the pairs of consecutive layers located at a radial distance from the beamline above $\rm r_C$ are used to build the hit pair seeds. 
+With the same approach, for a given seeding track  having  the estimated position of the conversion vertex at  $r\rm _C$ only the pairs of consecutive layers located at a radial distance from the beamline above $r\rm _C$ are used to build the hit pair seeds. 
 %
-Having to reconstruct a track of opposite charge respect to the seeding track, only hit pairs in the semi-plane defined by the VC direction and opposite to the seeding track are considered. The search is limited to an maximum opening angle -- with respect to the direction VC -- correlated to the minimum \pt to be reconstructed, that in our case is $100~\MeVc$.
+Having to reconstruct a track of opposite charge with respect to the seeding track, only hit pairs in the semi-plane defined by the VC direction and opposite to the seeding track are considered. The search is limited to an maximum opening angle -- with respect to the direction VC -- correlated to the minimum \pt to be reconstructed, that in our case is $100~\MeVc$.
 
-The requirement that the two conversion tracks are parallel to the photon direction in the $(z,R)$ plane (Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}) allows to further   reduce the number of hit combinations to keep into account, limiting the region of interest to a cone around the seeding track, such that the track extrapolated position to the hit surface is compatible with the hit position in 3 standard deviations.  
+The requirement that the two conversion tracks are parallel to the photon direction in the $(z,r)$ plane (Fig.~\ref{fig:algo}~\subref{subfig:algoRZ}) allows to further   reduce the number of hit combinations to take into account, limiting the region of interest to a cone around the seeding track, such that the track extrapolated position to the hit surface is compatible with the hit position in 3 standard deviations.  
 
 
 For each seeding track a collection of hit pairs satisfying the above requirements  is identified and used to construct the trajectory seeds, i.e. the proto-tracks providing the initial kinematic parameters needed for the trajectory propagation.
-At least three points are requested to evaluate the 5 parameters of the initial kinematic, but only two hits are provided per hit pair, and some of them have a coarse resolution in the $z$ coordinate. The third measurement is provided, again, by the   estimated position of the conversion vertex (C). The coordinates of these three points in the $(x,y)$ plane allow to estimate the \pt of the trajectory seed. The direction of the trajectory seed in the $(z,R)$ plane is imposed parallel to the seeding track.
+At least three points are requested to evaluate the 5 parameters of the initial kinematic, but only two hits are provided per hit pair, and some of them have a coarse resolution in the $z$ coordinate. The third measurement is provided, again, by the   estimated position of the conversion vertex (C). The coordinates of these three points in the $(x,y)$ plane allow to estimate the \pt of the trajectory seed. The direction of the trajectory seed in the $(z,r)$ plane is imposed parallel to the seeding track.
 
 Seeds are then
 propagated outward, adding compatible hits and updating the trajectory
@@ -334,7 +335,7 @@ The additional step increases by more than a factor two the number of conversion
  At the same time the additional number of reconstructed fake photon conversions is kept low (Fig.~\ref{fig:effPerf}~\subref{subfig:fakeBarrel}), thanks to the demanding geometrical requirements adopted.
  
 
- Table ~\ref{tab:perfTable} summarises the reconstruction performance of our algorithm in terms of the increased number of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($r < 15 \rm cm$) or in the remaining Tracker volume.
+ Table ~\ref{tab:perfTable} summarises the reconstruction performance of our algorithm in terms of the increased number of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($r < 15 ~\rm cm$) or in the remaining Tracker volume.
  
  %
   
@@ -348,7 +349,7 @@ The additional step increases by more than a factor two the number of conversion
 \label{subfig:fakeBarrel}
 \includegraphics[width=.48\textwidth]{fig/maxConvAlgo_r_Fake_Barrel_mod.png}}
 \caption{\label{fig:effPerf}
-Fraction of the reconstructed photon conversions per event as  a function of the radial position of the conversion vertex,   for  $|\eta|<1$, as estimated
+Fraction of the reconstructed true~\subref{subfig:effBarrel}  and fake~\subref{subfig:fakeBarrel} photon conversions per event as  a function of the radial position of the conversion vertex,   for  $|\eta|<1$, as estimated
 from simulation. The different colors correspond to the standard reconstruction algorithms only (green) and to the contribution of the new reconstruction algorithm (purple).}
 \end{center}
 \end{figure}
@@ -371,14 +372,14 @@ from simulation. The different colors correspond to the standard reconstruction 
 
 \begin{table}[htdp]
 \caption{\label{tab:perfTable}
-Reconstruction performance of the dedicated algorithm in terms of the increase fraction of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($\rm r < 15~cm$) or in the remaining Tracker volume.
+Reconstruction performance of the dedicated algorithm in terms of the increase fraction of true and fake photon conversions, distinguishing among barrel and endcap regions as well as among conversions undergone in the Pixel detector ($ r < 15~\rm cm$) or in the remaining Tracker volume.
 }
 \begin{center}
 \lineup
 \begin{tabular}{*{5}l}
 \br                          
-& \multicolumn{2}{c}{Sim \& Reco} & \multicolumn{2}{c}{Fake}  \\
-radius [cm]& $< 15 \rm cm$ & $\ge 15 \rm cm$ & $< 15 \rm cm$ & $\ge 15 \rm cm$ \\
+& \multicolumn{2}{c}{Sim \& Reco conversions} & \multicolumn{2}{c}{Fake conversions}  \\
+radius [cm]& $< 15 \rm ~cm$ & $\ge 15 \rm ~cm$ & $< 15 \rm ~cm$ & $\ge 15 \rm ~cm$ \\
 \mr
 barrel & +20\% & +200\% & +5\% & +28\% \\
 endcap & +26\% & +83\% & +11\% & +67\% \\
@@ -394,14 +395,14 @@ endcap & +26\% & +83\% & +11\% & +67\% \\
 \includegraphics[trim=0cm 6.3cm 18.5cm 6cm, clip=true,width=.485\textwidth]{fig/singleLegCoverage.pdf}}
 \subfigure[]{
 \label{subfig:RZCoverageDed}
-\includegraphics[trim=0cm 6.3cm 18.5cm 6cm, clip=true,width=.485\textwidth]{fig/singleLegCoverage.pdf}}
+\includegraphics[trim=18cm 6.3cm 0.5cm 6cm, clip=true,width=.485\textwidth]{fig/singleLegCoverage.pdf}}
 \caption{\label{fig:RZCoverage}
-Reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms~\subref{subfig:RZCoverageStd}  or including the dedicated conversion algorithm~\subref{subfig:RZCoverageDed}. }
+Reconstruction efficiency as a function of the conversion vertex position in the $(z,r)$ plane, evaluated with simulated data using only the standard CMS algorithms~\subref{subfig:RZCoverageStd}  or including the dedicated conversion algorithm~\subref{subfig:RZCoverageDed}. }
 \end{figure}
 
 
 In the overall increase of reconstruction efficiency we account also the improved efficiency in the transition region between the Tracker barrel and endcap.  
-Figure~\ref{fig:RZCoverage} shows the reconstruction efficiency as a function of the conversion vertex position in the $(z,R)$ plane, evaluated with simulated data using only the standard CMS algorithms (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageStd}) or including our dedicated algorithm (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageDed}). An increase of efficiency is visible in less populated area around $|\eta| \sim 1.2$ when the dedicated algorithm is adopted. This improvement is extremely useful to determine  the amount of material in the transition region as well as to increase the detector acceptance for physics studies.
+Figure~\ref{fig:RZCoverage} shows the reconstruction efficiency as a function of the conversion vertex position in the $(z,r)$ plane, evaluated with simulated data using only the standard CMS algorithms (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageStd}) or including our dedicated algorithm (Fig.~\ref{fig:RZCoverage}~\subref{subfig:RZCoverageDed}). An increase of efficiency is visible in the less populated area around $|\eta| \sim 1.2$ when the dedicated algorithm is adopted. This improvement is extremely useful to determine  the amount of material in the transition region as well as to increase the detector acceptance for physics studies.
 
 
 
@@ -419,13 +420,13 @@ Fraction of simulated and reconstructed photon conversions as a function of the 
 
 
 
-In terms of processing time per event, this dedicated tracking sequence well fits the available time quota imposed by the reconstruction constraints in the LHC high luminosity  environment.  The good time performance is again a consequence of the demanding requirements applied to limit the number of combinations to examine.
+In terms of processing time per event, this dedicated tracking sequence  fits well the available time quota imposed by the reconstruction constraints in the LHC high luminosity  environment.  The good time performance is again a consequence of the demanding requirements applied to limit the number of combinations to examine.
 Moreover some of the topological concepts exploited by our algorithm have been adopted also to optimize the processing time of the standard photon conversion reconstruction  in CMS, allowing to gain a factor of 15 in processing time with a smarter preselection of the tracks to be paired~\cite{recoImprovement}. This preselection is built on the same criteria used to identify the expected position of a conversion vertex from a single track. It avoids to pair a track with all the opposite-charge tracks before rejecting it as not compatible with a conversion in the Tracker material.
 
 \section{Conclusions}
 \label{section_conclusions}
 
-The photon conversions in the detector material is not just a nuisance in the event reconstruction of HEP experiments, but can be also extremely useful 
+The photon conversions in the detector material is not just a nuisance in the event reconstruction of HEP experiments, but can also be extremely useful. 
 We have developed in CMS	a dedicated tracking for photon  conversions that,
 exploiting their topology, enhances the reconstruction efficiency by a factor of 20\% to 200\% depending on the radial distance from the beamline.
 
