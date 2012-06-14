@@ -1,4 +1,4 @@
-\section{Fall 2011}
+\section{Fall 2011 campaign}
 \label{fall11}
 
 The modifications put in place and optimized in the first phase of the
@@ -10,9 +10,9 @@ and better algorithm implementation and do not
 change the physics outcome of the tracking reconstruction
 workflow. They are mainly targeted to reduction and better handling of
 the memory and in fact they allow for a 40\% cut of the
-memory budget. More in detail, these modifications are described below.
+memory budget. These modifications are described below in more detail.
 \begin{description}
-\item[Copy-less cluster masking within the iterative tracking.] Each
+\item[Copy-less hit masking within the iterative tracking.] Each
   step of the iterative tracking, but the first, works on the hits not
   yet associated to any track. Technically this was implemented by
   creating a new collection of surviving hits at each step. To save
@@ -21,9 +21,9 @@ memory budget. More in detail, these modifications are described below.
   unchanged with a major reduction of the allocated memory.
 \item[Batch cleaning of track candidates.] The track candidate results
   from a seed that has been successfully propagated. Before being
-  declared as a reconstructed track the track candidate must undergo
+  declared as a reconstructed track, the track candidate must undergo
   a filtering selection to reject fakes. To
-  avoid storing too much track candidates in memory the
+  avoid storing too much track candidates in memory, the
   cleaning procedure is done once a subsample of 1000 track candidates
   has been accumulated with large benefit on the overall required memory.
 \item[Efficient quality assignment.] Each step in
@@ -34,13 +34,13 @@ memory budget. More in detail, these modifications are described below.
   member to store the quality tier bits with an obvious advantage on
   the memory consumption.
 \item[Efficient track merging.] After all iterative steps, the
-  resulting track collections have to be merged and further cleaned up
-  by potential fake tracks and duplicated tracks. In fact, only hits
+  resulting track collections have to be merged and further cleaned from
+  potential fake tracks and duplicated tracks. In fact, only hits
   associated to tracks with highest quality, know in CMS as {\em high 
     purity tracks}, are not used in the following steps. But hits
   associated to lower quality tracks are retained, in the attempt to
   build better tracks out of them with different seed and propagation
-  parameters. Old implementation of merging algorithm compared the
+  parameters. The old implementation of the merging algorithm compared the
   collection created by the various steps in pairs creating intermediate
   collections to be further compared with other collections up to the
   end of the process. In the updated version all track collections
@@ -64,7 +64,7 @@ memory budget. More in detail, these modifications are described below.
 
 
 The second group of ameliorations directly affects
-the algorithms and thus the outcome on observables and have to
+the algorithms and thus the outcome on observables and has to
 be evaluated also with respect to performances on physics. These
 modifications target the CMSSW modules related to tracking that are
 dominating, in terms of CPU time, the entire reconstruction chain and are
@@ -74,19 +74,22 @@ described in the following.
   has been obtained by optimizing the iterative tracking, as detailed
   in table~\ref{table:44xIterativeSteps} to be compared with
   table~\ref{table:42xIterativeSteps} that summarizes the baseline
-  configuration of CMSSW 42x. As can be seen, the net effect is an
+  configuration of CMSSW 4.2.x. As can be seen, the net effect is an
   increase of the effective $P_T$ threshold for track reconstruction
   together with tighter constraint on impact parameter. This
   configuration results into a reduced efficiency for $P_T$ lower than
-  $300\MeVc$ but a larger efficiency for $P_T$ greater than
-  $0.9\GeVc$.  
+  $300\MeVc$ but an efficiency for $P_T$ greater than
+  $0.9\GeVc$ larger by $\sim 1\%$ with a $\sim 8\%$ reduction of the
+  fake rate.
 %
 \begin{table}[b]
   \caption{  \label{table:42xIterativeSteps}Relevant parameters of the
-    six tracking iterative steps in 
-    CMSSW 42x, i.e. before the reconstruction improvement campaign
-    described in this paper; $\sigma$ represent the beam spot size
-    along the $z$ axis.}
+    six iterative tracking steps in 
+    CMSSW 4.2.x, i.e. before the reconstruction improvement campaign
+    described in this paper; $\sigma$ represents the beam spot size
+    along the $z$ axis and $d_0$ and $z_0$ are the transverse
+    (i.e. in the $xy$ plane) and
+    longitudinal impact parameters, respectively.}
   \centering
   \begin{tabular}{llllll}
 \br
@@ -105,12 +108,12 @@ described in the following.
 \begin{table}[b]
   \caption{  \label{table:44xIterativeSteps} Relevant parameters of
     the seven tracking iterative steps in 
-    CMSSW 44x, after the first phase of the improvement campaign in
+    CMSSW 4.4.x, after the first phase of the improvement campaign in
     fall 2011; in bold the parameters changed with respect to the
-    corresponding steps in CMSSW 42x (see
+    corresponding steps in CMSSW 4.2.x (see
     table~\ref{table:42xIterativeSteps}); step \#1 is brand new with
-    respect to CMSSW 42x; $\sigma$ represent the beam spot size
-    along the $z$ axis.}
+    respect to CMSSW 4.2.x; see table~\ref{table:42xIterativeSteps}
+    caption for symbol definitions.}
   \centering
   \begin{tabular}{llllll}
 \br
@@ -128,9 +131,9 @@ described in the following.
 \end{table}
 %
 \item[Reconstruction of photon conversions.] Reconstruction of photon
-  conversion in the tracker volume results heavily affected by the
+  conversion in the tracker volume is heavily affected by the
   higher $P_T$ threshold and by the tighter impact parameter cuts
-  since conversion leg tracks are typically soft and displaced. To
+  since conversion tracks are typically soft and displaced. To
   recover this loss, a dedicated seeding has been
   deployed~\cite{posterConv} and the photon conversion reconstruction
   has been further optimized resulting in a factor 12 improvement of
@@ -143,21 +146,23 @@ described in the following.
 \item[Reconstruction of nuclear interactions.] Similarly to photon
   conversions, also nuclear interactions are reconstructed for tracker
   material studies and to correctly estimate the hadronic energy
-  fraction in jets within the Particle Flow, a sophisticated event
-  reconstruction that consists in reconstructing and identifying each
+  fraction in jets within the Particle Flow, the global event
+  reconstruction~\cite{pf1}\cite{pf2},
+  that consists in reconstructing and identifying each
   single particle with an optimized combination of all subdetector
   information. To avoid consuming CPU
   time in the heavy vertex fit with candidates that are very likely to
   be fakes, a very simple preselection has been implemented: a nuclear
   interaction candidate track is kept only if $P_T$ exceeds
-  $800\MeVc$, in case of primary tracks, or if $d_0$ is larger then
+  $800\MeVc$, in case of primary tracks, or if the impact parameter in
+  the $xy$ plane is larger then
   $2\mm$ for secondary tracks; the vertex candidate must have at least
-  three tracks (one primary and two secondaries or three secondary)
+  three tracks (one primary and two secondaries or three secondaries)
   and, finally, candidates are discarded if the
   secondary vertex estimate falls within the beam pipe. These simple
   criteria are enough to reduce the combinatorics such that the
-  nuclear interaction reconstructions gains a factor 5 in CPU time with
-  no sensible degradation in physics performances.
+  nuclear interaction reconstruction gains a factor 5 in CPU time with
+  no observable degradation in physics performances.
 \begin{figure}[t]
 \begin{center}
 \includegraphics*[width=0.65\textwidth]{figs/kdtree.png}
@@ -176,7 +181,7 @@ described in the following.
 %\begin{center}
 %\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
 %\hskip 2mm
-\includegraphics*[width=0.55\textwidth]{figs/recotime.pdf}\hspace{0.02\textwidth}%
+\includegraphics*[width=0.55\textwidth]{figs/recotime.png}\hspace{0.02\textwidth}%
 \begin{minipage}[b]{0.38\textwidth}\caption{\label{fig:fall11}Breakdown
     of the average CPU time per event in arbitrary units before and after 
   `Fall 2011' for each improvement area of the tracking reconstruction
@@ -188,10 +193,10 @@ described in the following.
 \item[Particle flow links.] The Particle Flow algorithm needs to link
   tracks to calorimetric clusters in the $(\eta, \phi)$ parameter space. This
   problem of nearest neighbor search 
-  over a large number of objects in CMSSW 42x is implemented with
+  over a large number of objects in CMSSW 4.2.x is implemented with
   nested loops and results to be rather time intensive. Moreover the
-  complexity scale quadratically ($N^2$) as the object multiplicity
-  $N$ increases. In CMSSW 44x the well known linearization technique
+  complexity scales quadratically ($N^2$) as the object multiplicity
+  $N$ increases. In CMSSW 4.4.x the well known linearization technique
   known as {\em kd-tree}~\cite{kdtree} has been introduced to replace nested
   loops. The method consists in an algorithm that, starting from a
   collection of objects (calorimetric cluster, for example),
@@ -211,12 +216,17 @@ represented in figure~\ref{fig:fall11} and figure~\ref{fig:fall11vsPU}. In the
 former the breakdown of the CPU time for each improvement area before
 and after each improvement is reported for simulated QCD events with
 30 pile-up interactions per event; in the latter the total CPU time is
-shown as a function of the number of pile-up interactions for simulated QCD events.
+shown as a function of the number of pile-up interactions for
+simulated QCD events.
+
+The CMSSW 4.4.x releases derived from the ``fall 2011'' campaign have been
+fully validated and have been accepted for production since changes in
+performaces are minor with respect to physics outcome.  
 \begin{figure}[t]
 %\begin{center}
 %\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
 %\hskip 2mm
-\includegraphics*[width=0.55\textwidth]{figs/recotime_vs_pu.pdf}\hspace{0.02\textwidth}%
+\includegraphics*[width=0.55\textwidth]{figs/recotime_vs_pu.png}\hspace{0.02\textwidth}%
 \begin{minipage}[b]{0.38\textwidth}\caption{\label{fig:fall11vsPU}Total reconstruction CPU time per event (in arbitrary units)
   for as a function of pile-up events for simulated QCD
   events for the baseline CMSSW and the 

@@ -1,4 +1,4 @@
-\section{Spring 2012}
+\section{Spring 2012 campaign}
 \label{spring12}
 
 The modifications put in place in the second phase of the
@@ -32,8 +32,9 @@ these modifications are described below.
 \end{figure}
   Other features that came along the new compiler version are the
   C++11 standard support and autovectorization flags on by default.
-\item[JEMalloc.] Switch to the concurrent malloc implementation
-  JEMalloc highly performant and able to better redeem memory.
+\item[JEMalloc.] The concurrent malloc implementation
+  JEMalloc, highly performant and able to better redeem memory, has
+  been implemented in place of the standard malloc.
 %\item[autovectorization]
 \item[Switch to improved ROOT version.] The ROOT package version has
   been changed from 5.27 to 5.32 that features several improvements,
@@ -44,8 +45,8 @@ these modifications are described below.
   track reconstruction classes. For example, the devirtualization of
   the BasicTrajectoryState class (an ancillary class for track
   reconstruction) resulted into a 10\% gain in speed and in some
-  $100$MB of RSS saved per event. Similarly the stereo hit class (the
-  class that stores the double sided module hits) has been
+  $100$MB of resident set size (RSS) saved per event. Similarly the
+  stereo hit class (the class that stores the double sided module hits) has been
   considerably slimmed down (a factor three in size) with a net decrease of
   RSS memory from 50MB to 150MB, depending on the event occupancy.
 \end{description}
@@ -56,7 +57,7 @@ output. These are described in the following.
 \item[Offline vertexing.] The offline reconstruction of primary
   vertices is based on a deterministic annealing algorithm to find the
   $z$ coordinate of the vertices. Major improvements have been
-  deployed for CMSSW 52x: loops have been autovectorized (thanks to
+  deployed for CMSSW 5.2.x: loops have been autovectorized (thanks to
   the introduction of the new compiler) but, to further profit of
   autovectorization capabilities, the exponential functions heavily
   used in the algorithm have been replaced with a fast,
@@ -74,31 +75,37 @@ output. These are described in the following.
   impinging a sensor with a large angle will generate a cluster
   wider than a track with normal incidence. This can be used to
   evaluate seed compatibility with the track hypothesis. Such a filter
-  was used only in steps \#0 and \#1 in CMSSW 44x (see
-  table~\ref{table:44xIterativeSteps}); for CMSSW 52x it has been
+  was used only in steps \#0 and \#1 in CMSSW 4.4.x (see
+  table~\ref{table:44xIterativeSteps}); for CMSSW 5.2.x it has been
   extended also to steps \#2, \#4 and \#5 (see
   table~\ref{table:52xIterativeSteps}) with a substantial CPU time
-  benefit especially in some step. For example, the step \#2, 
+  benefit. For example, the step \#2, 
   particularly prone to combinatorics since seeds are made up of hit
   pairs, sees a CPU time reduction of a factor 2.7. Overall the
-  improvement in CPU time is of a factor 1.5. 
-\item[Iterative tracking.] After all the modifications above
-  described, also the iterative tracking has been further optimized
-  for CMSSW 52x. Nevertheless the changes, summarized in
-  table~\ref{table:52xIterativeSteps}, are tiny as a demonstration
+  improvement in CPU time is of a factor 1.5. As a side effect of the
+  filter also the fake rate is reduced by $\sim20\%$.
+\item[Iterative tracking.] After all the modifications
+  described above, also the iterative tracking has been further optimized
+  for CMSSW 5.2.x. Nevertheless the differences, summarized in
+  table~\ref{table:52xIterativeSteps}, are tiny, which demonstrates
   that upstream improvements are already almost sufficient to make
   CMSSW compliant with requirements. There is no need to modify deeply
-  the iterative tracking, i.e. to to reduce combinatorics and match
+  the iterative tracking, i.e. to reduce combinatorics and to match
   performance target by increasing effective $P_T$ thresholds and/or
-  by reducing efficiency for displaced tracks. 
+  by reducing efficiency for displaced tracks. A relevant change
+  introduced as part of the optimization consist of the upgrade of the
+  final track cleaning and selection criteria. Eventually the
+  efficiency for prompts tracks with $P_T$ larger than $0.9\GeVc$ is
+  not affected but the fake rate is reduced by about $\sim35\%$.
 \begin{table}[t]
   \caption{  \label{table:52xIterativeSteps} Relevant parameters of
     the seven tracking iterative steps in 
-    CMSSW 52x, after the second phase of the improvement campaign in
+    CMSSW 5.2.x, after the second phase of the improvement campaign in
     2012; in bold the parameters changed with respect to the 
-    corresponding steps in CMSSW 44x (see
-    table~\ref{table:42xIterativeSteps}); $\sigma$ represent the beam spot size
-    along the $z$ axis.}
+    corresponding steps of CMSSW 4.4.x in
+    table~\ref{table:44xIterativeSteps}; see
+    table~\ref{table:42xIterativeSteps} 
+    caption for symbol definitions.}
   \centering
   \begin{tabular}{llllll}
 \br
@@ -119,10 +126,10 @@ output. These are described in the following.
 %\begin{center}
 %\includegraphics*[width=0.44\textwidth]{fig/sketch.pdf}
 %\hskip 2mm
-\includegraphics*[width=0.58\textwidth]{figs/spring12.pdf}\hspace{0.02\textwidth}%
+\includegraphics*[width=0.58\textwidth]{figs/spring12.png}\hspace{0.02\textwidth}%
 \begin{minipage}[b]{0.35\textwidth}\caption{\label{fig:spring12}
  RSS memory as a
-function of running time in CMSSW 44x and CMSSW 52x for a
+function of running time in CMSSW 4.4.x and CMSSW 5.2.x for a
 reconstruction job of 100 real data events from the 2011 special
 run with high PU.}
 \end{minipage}
@@ -131,12 +138,16 @@ run with high PU.}
 \end{figure}
 
 The overall result obtained with the ``spring 2012'' campaign
-improvements implemented in CMSSW 52x is shown in
+improvements implemented in CMSSW 5.2.x is shown in
 figure~\ref{fig:spring12} where the dependence of RSS memory as a
-function of running time is plotted in CMSSW 44x and CMSSW 52x for a
+function of running time is plotted in CMSSW 4.4.x and CMSSW 5.2.x for a
 reconstruction job of 100 real data events from the 2011 special
-run with high PU. The substantial reduction either in memory load
-either in total running time is clearly evident.
+run with high PU. The substantial reduction both in memory load as
+well as in total running time is clearly evident.
+
+The CMSSW 5.2.x releases have been
+fully validated and have been accepted for production since changes in
+performaces are minor with respect to physics outcome.  
 
 
 

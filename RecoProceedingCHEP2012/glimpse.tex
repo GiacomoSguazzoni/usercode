@@ -4,24 +4,24 @@
 The challenge for the CMS reconstruction cannot be considered over
 with the deployment of the software for 2012 data taking, currently
 ongoing. After the first long shutdown, foreseen for almost two years
-across 2013 and 2014, LHC will increase center-of-mass energy
+in 2013 and 2014, LHC will increase center-of-mass energy
 and instantaneous luminosity as well. This will require a major
 reengineering of the entire reconstruction software and of the
-tracking as well.
+tracking.
 
-Two major areas of improvements are being outlined: implementation of
+Two major areas of improvements are being considered: implementation of
 tracking techniques never used in CMS up to now (like Hough transforms
 tracking); exploitation at any possible level of parallelization
 techniques. The latter, in particular, turns out to be necessary to
-better profit of the actual trend of increase of the computing power
+better profit from the actual trend of increase of the computing power
 that is realized by an increase of the number of cores in the same
 monolithic CPU.
 
 Parallelization can be implemented in several ways. At the level of
-the framework by allowing different modules to run in parellel taking
+the framework by allowing different modules to run in parallel taking
 appropriately into account all dependencies; this would be almost
-transparent for the final user and developer, i.e. it would require no
-to minor changes to user and reconstruction module code. Nevertheless
+transparent for the final user and developer, i.e. it would require
+minor or no changes to user and reconstruction module code. Nevertheless
 this is not optimal as some modules of CMSSW need much longer time
 to run with respect to the others; track reconstruction is the
 typical example. In this case it is worthwhile to implement
