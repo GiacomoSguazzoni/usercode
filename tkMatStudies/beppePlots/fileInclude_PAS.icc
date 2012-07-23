@@ -1,4 +1,0 @@
-//
-// PAS
-    mc->Add("../7TeV/ntuple_conversion_minbias7TeV_July12.root"); //25723412
-    mcEvt->Add("../7TeV/ntuple_conversion_minbias7TeV_July12.root"); //25723412
