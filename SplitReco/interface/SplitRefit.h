@@ -43,10 +43,13 @@ public:
   double ptErrorAtTSOS(TrajectoryStateOnSurface &);
   std::vector<Trajectory> doGenericRefit(TransientTrackingRecHit::RecHitContainer, TrajectoryStateOnSurface);
 
-  
+
+  //Track stuff
   std::vector<TrajectoryMeasurement> theTrajectoryMeasurements;
   TrajectoryStateOnSurface theInitialStateForRefitting;
   reco::Track theTrack;
+  double theTrackTheta, theTrackInvSinTheta, theTrackThetaErr;
+
 
   bool myDebug_;
 
@@ -67,6 +70,8 @@ public:
   std::vector<int> vecEffHitBegin;
   std::vector<int> vecEffHitEnd;
   std::vector<double> vecPerpR;
+  std::vector<double> vecX;
+  std::vector<double> vecY;
   std::vector<double> vecZ;
   std::vector<double> vecDPerpT;
 

@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitReco.cc,v 1.1 2009/10/14 16:02:21 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.1 2012/08/02 14:21:37 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -55,6 +55,11 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
 
   theTrack = track;
 
+  //Store Quantities needed later
+  theTrackTheta = theTrack.theta();
+  theTrackThetaErr = theTrack.thetaError();
+  theTrackInvSinTheta = 1./sin(theTrackTheta);
+
 #ifdef cmsswVersion44x
   // in CMMSW 44x
   TrajectoryStateTransform transformer;
@@ -64,7 +69,6 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
   const TrajectoryStateOnSurface innerStateFromTrack(trajectoryStateTransform::innerStateOnSurface(theTrack,*theG,theMF.product()));
   const TrajectoryStateOnSurface outerStateFromTrack(trajectoryStateTransform::outerStateOnSurface(theTrack,*theG,theMF.product()));
 #endif
-
   
   //First refit the track with all the hits to have all intermediate TSOS
   // 
@@ -94,6 +98,8 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
   vecEffHitBegin.clear();
   vecEffHitEnd.clear();
   vecPerpR.clear();
+  vecX.clear();
+  vecY.clear();
   vecZ.clear();
   vecDPerpT.clear();
 
@@ -124,6 +130,8 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
       double z=upTSOS.globalPosition().z();
       double perpR=upTSOS.globalPosition().perp();
       vecPerpR.push_back(perpR);
+      vecX.push_back(x);
+      vecY.push_back(y);
       vecZ.push_back(z);
       pAveTrack+=upTSOS.globalMomentum().mag();
       pErrAveTrack+=pErrorAtTSOS(upTSOS);
@@ -173,7 +181,11 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
     mytrack.T=T;
     mytrack.rIn=vecPerpR.at(0);
     mytrack.rOut=vecPerpR.at(iHitN-1);
+    mytrack.xIn=vecX.at(0);
+    mytrack.yIn=vecY.at(0);
     mytrack.zIn=vecZ.at(0);
+    mytrack.xOut=vecX.at(iHitN-1);
+    mytrack.yOut=vecY.at(iHitN-1);
     mytrack.zOut=vecZ.at(iHitN-1);
 
     if ( myDebug_ ) std::cout << " Initialization successful; track refit done. " << std::endl;
@@ -223,6 +235,7 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
     if ( myDebug_ ) std::cout << " NEXT iEffFirst=" << iEffFirst << " " << " iEffLast=" << iEffLast << " " << std::endl;
     if ( myDebug_ ) std::cout << " Now using hits"; 
     int iFirst=vecEffHitBegin.at(iEffFirst-1);
+    int iLast=vecEffHitBegin.at(iEffLast-1);
     int iCurrent=iFirst;
     //
     // Build the rec hit container for the Split Track
@@ -256,54 +269,24 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
     //
     //
     if (trajVecSplit.size()>0) {
-      TrajectoryStateOnSurface firstSplitTSOS = trajVecSplit.begin()->lastMeasurement().updatedState();
-      double p = firstSplitTSOS.globalMomentum().mag();
-      //	   double p = trajVecSplit.begin()->firstMeasurement().updatedState().globalMomentum().mag();
-      double perror = pErrorAtTSOS(firstSplitTSOS);
-      if ( myDebug_ ) std::cout << " p=" << p << "+-" << perror << std::endl;
-      //
-      //Loop on TSOS of the Split track	   
-      std::vector<TrajectoryMeasurement> theTrajectoryMeasurements=trajVecSplit.begin()->measurements();
-      std::vector<TrajectoryMeasurement>::iterator itm;
-      int ista=0;
-      double pAveSplit=0.;
-      double pErrAveSplit=0.;
-      double TAveSplit=0.;
-      int nMeas=theTrajectoryMeasurements.size();
-      for (itm=theTrajectoryMeasurements.end()-1;itm!=theTrajectoryMeasurements.begin()-1;itm--){ //loop on hits
-	ista++;
-	TrajectoryStateOnSurface uptsos=itm->updatedState();
-	if ( myDebug_ ) std::cout << ">>>>SplitTrackTSOS>> " << ista << " p=" << uptsos.globalMomentum().mag() << "+-" << pErrorAtTSOS(uptsos) << " r=" << uptsos.globalPosition().perp() << " T=" << vecT.at(iFirst-1+ista-1) << std::endl;   
-	//
-	// For now: 
-	// p of the split = plain average 
-	// perr  of the split = plain average of the errors
-	// T of the split = plain average 
-	//
-	pAveSplit += uptsos.globalMomentum().mag()/nMeas; //FIXME now ok... but then use perp and theta? Exclude 1st and last hit?
-	pErrAveSplit += pErrorAtTSOS(uptsos)/nMeas;
-	TAveSplit = vecT.at(iFirst-1+ista-1);
-      }  
-      //
-      // Trajectory lenght average
-      TAveSplit = 0.5*(TAveSplit+vecT.at(iFirst-1));
-      if ( myDebug_ ) std::cout << ">>>>SplitTrackAve>> pAveSplit="<< pAveSplit << "+-" << pErrAveSplit << " TAveSplit=" << TAveSplit << std::endl; 
-      //
-      // Pull
-      double pull=(pAveSplit - mytrack.pAve)/sqrt(pErrAveSplit*pErrAveSplit+mytrack.pAveErr*mytrack.pAveErr);
 
       //
       // For the energy loss fit...
-      if ( abs(pull)<pullCut ){ 
-	Split split;
-	split.p=pAveSplit;
-	split.pErr=pErrAveSplit;
-	split.T=TAveSplit;
-	split.TErr=0.05;  //half millimiter error (?)
-	splits.push_back(split);
-      }
+      Split split;
+
+      TrajectoryStateOnSurface firstSplitTSOS = trajVecSplit.begin()->lastMeasurement().updatedState();
+      split.pt=firstSplitTSOS.globalMomentum().perp();;
+      split.ptErr=ptErrorAtTSOS(firstSplitTSOS);;
+      split.T=0.5*(vecT.at(iLast-1)+vecT.at(iFirst-1));
+      split.TErr=0.05;  //half millimiter error (?)
+      splits.push_back(split);
+
+      if ( myDebug_ ) std::cout << " Split pt=" << split.pt << "+-" << split.ptErr << std::endl;
+
     } else {
+
       if ( myDebug_ ) std::cout << " split fit failed" << std::endl;
+
     }
 	 
     iEffFirst+=nHitIncrement;
@@ -342,8 +325,8 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
   int nsize = nsplits;
 #endif
 
-  double arrPSplit[nsize];
-  double arrPErrSplit[nsize];
+  double arrPtSplit[nsize];
+  double arrPtErrSplit[nsize];
   double arrTSplit[nsize];
   double arrTErrSplit[nsize];
   
@@ -351,16 +334,16 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
 
   for (std::vector<Split>::iterator it=splits.begin() ; it < splits.end(); it++ ){
 
-    arrPSplit[iarr]=(*it).p;
-    arrPErrSplit[iarr]=(*it).pErr;
+    arrPtSplit[iarr]=(*it).pt;
+    arrPtErrSplit[iarr]=(*it).ptErr;
     arrTSplit[iarr]=(*it).T;
     arrTErrSplit[iarr]=(*it).TErr;
     iarr++;
 
   }  
 
-  TGraphErrors graphForFit(nsplits,arrTSplit,arrPSplit,arrTErrSplit,arrPErrSplit);  
-  int fitResult = graphForFit.Fit("pol1");
+  TGraphErrors graphForFit(nsplits,arrTSplit,arrPtSplit,arrTErrSplit,arrPtErrSplit);  
+  int fitResult = graphForFit.Fit("pol1","Q");
   TF1 *fit = graphForFit.GetFunction("pol1");
   if ( fitResult ) {
     if ( myDebug_ ) std::cout << " Linear fit of splits failed with code: " << fitResult << std::endl;
@@ -370,21 +353,21 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
   //
   // In case of valid fit
   eLoss.p0 = fit->GetParameter(0);
-  eLoss.p1 = fit->GetParameter(1);
-  double p1Err = fit->GetParError(1);
+  eLoss.dpdx = -1.*fit->GetParameter(1)*theTrackInvSinTheta; //Rescale for theta and revert sign
+  eLoss.dpdxErr = fit->GetParError(1)*theTrackInvSinTheta; //Rescale for theta
   eLoss.chi2 = fit->GetChisquare();
   eLoss.freePar = fit->GetNumberFreeParameters();
-  if ( myDebug_ ) std::cout << " linear EL fit p0=" << eLoss.p0 << " p1=" << eLoss.p1 << " chi2/freePar=" << eLoss.chi2 << "/" << eLoss.freePar << std::endl; 
+  if ( myDebug_ ) std::cout << " linear EL fit p0=" << eLoss.p0 << " p1=" << eLoss.dpdx << " chi2/freePar=" << eLoss.chi2 << "/" << eLoss.freePar << std::endl; 
   eLoss.TIn  = (*(splits.begin())).T;
   double TInErr = (*(splits.begin())).TErr;
   eLoss.TOut = (*(splits.end()-1)).T;
   double TOutErr = (*(splits.end()-1)).TErr;
   double TTot = eLoss.TOut - eLoss.TIn;
-  eLoss.pLoss = eLoss.p1*(eLoss.TIn - eLoss.TOut);
-  eLoss.pLossErr = sqrt(TTot*TTot*p1Err*p1Err+eLoss.p1*eLoss.p1*(TInErr*TInErr+TOutErr*TOutErr));
+  eLoss.pLoss = eLoss.dpdx*(eLoss.TOut - eLoss.TIn);
+  eLoss.pLossErr = sqrt(TTot*TTot*eLoss.dpdxErr*eLoss.dpdxErr+eLoss.dpdx*eLoss.dpdx*(TInErr*TInErr+TOutErr*TOutErr));
   if ( myDebug_ ) {
-    double pIn  = eLoss.p0+eLoss.p1*eLoss.TIn;
-    double pOut = eLoss.p0+eLoss.p1*eLoss.TOut;
+    double pIn  = eLoss.p0+eLoss.dpdx*eLoss.TIn;
+    double pOut = eLoss.p0+eLoss.dpdx*eLoss.TOut;
     std::cout << " TIn=" << eLoss.TIn << " pIn=" << pIn << "; TOut=" << eLoss.TOut << " pOut=" << pOut << " Ttot=" << TTot << " pLoss=" << eLoss.pLoss << " pLossErr=" << eLoss.pLossErr  << std::endl; 
   }
 
@@ -471,5 +454,3 @@ void SplitRefit::setMaterialToKFactor(double kFactor){
   //  edm::LogInfo("ELFTrackProducer::setMaterialToKFactor") << outputBlock.data();
 }
   
-
-

@@ -10,14 +10,18 @@ struct myTrack {
   double T;
   double rIn;
   double rOut;
+  double xIn;
+  double yIn;
   double zIn;
+  double xOut;
+  double yOut;
   double zOut;
 
 };
 
 struct Split {
-  double p;
-  double pErr;
+  double pt;
+  double ptErr;
   double T;
   double TErr;
 };
@@ -25,8 +29,9 @@ struct Split {
 struct energyLoss {
   double pLoss;
   double pLossErr;
+  double dpdx;
+  double dpdxErr;
   double p0;
-  double p1;
   double chi2;
   double freePar;
   int nsplits;

@@ -103,14 +103,21 @@ private:
   float sT_vx;     
   float sT_vy;    
   float sT_vz;    
-  int   sT_nHit;
+  int   sT_nHitVal;
+  int   sT_nHitMis;
+  int   sT_nHitIna;
+  int   sT_nHitBad;
   int   sT_nEffHit;
   int   sT_q;
   float sT_chi2;
   float sT_T;
   float sT_rIn;
   float sT_rOut;
+  float sT_xIn;
+  float sT_yIn;
   float sT_zIn;
+  float sT_xOut;
+  float sT_yOut;
   float sT_zOut;
   // simtrack
   int   sT_iTrackSim;
@@ -120,17 +127,23 @@ private:
   float sT_theSim;
   float sT_phiSim;
   float sT_pLossSim;
+  float sT_dpdxSim;
   int   sT_nHitSim;    
   float sT_TSim;
   float sT_rInSim; //r first hit
   float sT_rOutSim; //r last hit
-  float sT_zInSim; //r first hit
-  float sT_zOutSim; //r last hit
+  float sT_xInSim; //x first hit
+  float sT_yInSim; //y first hit
+  float sT_zInSim; //z first hit
+  float sT_xOutSim; //x last hit
+  float sT_yOutSim; //y last hit
+  float sT_zOutSim; //z last hit
   // split track method 0 (not overlapping splits)
   float sT_pLossSplit;
   float sT_pLossErrSplit;
+  float sT_dpdxSplit;
+  float sT_dpdxErrSplit;
   float sT_p0Split;
-  float sT_p1Split;
   float sT_chi2Split;
   int sT_freeParSplit;
   int sT_NSplit;
@@ -139,8 +152,9 @@ private:
   // split track method 1 (super split, overlapping splits)
   float sT_pLossSSplit;
   float sT_pLossErrSSplit;
+  float sT_dpdxSSplit;
+  float sT_dpdxErrSSplit;
   float sT_p0SSplit;
-  float sT_p1SSplit;
   float sT_chi2SSplit;
   int sT_freeParSSplit;
   int sT_NSSplit;
