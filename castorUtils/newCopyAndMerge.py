@@ -1,46 +1,25 @@
 import os
 
 #output
-#targetDir = '/data01/sguazz'
-#targetDir = '/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_wEcaps'
-#targetDir = '/raid/sguazz/MinBiasMC_397_altTrig_DG_10MEvt_seedSingleTrack_wEcaps_inCKFandGSF'
-targetDir = '/raid/sguazz'
-#targetDir = '/tmp/sguazz'
-#targetDir = '/tmp'
-#targetDir = '/afs/cern.ch/user/s/sguazz/scratch1'
+targetDir = '/tmp/sguazz'
 
-tmpCopyDir = '/tmp/sguazz'
+tmpCopyDir = '/tmp/sguazz/copy'
 
-rootName = 'ntuple_'
-rootType = 'conversion_'
+rootName = 'split_'
+rootType = ''
+#rootType = 'conversion_'
 #rootType = 'nuclint_'
 rootSuffix = ''
 #rootSuffix = 'MinBiasMC_'
 #rootSuffix = 'Run2010A_'
 #rootSuffix = 'HIRun2010_'
 rootExt = '.root'
-numberOfFilesPerChunk = 10
+numberOfFilesPerChunk = 20
 #numberOfFilesPerChunk = 17
 
 #castor
-#castorNumberOfFiles = 270
-#castorNumberOfFiles = 92
-castorNumberOfFiles = 255
-#castorNumberOfFiles = 17
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_DG_STD/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_DG_onlyInCKFSpecialTag/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC2T_altTrig/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_Quad'
-castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_i2c'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_i2c_sLeg'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/HIRun2010/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_DG_onlyInGSF/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_DG_inCKFandGSF/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_DG/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_DG_tinyTest/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig_noServer/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/MinBiasMC_altTrig/'
-#castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/Run2010A_altTrig/'
+castorNumberOfFiles = 244
+castorPath = '/castor/cern.ch/user/s/sguazz/MaterialNtuples/workDir/split44'
 castorName = rootName
 castorType = rootType
 #castorSuffix = rootSuffix+'altTrig_DG_'
@@ -72,10 +51,13 @@ while nFile<castorNumberOfFiles :
         if nFile<castorNumberOfFiles+1:
             castorFileName = castorName+castorType+castorSuffix+str(nFile)+castorExt
             castorFullPath = castorPath+'/'+castorFileName
+#
             command = 'stager_qry -M '+castorFullPath
             print command
-            check = os.system(command)
-            if check:
+            fin,fout = os.popen4(command)
+            result = fout.read()
+            print result
+            if ( 'No such file or directory' in result ) & ~( 'not on disk cache' in result ):
                 print 'Skipping non existing file: '+castorFullPath
             else:
                 if doCastor:
