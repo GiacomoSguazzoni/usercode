@@ -5,3 +5,6 @@ RecoTracker/ConversionSeedGenerators/src/SeedForPhotonConversionFromQuadruplets.
 RecoTracker/FinalTrackSelectors/python/MergeTrackCollections_cff.py
 RecoTracker/IterativeTracking/python/iterativeTk_cff.py
 
+20120723 
+tag t53x-00-00 for 53x; quad seeding working (i.e. not crashing!) but not quite effective. Probably need
+to implement a more appropriate track selection and merging.
