@@ -51,6 +51,7 @@ private:
   bool myDebug_;
   bool isMC_;
   int splitTrackEffHits_;
+  bool specialErrorRescale_;
   int minSplits_;
   double kFactor_;
   double pullCut_;
@@ -58,6 +59,7 @@ private:
   double ptMinCut_;
   double ptMaxCut_;
   double etaMaxCut_;
+  double etaMinCut_;
   int nHitMinCut_;
 
   std::string fitterName_;
@@ -110,6 +112,7 @@ private:
   int   sT_nEffHit;
   int   sT_q;
   float sT_chi2;
+  float sT_maxchi2;
   float sT_T;
   float sT_rIn;
   float sT_rOut;
@@ -129,6 +132,7 @@ private:
   float sT_pLossSim;
   float sT_dpdxSim;
   int   sT_nHitSim;    
+  float sT_hitFrac;    
   float sT_TSim;
   float sT_rInSim; //r first hit
   float sT_rOutSim; //r last hit
@@ -139,27 +143,51 @@ private:
   float sT_yOutSim; //y last hit
   float sT_zOutSim; //z last hit
   // split track method 0 (not overlapping splits)
-  float sT_pLossSplit;
-  float sT_pLossErrSplit;
-  float sT_dpdxSplit;
-  float sT_dpdxErrSplit;
-  float sT_p0Split;
-  float sT_chi2Split;
-  int sT_freeParSplit;
   int sT_NSplit;
   float sT_TInSplit;
   float sT_TOutSplit;
+
+  float sT_dpdxSplit;
+  float sT_dpdxErrSplit;
+  float sT_chi2Split;
+  int sT_freeParSplit;
+
+  float sT_dpdxTSplit;
+  float sT_dpdxTErrSplit;
+  float sT_chi2TSplit;
+  int sT_freeParTSplit;
+
+  float sT_dpdxZSplit;
+  float sT_dpdxZErrSplit;
+  float sT_chi2ZSplit;
+  int sT_freeParZSplit;
+
   // split track method 1 (super split, overlapping splits)
-  float sT_pLossSSplit;
-  float sT_pLossErrSSplit;
+  int sT_NSSplit;
+
   float sT_dpdxSSplit;
   float sT_dpdxErrSSplit;
-  float sT_p0SSplit;
   float sT_chi2SSplit;
   int sT_freeParSSplit;
-  int sT_NSSplit;
-  float sT_TInSSplit;
-  float sT_TOutSSplit;
+
+  float sT_dpdxTSSplit;
+  float sT_dpdxTErrSSplit;
+  float sT_chi2TSSplit;
+  int sT_freeParTSSplit;
+
+  float sT_dpdxZSSplit;
+  float sT_dpdxZErrSSplit;
+  float sT_chi2ZSSplit;
+  int sT_freeParZSSplit;
+
+#ifdef extra
+  float sT_pLossSplit;
+  float sT_pLossErrSplit;
+  float sT_p0Split;
+  float sT_pLossSSplit;
+  float sT_pLossErrSSplit;
+  float sT_p0SSplit;
+#endif
 
   //
   // Quantities needed for split refits

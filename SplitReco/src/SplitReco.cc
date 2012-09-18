@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitReco.cc,v 1.1 2012/08/02 14:21:37 sguazz Exp $
+// $Id: SplitReco.cc,v 1.2 2012/08/28 09:57:38 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -45,12 +45,13 @@ SplitReco::SplitReco(const edm::ParameterSet& iConfig)
   splitTrackEffHits_ = iConfig.getUntrackedParameter<int>("splitTrackEffHits", 4);
   minSplits_ = iConfig.getUntrackedParameter<int>("minSplits", 4);
   kFactor_ = iConfig.getUntrackedParameter<double>("kFactor", 1.);
-  pullCut_ = iConfig.getUntrackedParameter<double>("pullCut", 7.);
+  specialErrorRescale_ = iConfig.getUntrackedParameter<bool>("specialRescale", false);
 
   ptMinCut_ = iConfig.getUntrackedParameter<double>("ptMinCut", 0.8);
   ptMaxCut_ = iConfig.getUntrackedParameter<double>("ptMaxCut", 5.2);
   nHitMinCut_ = iConfig.getUntrackedParameter<int>("nHitMinCut", 6);
   etaMaxCut_ = iConfig.getUntrackedParameter<double>("etaMaxCut", 2.0);
+  etaMinCut_ = iConfig.getUntrackedParameter<double>("etaMinCut", -2.0);
   
   fitterName_ = iConfig.getUntrackedParameter<std::string>("Fitter","KFFittingSmootherWithOutliersRejectionAndRK");
   associatorName_ = iConfig.getUntrackedParameter<std::string>("Associator","TrackAssociatorByHits");
@@ -114,6 +115,7 @@ SplitReco::SplitReco(const edm::ParameterSet& iConfig)
   splitTree->Branch("vy",         &sT_vy,         "vy/F",         bs);    
   splitTree->Branch("vz",         &sT_vz,         "vz/F",         bs);    
   splitTree->Branch("chi2",       &sT_chi2,       "chi2/F",       bs);    
+  splitTree->Branch("maxchi2",    &sT_maxchi2,    "maxchi2/F",    bs);    
   splitTree->Branch("T",          &sT_T,          "T/F",          bs);       
   splitTree->Branch("rIn",        &sT_rIn,        "rIn/F",        bs); //r first hit
   splitTree->Branch("rOut",       &sT_rOut,       "rOut/F",       bs); //r last hit
@@ -133,37 +135,63 @@ SplitReco::SplitReco(const edm::ParameterSet& iConfig)
   splitTree->Branch("pLossSim",   &sT_pLossSim,   "pLossSim/F",   bs);
   splitTree->Branch("dpdxSim",    &sT_dpdxSim,    "dpdxSim/F",    bs);
   splitTree->Branch("nHitSim",    &sT_nHitSim,    "nHitSim/I",    bs);    
+  splitTree->Branch("hitFrac",    &sT_hitFrac,    "hitFrac/F",    bs);    
   splitTree->Branch("TSim",       &sT_TSim,       "TSim/F",       bs); //r first hit
   splitTree->Branch("rInSim",     &sT_rInSim,     "rInSim/F",     bs); //r first hit
   splitTree->Branch("rOutSim",    &sT_rOutSim,    "rOutSim/F",    bs); //r last hit
   splitTree->Branch("xInSim",     &sT_xInSim,     "xInSim/F",     bs); //x first hit
   splitTree->Branch("yInSim",     &sT_yInSim,     "yInSim/F",     bs); //y first hit
   splitTree->Branch("zInSim",     &sT_zInSim,     "zInSim/F",     bs); //z first hit
-  splitTree->Branch("xOutSim",    &sT_zOutSim,    "xOutSim/F",    bs); //x last hit
-  splitTree->Branch("yOutSim",    &sT_zOutSim,    "yOutSim/F",    bs); //y last hit
+  splitTree->Branch("xOutSim",    &sT_xOutSim,    "xOutSim/F",    bs); //x last hit
+  splitTree->Branch("yOutSim",    &sT_yOutSim,    "yOutSim/F",    bs); //y last hit
   splitTree->Branch("zOutSim",    &sT_zOutSim,    "zOutSim/F",    bs); //z last hit
   // split track method 0 (not overlapping splits)
-  splitTree->Branch("pLossSplit", &sT_pLossSplit, "pLossSplit/F", bs);
-  splitTree->Branch("pLossErrSplit", &sT_pLossErrSplit, "pLossSplitErr/F", bs);
-  splitTree->Branch("dpdxSplit", &sT_dpdxSplit, "dpdxSplit/F", bs);
-  splitTree->Branch("dpdxErrSplit", &sT_dpdxErrSplit, "dpdxSplitErr/F", bs);
-  splitTree->Branch("p0Split",    &sT_p0Split,         "p0Split/F", bs);
-  splitTree->Branch("chi2Split",  &sT_chi2Split,  "chi2Split/F",  bs);
-  splitTree->Branch("freeParSplit", &sT_freeParSplit,     "freeParSplit/I",     bs);  
   splitTree->Branch("NSplit",     &sT_NSplit,     "NSplit/I",     bs);  
   splitTree->Branch("TInSplit",   &sT_TInSplit,   "TInSplit/F",   bs);
   splitTree->Branch("TOutSplit",  &sT_TOutSplit,  "TOutSplit/F",  bs);
+
+  splitTree->Branch("dpdxSplit", &sT_dpdxSplit, "dpdxSplit/F", bs);
+  splitTree->Branch("dpdxErrSplit", &sT_dpdxErrSplit, "dpdxSplitErr/F", bs);
+  splitTree->Branch("chi2Split",  &sT_chi2Split,  "chi2Split/F",  bs);
+  splitTree->Branch("freeParSplit", &sT_freeParSplit,     "freeParSplit/I",     bs);  
+
+  splitTree->Branch("dpdxTSplit", &sT_dpdxTSplit, "dpdxTSplit/F", bs);
+  splitTree->Branch("dpdxTErrSplit", &sT_dpdxTErrSplit, "dpdxTSplitErr/F", bs);
+  splitTree->Branch("chi2TSplit",  &sT_chi2TSplit,  "chi2TSplit/F",  bs);
+  splitTree->Branch("freeParTSplit", &sT_freeParTSplit,     "freeParTSplit/I",     bs);  
+
+  splitTree->Branch("dpdxZSplit", &sT_dpdxZSplit, "dpdxZSplit/F", bs);
+  splitTree->Branch("dpdxZErrSplit", &sT_dpdxZErrSplit, "dpdxZSplitErr/F", bs);
+  splitTree->Branch("chi2ZSplit",  &sT_chi2ZSplit,  "chi2ZSplit/F",  bs);
+  splitTree->Branch("freeParZSplit", &sT_freeParZSplit, "freeParZSplit/I",     bs);  
+
   // split track method 1 (overlapping splits) super split   		   		   	       
-  splitTree->Branch("pLossSSplit", &sT_pLossSSplit, "pLossSSplit/F", bs);
-  splitTree->Branch("pLossErrSSplit", &sT_pLossErrSSplit, "pLossErrSSplit/F", bs);
+  splitTree->Branch("NSSplit",     &sT_NSSplit,     "NSSplit/I",     bs);  
+
   splitTree->Branch("dpdxSSplit", &sT_dpdxSSplit, "dpdxSSplit/F", bs);
   splitTree->Branch("dpdxErrSSplit", &sT_dpdxErrSSplit, "dpdxErrSSplit/F", bs);
-  splitTree->Branch("p0SSplit",    &sT_p0SSplit,         "p0SSplit/F", bs);
   splitTree->Branch("chi2SSplit",  &sT_chi2SSplit,  "chi2SSplit/F",  bs);
   splitTree->Branch("freeParSSplit", &sT_freeParSSplit,     "freeParSSplit/I",     bs);  
-  splitTree->Branch("NSSplit",     &sT_NSSplit,     "NSSplit/I",     bs);  
-  splitTree->Branch("TInSSplit",   &sT_TInSSplit,   "TInSSplit/F",   bs);
-  splitTree->Branch("TOutSSplit",  &sT_TOutSSplit,  "TOutSSplit/F",  bs);
+
+  splitTree->Branch("dpdxTSSplit", &sT_dpdxTSSplit, "dpdxTSSplit/F", bs);
+  splitTree->Branch("dpdxTErrSSplit", &sT_dpdxTErrSSplit, "dpdxTSSplitErr/F", bs);
+  splitTree->Branch("chi2TSSplit",  &sT_chi2TSSplit,  "chi2TSSplit/F",  bs);
+  splitTree->Branch("freeParTSSplit", &sT_freeParTSSplit, "freeParTSSplit/I",     bs);  
+
+  splitTree->Branch("dpdxZSSplit", &sT_dpdxZSSplit, "dpdxZSSplit/F", bs);
+  splitTree->Branch("dpdxZErrSSplit", &sT_dpdxZErrSSplit, "dpdxZSSplitErr/F", bs);
+  splitTree->Branch("chi2ZSSplit",  &sT_chi2ZSSplit,  "chi2ZSSplit/F",  bs);
+  splitTree->Branch("freeParZSSplit", &sT_freeParZSSplit, "freeParZSSplit/I",     bs);  
+
+#ifdef extra
+  splitTree->Branch("pLossSSplit", &sT_pLossSSplit, "pLossSSplit/F", bs);
+  splitTree->Branch("pLossErrSSplit", &sT_pLossErrSSplit, "pLossErrSSplit/F", bs);
+  splitTree->Branch("p0SSplit",    &sT_p0SSplit,         "p0SSplit/F", bs);
+  splitTree->Branch("pLossSplit", &sT_pLossSplit, "pLossSplit/F", bs);
+  splitTree->Branch("pLossErrSplit", &sT_pLossErrSplit, "pLossSplitErr/F", bs);
+  splitTree->Branch("p0Split",    &sT_p0Split,         "p0Split/F", bs);
+#endif
+
 }
 
 
@@ -240,6 +268,7 @@ SplitReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
     sT_theSim=0.;   
     sT_phiSim=0.;   
     sT_pLossSim=0.; 
+    sT_hitFrac=0.;
 
     if ( isMC_ ) {
 
@@ -251,9 +280,9 @@ SplitReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 	     it != tp.end(); ++it) {
 	  
 	  TrackingParticleRef tpr = it->first;
-	  double assocChi2 = it->second;
+	  sT_hitFrac = it->second;
 	  if ( myDebug_ ) std::cout << "\t\tMCTrack " << tpr.index() << " pT: " << tpr->pt() << 
-	    " NShared: " << assocChi2 << std::endl;
+	    " NShared: " << sT_hitFrac << std::endl;
 	  trackingParticleAction(tpr);
 	  
 	}
@@ -335,7 +364,7 @@ int SplitReco::trackingParticleAction(TrackingParticleRef & tpr){
 	vecTPHitX.push_back(x);
 	vecTPHitY.push_back(y);
 	vecTPHitZ.push_back(z);
-	if ( myDebug_ ) std::cout << itphit << " p=" << TPhit->pabs() << " r=" << gpos.perp() << std::endl;
+	if ( myDebug_ ) std::cout << itphit << " TPHit p=" << TPhit->pabs() << " r=" << gpos.perp() << std::endl;
 	if ( TPhit->pabs() > 0.5 ) { pSimOut=TPhit->pabs() ;}
 		 
 	x0=x;
@@ -387,7 +416,8 @@ bool SplitReco::trackPreSelection(const reco::Track & itTrack){
   //
   // Track preselection
   if (
-      fabs(sT_eta)>etaMaxCut_ || 
+      sT_eta<etaMinCut_ || 
+      sT_eta>etaMaxCut_ || 
       sT_nHitVal<nHitMinCut_ ||
       sT_pt<ptMinCut_ ||
       sT_pt>ptMaxCut_
@@ -406,7 +436,7 @@ bool SplitReco::trackPreSelection(const reco::Track & itTrack){
 
 int SplitReco::trackAction(const reco::Track & itTrack){
 
-  SplitRefit thisSplitRefit(theG.product(), theMF.product(), theFitter.product(), theBuilder.product());
+  SplitRefit thisSplitRefit(theG.product(), theMF.product(), theFitter.product(), theBuilder.product(), myDebug_);
   myTrack mytrack = thisSplitRefit.initializeWithTrack(itTrack);
 
   //
@@ -423,36 +453,88 @@ int SplitReco::trackAction(const reco::Track & itTrack){
   sT_xOut   =mytrack.xOut;
   sT_yOut   =mytrack.yOut;
   sT_zOut   =mytrack.zOut;
+  sT_maxchi2 = mytrack.maxhitchi2;
+
+
+  /*
+  //'offline' track selection for debugging purposes
+  int icut = 0;
+  if (
+      //ripulire
+      sT_rIn < 8. 
+      &&
+      ((sT_rOut>100.)||(sT_zOut>260.)||(sT_zOut<-260.))
+      &&
+      (sT_nHitIna+sT_nHitMis+sT_nHitBad)==0
+      &&
+      //To better identify the direction
+      sT_dz<5.
+      &&
+      sT_dz>-5.
+      ) icut = 1;
+  
+  if ( icut ) return 1;
+  */
 
   //do splits refits
-  std::vector<Split> splits = thisSplitRefit.doSplitRefits(splitTrackEffHits_, splitTrackEffHits_, kFactor_, pullCut_);
-  energyLoss eLoss = thisSplitRefit.energyLossFitOnSplits(splits);
+  if ( myDebug_ ) std::cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%% Split refit " << std::endl; 
+  std::vector<Split> splits = thisSplitRefit.doSplitRefits(splitTrackEffHits_, splitTrackEffHits_, kFactor_, specialErrorRescale_);
+  std::vector<energyLoss> eLosses = thisSplitRefit.energyLossFitOnSplits(splits);
+  if ( myDebug_ ) std::cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%% Split refit done" << std::endl; 
   
-  sT_pLossSplit=eLoss.pLoss;
-  sT_pLossErrSplit=eLoss.pLossErr;
-  sT_dpdxSplit=eLoss.dpdx;
-  sT_dpdxErrSplit=eLoss.dpdxErr;
-  sT_p0Split=eLoss.p0;
-  sT_chi2Split=eLoss.chi2;
-  sT_freeParSplit=eLoss.freePar;
-  sT_NSplit=eLoss.nsplits;
-  sT_TInSplit=eLoss.TIn;
-  sT_TOutSplit=eLoss.TOut;
+  sT_NSplit=eLosses.at(0).nsplits;
+  sT_TInSplit=eLosses.at(0).TIn;
+  sT_TOutSplit=eLosses.at(0).TOut;
+
+  sT_dpdxSplit=eLosses.at(0).dpdx;
+  sT_dpdxErrSplit=eLosses.at(0).dpdxErr;
+  sT_chi2Split=eLosses.at(0).chi2;
+  sT_freeParSplit=eLosses.at(0).freePar;
+
+  sT_dpdxTSplit=eLosses.at(1).dpdx;
+  sT_dpdxTErrSplit=eLosses.at(1).dpdxErr;
+  sT_chi2TSplit=eLosses.at(1).chi2;
+  sT_freeParTSplit=eLosses.at(1).freePar;
+
+  sT_dpdxZSplit=eLosses.at(2).dpdx;
+  sT_dpdxZErrSplit=eLosses.at(2).dpdxErr;
+  sT_chi2ZSplit=eLosses.at(2).chi2;
+  sT_freeParZSplit=eLosses.at(2).freePar;
 
   //do super splits refits
-  std::vector<Split> splits2 = thisSplitRefit.doSplitRefits(splitTrackEffHits_, 1, kFactor_, pullCut_);
-  energyLoss eLoss2 = thisSplitRefit.energyLossFitOnSplits(splits2);
+  if ( myDebug_ ) std::cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%% Super Split refit " << std::endl; 
+  std::vector<Split> splits2 = thisSplitRefit.doSplitRefits(splitTrackEffHits_, 1, kFactor_, specialErrorRescale_);
+  std::vector<energyLoss> eLosses2 = thisSplitRefit.energyLossFitOnSplits(splits2);
+  if ( myDebug_ ) std::cout << " %%%%%%%%%%%%%%%%%%%%%%%%%%%% Super Split refit done " << std::endl; 
   
-  sT_pLossSSplit=eLoss2.pLoss;
-  sT_pLossErrSSplit=eLoss2.pLossErr;
-  sT_dpdxSSplit=eLoss2.dpdx;
-  sT_dpdxErrSSplit=eLoss2.dpdxErr;
-  sT_p0SSplit=eLoss2.p0;
-  sT_chi2SSplit=eLoss2.chi2;
-  sT_freeParSSplit=eLoss2.freePar;
-  sT_NSSplit=eLoss2.nsplits;
-  sT_TInSSplit=eLoss2.TIn;
-  sT_TOutSSplit=eLoss2.TOut;
+  sT_NSSplit=eLosses2.at(0).nsplits;
+
+  sT_dpdxSSplit=eLosses2.at(0).dpdx;
+  sT_dpdxErrSSplit=eLosses2.at(0).dpdxErr;
+  sT_chi2SSplit=eLosses2.at(0).chi2;
+  sT_freeParSSplit=eLosses2.at(0).freePar;
+
+  sT_dpdxTSSplit=eLosses2.at(1).dpdx;
+  sT_dpdxTErrSSplit=eLosses2.at(1).dpdxErr;
+  sT_chi2TSSplit=eLosses2.at(1).chi2;
+  sT_freeParTSSplit=eLosses2.at(1).freePar;
+
+  sT_dpdxZSSplit=eLosses2.at(2).dpdx;
+  sT_dpdxZErrSSplit=eLosses2.at(2).dpdxErr;
+  sT_chi2ZSSplit=eLosses2.at(2).chi2;
+  sT_freeParZSSplit=eLosses2.at(2).freePar;
+
+  //
+  // Extras
+#ifdef extra
+  sT_pLossSplit=eLosses.at(0).pLoss;
+  sT_pLossErrSplit=eLosses.at(0).pLossErr;
+  sT_p0Split=eLosses.at(0).p0;
+  sT_pLossSSplit=eLosses2.at(0).pLoss;
+  sT_pLossErrSSplit=eLosses2.at(0).pLossErr;
+  sT_p0SSplit=eLosses.at(0).p0;
+#endif
+
 
   //
   // Fill splitTree

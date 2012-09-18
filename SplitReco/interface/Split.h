@@ -2,7 +2,6 @@
 #define Split_H
 
 struct myTrack {
-
   double pAve;
   double pAveErr;
   int nHit;
@@ -16,12 +15,18 @@ struct myTrack {
   double xOut;
   double yOut;
   double zOut;
-
+  double maxhitchi2;
 };
 
 struct Split {
   double pt;
   double ptErr;
+  double curv;
+  double curvErr;
+  double curvz;
+  double curvzErr;
+  double curvt;
+  double curvtErr;
   double T;
   double TErr;
 };

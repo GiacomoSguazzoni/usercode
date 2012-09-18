@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.1 2012/08/02 14:21:37 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.2 2012/08/28 09:57:38 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -39,10 +39,10 @@
 //
 // constructors and destructor
 //
-SplitRefit::SplitRefit(const TrackerGeometry * theGeometry, const MagneticField * theMagneticField, const TrajectoryFitter * theFitter, const TransientTrackingRecHitBuilder * theBuilder)
+SplitRefit::SplitRefit(const TrackerGeometry * theGeometry, const MagneticField * theMagneticField, const TrajectoryFitter * theFitter, const TransientTrackingRecHitBuilder * theBuilder, bool debug)
 {
 
-  myDebug_ = false;
+  myDebug_ = debug;
 
   theG = theGeometry;
   theMF = theMagneticField;
@@ -55,10 +55,42 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
 
   theTrack = track;
 
+  //
   //Store Quantities needed later
+  //
   theTrackTheta = theTrack.theta();
   theTrackThetaErr = theTrack.thetaError();
   theTrackInvSinTheta = 1./sin(theTrackTheta);
+  theTrackPt = theTrack.pt();
+  theTrackP = theTrack.p();
+  theTrackPtSquared = theTrackPt*theTrackPt;
+  theTrackPSquared = theTrackP*theTrackP;
+  theTrackLambda = theTrack.lambda();
+  theTrackInvSinLambda = 1./sin(theTrackLambda);
+  theTrackInvCosLambda = 1./cos(theTrackLambda);
+  theTrackCharge = theTrack.charge();
+  BInTesla = theMF->inTesla(GlobalPoint(0., 0., 0.)).z(); //Nominal B field
+
+  //
+  // Initialize Jacobians
+  double sinlambda = sin(theTrackLambda);
+  double coslambda = cos(theTrackLambda);
+
+  // To pass from matrix with 1/P (default) to 1/Pt
+  jacoInvPToInvPt                = AlgebraicMatrixID();
+  jacoInvPToInvPtTransposed      = AlgebraicMatrixID();
+  jacoInvPToInvPt(0,0)           = 1./coslambda; 
+  jacoInvPToInvPtTransposed(0,0) = jacoInvPtToInvP(0,0);
+  jacoInvPToInvPt(0,1)           = theTrackPt*sinlambda/coslambda/coslambda; 
+  jacoInvPToInvPtTransposed(1,0) = jacoInvPtToInvP(0,1);  
+
+  // To pass from matrix with 1/Pt to 1/P (default)
+  jacoInvPtToInvP                = AlgebraicMatrixID();
+  jacoInvPtToInvPTransposed      = AlgebraicMatrixID();
+  jacoInvPtToInvP(0,0)           = coslambda;
+  jacoInvPtToInvPTransposed(0,0) = coslambda;
+  jacoInvPtToInvP(0,1)           = -theTrackP*sinlambda; 
+  jacoInvPtToInvPTransposed(1,0) = jacoInvPToInvPt(0,1);
 
 #ifdef cmsswVersion44x
   // in CMMSW 44x
@@ -105,7 +137,9 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
 
   mytrack.nEffHit=-1;
 
-  if ( myDebug_ ) std::cout << " ++++++++++++++++++++++++++++++++++++++++" << std::endl;
+    if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
+    if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
+    if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
   if ( myDebug_ ) std::cout << " Split refit initialization with track..." << std::endl;
 
   if ( ! trajVec.size()>0 ) return mytrack;
@@ -121,6 +155,7 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
     double T = 0.;
     double pAveTrack=0.;
     double pErrAveTrack=0.;
+    double maxhitchi2 = -1.;
     for (itm=theTrajectoryMeasurements.end()-1;itm!=theTrajectoryMeasurements.begin()-1;itm--){ //loop on hits
       iHitN++;
       TrajectoryStateOnSurface upTSOS = itm->updatedState();
@@ -137,6 +172,8 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
       pErrAveTrack+=pErrorAtTSOS(upTSOS);
       double theta=upTSOS.globalMomentum().theta();
       double dPerpT=sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
+      double hitchi2 = itm->estimate();
+      if ( hitchi2 > maxhitchi2 ) maxhitchi2 = hitchi2;
       vecDPerpT.push_back(dPerpT);
       if ( dPerpT > 1. || iHitN == 1 ) {
 	iEffHitN++;
@@ -150,25 +187,41 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
       //	 double dT=dPerpT/sin(theta);
       T+=dT;
       vecT.push_back(T);
-      if ( myDebug_ ) std::cout
-	<< " >>>>TSOS>> nH" << iHitN
-	<< " nEffH" << iEffHitN
-	<< " ups=" << upTSOS.globalMomentum().mag() 
-	<< " th=" << theta
-	<< " sinth=" << sin(theta)
-	<< " r=" << perpR
-	<< " x=" << x
-	<< " y=" << y
-	<< " z=" << z
-	<< " dx=" << x-x0
-	<< " dy=" << y-y0
-	<< " dPerpT=" << dPerpT
-	<< " effN=" << iEffHitN
-	<< " beg:" << vecEffHitBegin.at(iEffHitN-1)
-	<< " end:" << vecEffHitEnd.at(iEffHitN-1)
-	<< " dT=" << dT
-	<< " T=" << T
-	<< std::endl;
+      //
+      if ( myDebug_ ) {
+	std::cout
+	  << " >>>>Measurement>> nH" << iHitN
+	  << " nEffH" << iEffHitN;
+	DetId detectorId=DetId(itm->recHit()->geographicalId());
+	dumpModuleInfo(detectorId);
+	//	<< " sinth=" << sin(theta)
+	std::cout << " r=" << perpR
+	  //	<< " x=" << x
+	  //	<< " y=" << y
+		  << " z=" << z
+	  //	<< " dx=" << x-x0
+	  //	<< " dy=" << y-y0
+	  //	<< " dPerpT=" << dPerpT
+		  << " effN=" << iEffHitN
+		  << " beg:" << vecEffHitBegin.at(iEffHitN-1)
+		  << " end:" << vecEffHitEnd.at(iEffHitN-1)
+		  << " dT=" << dT
+		  << " T=" << T
+		  << " chi2=" << hitchi2
+		  << " maxchi2=" << maxhitchi2
+		  << std::endl;
+	TrajectoryStateOnSurface fwTSOS = itm->forwardPredictedState();
+	std::cout << ">>>>>fw>>";
+	dumpTSOSInfo(fwTSOS);
+	//
+	TrajectoryStateOnSurface bwTSOS = itm->backwardPredictedState();
+	std::cout << ">>>>>bw>>";
+	dumpTSOSInfo(bwTSOS);
+	//
+	std::cout << ">>>>>up>>";
+	dumpTSOSInfo(upTSOS);
+      }
+      
       x0=x;
       y0=y;
       z0=z;
@@ -187,8 +240,10 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
     mytrack.xOut=vecX.at(iHitN-1);
     mytrack.yOut=vecY.at(iHitN-1);
     mytrack.zOut=vecZ.at(iHitN-1);
+    mytrack.maxhitchi2=maxhitchi2;
 
     if ( myDebug_ ) std::cout << " Initialization successful; track refit done. " << std::endl;
+    if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
 
     return mytrack;
 
@@ -218,7 +273,7 @@ std::vector<Trajectory> SplitRefit::doGenericRefit(TransientTrackingRecHit::RecH
 
 }
 
-std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement, double kFactor, double pullCut){
+std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement, double kFactor, bool iSpecialErrorRescale){
 
   setMaterialToKFactor(kFactor);
 
@@ -232,6 +287,8 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
 
     if ( mytrack.nEffHit - iEffLast < nHitIncrement ) iEffLast = mytrack.nEffHit; //no place for another split
 
+    if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
+    if ( myDebug_ ) std::cout << " ## New split " << std::endl;
     if ( myDebug_ ) std::cout << " NEXT iEffFirst=" << iEffFirst << " " << " iEffLast=" << iEffLast << " " << std::endl;
     if ( myDebug_ ) std::cout << " Now using hits"; 
     int iFirst=vecEffHitBegin.at(iEffFirst-1);
@@ -247,45 +304,123 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
       hitsSplit.push_back(theB->build(&**i ));
       i++;
     }
+    if ( myDebug_ ) std::cout << std::endl;
 
     //
     // Set the proper TSOS
+    //    if ( iFirst == 1 ) {
+    //      theInitialStateForSplitRefitting=theInitialStateForRefitting;
+    //      if ( myDebug_ ) std::cout << " iFirst=" << iFirst << " TSOS=" << theInitialStateForSplitRefitting.globalMomentum().mag(); 
+    //    } else {
+    
     TrajectoryStateOnSurface theInitialStateForSplitRefitting;
-    if ( iFirst == 1 ) {
-      theInitialStateForSplitRefitting=theInitialStateForRefitting;
-      if ( myDebug_ ) std::cout << " iFirst=" << iFirst << " TSOS=" << theInitialStateForSplitRefitting.globalMomentum().mag(); 
+
+    if ( iSpecialErrorRescale ) {
+      TrajectoryStateOnSurface theStateFromTraj = (theTrajectoryMeasurements.end()-iFirst)->updatedState();
+      // TSOS, factor, rescale 1/pt (= 0 to rescale 1/p), rescale all transv components
+      theStateFromTraj.rescaleError(100);
+      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfLongComponent(theStateFromTraj, 0.);
+      // Constructor from global ref system
+      theInitialStateForSplitRefitting = TrajectoryStateOnSurface( theStateFromTraj.globalParameters(),
+								 CurvilinearTrajectoryError(newErrorMatrix),
+								 theStateFromTraj.surface());
     } else {
       TrajectoryStateOnSurface theStateFromTraj = (theTrajectoryMeasurements.end()-iFirst)->forwardPredictedState();
       theStateFromTraj.rescaleError(100);
+      //Constructor from local ref system
       theInitialStateForSplitRefitting = TrajectoryStateOnSurface(theStateFromTraj.localParameters(),
 								  theStateFromTraj.localError(),                  
-								  theStateFromTraj.surface(),
-								  theMF.product());  
-      if ( myDebug_ ) std::cout << " iFirst=" << iFirst << " TSOS=" << theInitialStateForSplitRefitting.globalMomentum().mag(); 
+								theStateFromTraj.surface(),
+								theMF.product());  
     }
-	 
+
+    if ( myDebug_ ) std::cout << " iFirst=" << iFirst << " TSOS=" << theInitialStateForSplitRefitting.globalMomentum().mag() << std::endl; 
+    
     std::vector<Trajectory> trajVecSplit = doGenericRefit(hitsSplit, theInitialStateForSplitRefitting);
 
     //
     //
     if (trajVecSplit.size()>0) {
 
+      std::vector<TrajectoryMeasurement> theSplitMeasurements;
+      theSplitMeasurements=trajVecSplit.begin()->measurements();
+ 
+
+      if ( myDebug_ ){
+
+	int istate = 0;
+
+	for (std::vector<TrajectoryMeasurement>::iterator itm=theSplitMeasurements.end()-1;itm!=theSplitMeasurements.begin()-1;itm--){ //loop on hits
+
+	  DetId detectorId=DetId(itm->recHit()->geographicalId());
+	  
+	  std::cout << ">>>>>> Measurement #" << istate;
+	  dumpModuleInfo(detectorId);
+	  std::cout << " chi2:" << itm->estimate() << std::endl;
+	  //
+	  TrajectoryStateOnSurface fwTSOS = itm->forwardPredictedState();
+	  std::cout << ">>>>>fw>>";
+	  dumpTSOSInfo(fwTSOS);
+	  //
+	  TrajectoryStateOnSurface bwTSOS = itm->backwardPredictedState();
+	  std::cout << ">>>>>bw>>";
+	  dumpTSOSInfo(bwTSOS);
+	  //
+	  TrajectoryStateOnSurface upTSOS = itm->updatedState();
+	  std::cout << ">>>>>up>>";
+	  dumpTSOSInfo(upTSOS);
+
+	  istate++;
+	}
+      }
+
+
+
       //
       // For the energy loss fit...
       Split split;
 
+      double pAve, pAveErr, pAveT, pAveTErr, pAveZ, pAveZErr;
+      GetPAveFromMeasurements(theSplitMeasurements, pAve, pAveErr, pAveT, pAveTErr, pAveZ, pAveZErr);
+
       TrajectoryStateOnSurface firstSplitTSOS = trajVecSplit.begin()->lastMeasurement().updatedState();
-      split.pt=firstSplitTSOS.globalMomentum().perp();;
-      split.ptErr=ptErrorAtTSOS(firstSplitTSOS);;
+      split.pt=firstSplitTSOS.globalMomentum().perp();
+      split.ptErr=ptErrorAtTSOS(firstSplitTSOS);
+      // split.curv=abs(firstSplitTSOS.transverseCurvature()); //Apparently this method returns zero...
+      split.curv=1./pAve;
+      split.curvErr=split.curv*(pAveErr/pAve); //Relative curv error is the same as relative pt error
+      split.curvt=1./pAveT;
+      split.curvtErr=split.curv*(pAveTErr/pAveT); //Relative curv error is the same as relative pt error
+      split.curvz=1./pAveZ;
+      split.curvzErr=split.curv*(pAveZErr/pAveZ); //Relative curv error is the same as relative pt error
       split.T=0.5*(vecT.at(iLast-1)+vecT.at(iFirst-1));
       split.TErr=0.05;  //half millimiter error (?)
       splits.push_back(split);
 
-      if ( myDebug_ ) std::cout << " Split pt=" << split.pt << "+-" << split.ptErr << std::endl;
+      if ( myDebug_ ) {
+	double lambda = (M_PI/2.-firstSplitTSOS.globalMomentum().theta());
+	double lambdaErr = lambdaErrorAtTSOS(firstSplitTSOS);
+	double p = firstSplitTSOS.globalMomentum().mag();
+	double pErr = pErrorAtTSOS(firstSplitTSOS);
+	double pz = firstSplitTSOS.globalMomentum().z();
+	double pzErr = pzErrorAtTSOS(firstSplitTSOS);
+	double pFromPt = fabs(split.pt/cos(theTrackLambda)); 
+	double pErrFromPt = split.ptErr/cos(theTrackLambda); 
+	double pFromPz = pz/sin(theTrackLambda); 
+	double pErrFromPz = fabs(pzErr/sin(theTrackLambda));
+	double splitChi2 = (trajVecSplit.begin()->chiSquared()/(1.*trajVecSplit.begin()->ndof()));
+	std::cout << " ???????????????????????????????????????????????????????????????????????? " << std::endl;
+	std::cout << " Split T=" << split.T << " pt=" << split.pt << "+-" << split.ptErr << " pz=" << pz << "+-" << pzErr << " lambda:" << lambda << "+-" << lambdaErr << " chi2/ndof:" << splitChi2 << std::endl;
+	std::cout << "  p=" << p << "+-" << pErr << "  pFromPt=" << pFromPt << "+-" << pErrFromPt << " pFromPz=" << pFromPz << "+-" << pErrFromPz << std::endl;
+	std::cout << "  pAv=" << pAve << "+-" << pAveErr << "  pAv=" << pAveT << "+-" << pAveTErr << "  pAv=" << pAveZ << "+-" << pAveZErr << std::endl;
+	std::cout << " ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; " << std::endl;
+	std::cout << firstSplitTSOS.curvilinearError().matrix()  << std::endl;
+	std::cout << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;
+      }
 
     } else {
 
-      if ( myDebug_ ) std::cout << " split fit failed" << std::endl;
+      if ( myDebug_ ) std::cout << " split refit failed" << std::endl;
 
     }
 	 
@@ -304,7 +439,20 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
 
 }
 
-energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
+std::vector<energyLoss> SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
+
+  std::vector<energyLoss> eLosses;
+
+  //  eLosses.push_back(energyLossFitByPtOnSplits(splits));
+  eLosses.push_back(energyLossFitByCurvOnSplits(splits,0));
+  eLosses.push_back(energyLossFitByCurvOnSplits(splits,1));
+  eLosses.push_back(energyLossFitByCurvOnSplits(splits,2));
+
+  return eLosses;
+
+}
+
+energyLoss SplitRefit::energyLossFitByPtOnSplits(std::vector<Split> &splits){
 
   int minSplits = 3; //protection
   int nsplits = splits.size();  
@@ -314,7 +462,6 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
   eLoss.nsplits = nsplits;
 
   if ( nsplits < minSplits ) return eLoss;
-  
   //
   // Fill arrays for graph
 
@@ -332,6 +479,10 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
   
   int iarr = 0;
 
+  if ( myDebug_ ) std::cout << " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+  if ( myDebug_ ) std::cout << " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+  if ( myDebug_ ) std::cout << " >>>>>>>>>>>>>>>>>>>>> Starting split value **pt** fit " << std::endl;
+
   for (std::vector<Split>::iterator it=splits.begin() ; it < splits.end(); it++ ){
 
     arrPtSplit[iarr]=(*it).pt;
@@ -340,13 +491,17 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
     arrTErrSplit[iarr]=(*it).TErr;
     iarr++;
 
+  if ( myDebug_ ) std::cout << " Split value for fit #" << iarr << " T:" << (*it).T << " TErr:" << (*it).TErr << " pt:" << (*it).pt << " ptErr:" << (*it).ptErr << std::endl;
+
   }  
 
+  // Old style fits on pt values
+  //
   TGraphErrors graphForFit(nsplits,arrTSplit,arrPtSplit,arrTErrSplit,arrPtErrSplit);  
   int fitResult = graphForFit.Fit("pol1","Q");
   TF1 *fit = graphForFit.GetFunction("pol1");
   if ( fitResult ) {
-    if ( myDebug_ ) std::cout << " Linear fit of splits failed with code: " << fitResult << std::endl;
+    if ( myDebug_ ) std::cout << " Linear fit of split pt failed with code: " << fitResult << std::endl;
     return eLoss;
   } 
 
@@ -375,55 +530,291 @@ energyLoss SplitRefit::energyLossFitOnSplits(std::vector<Split> &splits){
 
 }
 
+energyLoss SplitRefit::energyLossFitByCurvOnSplits(std::vector<Split> &splits, int iSwitch){
+
+  int minSplits = 3; //protection
+  int nsplits = splits.size();  
+
+  energyLoss eLoss;
+  eLoss.chi2 = -1.;
+  eLoss.nsplits = nsplits;
+
+  if ( nsplits < minSplits ) return eLoss;
+  
+  //
+  // Fill arrays for graph
+
+#ifdef cmsswVersion44x
+  // in CMMSW 44x fixed lenght arrays required
+  const int nsize = 50;
+#else
+  int nsize = nsplits;
+#endif
+
+  double arrCurvSplit[nsize];
+  double arrCurvErrSplit[nsize];
+  double arrTSplit[nsize];
+  double arrTErrSplit[nsize];
+  
+  int iarr = 0;
+
+  if ( myDebug_ ) std::cout << " >>>>>>>>>>>>>>>>>>>>> Starting split value **curvature** fit " << std::endl;
+  
+  for (std::vector<Split>::iterator it=splits.begin() ; it < splits.end(); it++ ){
+
+    if ( iSwitch == 0 ){
+      arrCurvSplit[iarr]=(*it).curv;
+      arrCurvErrSplit[iarr]=(*it).curvErr;
+    }
+    if ( iSwitch == 1 ){
+      arrCurvSplit[iarr]=(*it).curvt;
+      arrCurvErrSplit[iarr]=(*it).curvtErr;
+    }
+    if ( iSwitch == 2 ){
+      arrCurvSplit[iarr]=(*it).curvz;
+      arrCurvErrSplit[iarr]=(*it).curvzErr;
+    }
+
+    arrTSplit[iarr]=(*it).T;
+    arrTErrSplit[iarr]=(*it).TErr;
+
+    if ( myDebug_ ) std::cout << " Split value for fit #" << iarr << " T:" << (*it).T << " TErr:" << (*it).TErr << " curv:" << arrCurvSplit[iarr] << " curvErr:" << arrCurvErrSplit[iarr] << std::endl;
+
+    iarr++;
+
+
+  }  
+
+  // New style fits on pt values
+  //
+  try {
+    TGraphErrors graphForFit(nsplits,arrTSplit,arrCurvSplit,arrTErrSplit,arrCurvErrSplit);  
+    int fitResult = graphForFit.Fit("pol1","Q");
+    TF1 *fit = graphForFit.GetFunction("pol1");
+    if ( fitResult ) {
+      if ( myDebug_ ) std::cout << " Linear fit of split curv failed with code: " << fitResult << std::endl;
+      return eLoss;
+    } 
+    
+    //
+    // In case of valid fit
+    eLoss.p0 = fit->GetParameter(0);
+    // 
+    // Approximated relation between dCurv/dx and dP/dx
+    //
+    // dP/dx = -(1/sin theta) (pt*pt/0.3/B) dCurv/dx
+    //
+    // with 3.33566830114413 = 1./0.29979
+    //
+    // we fill the vector with Chi = 1./pt . Formula simplifies
+    //
+    // dP/dx = -(1/sin theta) (pt*pt) dChi/dx
+    
+    //  double multFactor = theTrackInvSinTheta*theTrackPtSquared*3.33566830114413/BInTesla;
+    //  double multFactor = theTrackInvSinTheta*theTrackPtSquared;
+    
+    double multFactor = theTrackPSquared;
+    
+    eLoss.dpdx = fit->GetParameter(1)*multFactor;
+    eLoss.dpdxErr = fit->GetParError(1)*multFactor; 
+    eLoss.chi2 = fit->GetChisquare();
+    eLoss.freePar = fit->GetNumberFreeParameters();
+    
+    
+    if ( myDebug_ ) std::cout << " linear EL by Curv fit p0=" << eLoss.p0 << " dpdx=" << eLoss.dpdx << " chi2/freePar=" << eLoss.chi2 << "/" << eLoss.freePar << std::endl; 
+    eLoss.TIn  = (*(splits.begin())).T;
+    double TInErr = (*(splits.begin())).TErr;
+    eLoss.TOut = (*(splits.end()-1)).T;
+    double TOutErr = (*(splits.end()-1)).TErr;
+    double TTot = eLoss.TOut - eLoss.TIn;
+    eLoss.pLoss = eLoss.dpdx*(eLoss.TOut - eLoss.TIn);
+    eLoss.pLossErr = sqrt(TTot*TTot*eLoss.dpdxErr*eLoss.dpdxErr+eLoss.dpdx*eLoss.dpdx*(TInErr*TInErr+TOutErr*TOutErr));
+    if ( myDebug_ ) {
+      std::cout << " TIn=" << eLoss.TIn << "; TOut=" << eLoss.TOut << " Ttot=" << TTot << " pLoss=" << eLoss.pLoss << " pLossErr=" << eLoss.pLossErr  << std::endl; 
+    }
+    
+  } catch (...) {
+    
+    std::cout << " >>>>> Exception caught in linear fit <<<<<" << std::endl; 
+    
+  }
+  
+  return eLoss;
+
+}
+
 double SplitRefit::pErrorAtTSOS(TrajectoryStateOnSurface & TSOS){
   
-  //  float     px    = TSOS.globalMomentum().x();
-  //  float     py    = TSOS.globalMomentum().y();
-  //  float     pz    = TSOS.globalMomentum().z();
-  //  float     pt    = TSOS.globalMomentum().perp();
-  //  float     phi   = TSOS.globalMomentum().phi();
-  //  float     theta = TSOS.globalMomentum().theta();
-  //  float     eta   = TSOS.globalMomentum().eta();
+  //Relative error on p is the same as error on curvature, i.e. the 
+
+  double p = TSOS.globalMomentum().mag();
+  double qoverperror = sqrt(TSOS.curvilinearError().matrix()(0,0));
+
+  return p*p*qoverperror;
+
+}
+
+void SplitRefit::GetPAveFromMeasurements(std::vector<TrajectoryMeasurement> theSplitMeasurements, double& pAve, double& pAveErr, double& pAveT, double& pAveTErr, double& pAveZ, double& pAveZErr){
+
+  pAve = 0.;
+  pAveErr = 0.;
+  pAveT = 0.;
+  pAveTErr = 0.;
+  pAveZ = 0.;
+  pAveZErr = 0.;
+  for (std::vector<TrajectoryMeasurement>::iterator itm=theSplitMeasurements.end()-1;itm!=theSplitMeasurements.begin()-1;itm--){ //loop on hits
+    TrajectoryStateOnSurface upTSOS = itm->updatedState();
+    double pErr2 = pErrorAtTSOS(upTSOS);
+    double pTErr2 = ptErrorAtTSOS(upTSOS);
+    double pZErr2 = pzErrorAtTSOS(upTSOS)*theTrackInvSinLambda;
+    //
+    pErr2*=pErr2;
+    pAve += upTSOS.globalMomentum().mag()/pErr2;
+    pAveErr += 1./pErr2;
+    //
+    pTErr2*=pTErr2;
+    pAveT += upTSOS.globalMomentum().perp()*theTrackInvCosLambda/pTErr2;
+    pAveTErr += 1./pTErr2;
+    //
+    pZErr2*=pZErr2;
+    pAveZ += upTSOS.globalMomentum().z()*theTrackInvSinLambda/pZErr2;
+    pAveZErr += 1./pZErr2;
+  }
   
-  //get the error of the kinimatic parameters
+  pAve *= 1./pAveErr;
+  pAveErr = sqrt(1./pAveErr);
+  //
+  pAveT *= 1./pAveTErr;
+  pAveTErr = sqrt(1./pAveTErr);
+  //
+  pAveZ *= 1./pAveZErr;
+  pAveZErr = sqrt(1./pAveZErr);
+
+}
+
+double SplitRefit::ptErrorAtTSOS(TrajectoryStateOnSurface& TSOS){
+  
+  double px = TSOS.globalMomentum().x();
+  double py = TSOS.globalMomentum().y();
+  double pt = TSOS.globalMomentum().perp();
+
   AlgebraicSymMatrix66 errors = TSOS.cartesianError().matrix();
-  double partialPterror = errors(3,3)*pow(TSOS.globalMomentum().x(),2) + errors(4,4)*pow(TSOS.globalMomentum().y(),2);
-  //  float     pterror  = sqrt(partialPterror)/TSOS.globalMomentum().perp();
-  //  float     pxerror  = sqrt(errors(3,3))/TSOS.globalMomentum().x();
-  //  float     pyerror  = sqrt(errors(4,4))/TSOS.globalMomentum().y();
-  //  float     pzerror  = sqrt(errors(5,5))/TSOS.globalMomentum().z();
-  double     perror   = sqrt(partialPterror+errors(5,5)*pow(TSOS.globalMomentum().z(),2))/TSOS.globalMomentum().mag();
-  //  float     phierror = sqrt(TSOS.curvilinearError().matrix()(2,2));
-  //  float     etaerror = sqrt(TSOS.curvilinearError().matrix()(1,1))*fabs(sin(TSOS.globalMomentum().theta()));
+
+  double dpx2 = errors(3,3);
+  double dpy2 = errors(4,4);
+  double dpxdpy = errors(3,4);
   
-  return perror;
+  return sqrt(px*px*dpx2 + py*py*dpy2 + 2.*px*py*dpxdpy)/pt;
   
 }
 
-double SplitRefit::ptErrorAtTSOS(TrajectoryStateOnSurface & TSOS){
+double SplitRefit::pzErrorAtTSOS(TrajectoryStateOnSurface& TSOS){
   
-  //  float     px    = TSOS.globalMomentum().x();
-  //  float     py    = TSOS.globalMomentum().y();
-  //  float     pz    = TSOS.globalMomentum().z();
-  //  float     pt    = TSOS.globalMomentum().perp();
-  //  float     phi   = TSOS.globalMomentum().phi();
-  //  float     theta = TSOS.globalMomentum().theta();
-  //  float     eta   = TSOS.globalMomentum().eta();
-  
-  //get the error of the kinimatic parameters
   AlgebraicSymMatrix66 errors = TSOS.cartesianError().matrix();
-  double partialPterror = errors(3,3)*pow(TSOS.globalMomentum().x(),2) + errors(4,4)*pow(TSOS.globalMomentum().y(),2);
-  double     pterror  = sqrt(partialPterror)/TSOS.globalMomentum().perp();
-  //  float     pxerror  = sqrt(errors(3,3))/TSOS.globalMomentum().x();
-  //  float     pyerror  = sqrt(errors(4,4))/TSOS.globalMomentum().y();
-  //  float     pzerror  = sqrt(errors(5,5))/TSOS.globalMomentum().z();
-  //  double     perror   = sqrt(partialPterror+errors(5,5)*pow(TSOS.globalMomentum().z(),2))/TSOS.globalMomentum().mag();
-  //  float     phierror = sqrt(TSOS.curvilinearError().matrix()(2,2));
-  //  float     etaerror = sqrt(TSOS.curvilinearError().matrix()(1,1))*fabs(sin(TSOS.globalMomentum().theta()));
-  
-  return pterror;
+
+  return sqrt(errors(5,5));
   
 }
+
+double SplitRefit::lambdaErrorAtTSOS(TrajectoryStateOnSurface& TSOS){
+  
+  AlgebraicSymMatrix55 errors = TSOS.curvilinearError().matrix();
+
+  return sqrt(errors(1,1));
+  
+}
+
+AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfTransComponent(TrajectoryStateOnSurface& TSOS, double kFactor, int iRescalePt, int iRescaleTransv){
+
+  AlgebraicSymMatrix55 oldErrorMatrix = TSOS.curvilinearError().matrix();
+
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+    std::cout << ">> ***[Matrices multiplied by 100. to improve readibility]*** >>>>>>>>>>" << std::endl;
+    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in P before rescaling:" << std::endl;
+    std::cout << 100.*oldErrorMatrix << std::endl;
+  }
+  
+  AlgebraicMatrix55 errorMatrixToRescale;
+  if ( iRescalePt ) {
+    errorMatrixToRescale = (jacoInvPToInvPt*oldErrorMatrix)*jacoInvPToInvPtTransposed;
+  } else {
+    errorMatrixToRescale = oldErrorMatrix;
+  }
+
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pt before rescaling:" << std::endl;
+    std::cout << 100.*errorMatrixToRescale << std::endl;
+  }
+  
+  //Let's rescale only the first component term (p or pt)
+  for (int j=0;j<5;j++) { errorMatrixToRescale(0,j)*=kFactor; errorMatrixToRescale(j,0)*=kFactor; }
+  // ...or all tranvese comp
+  if ( iRescaleTransv ){
+    for (int j=0;j<5;j++) { errorMatrixToRescale(2,j)*=kFactor; errorMatrixToRescale(j,2)*=kFactor; }
+    for (int j=0;j<5;j++) { errorMatrixToRescale(3,j)*=kFactor; errorMatrixToRescale(j,3)*=kFactor; }
+  }
+
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pt **AFTER** rescaling:" << std::endl;
+    std::cout << 100.*errorMatrixToRescale << std::endl;
+  }
+
+  AlgebraicMatrix55 newErrorMatrix;
+
+  if ( iRescalePt ) {
+    newErrorMatrix = (jacoInvPtToInvP*errorMatrixToRescale)*jacoInvPtToInvPTransposed;
+  } else {
+    newErrorMatrix = errorMatrixToRescale;
+  }
+
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in P **AFTER** rescaling:" << std::endl;
+    std::cout << 100.*newErrorMatrix << std::endl;
+  }
+
+  AlgebraicSymMatrix55 newSymErrorMatrix = newErrorMatrix.LowerBlock();
+  
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>> returned Sym ErrorMatrix in P **AFTER** rescaling (for cross check):" << std::endl;
+    std::cout << 100.*newSymErrorMatrix << std::endl;
+  }
+
+  return newSymErrorMatrix;
+
+}
+
+AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfLongComponent(TrajectoryStateOnSurface& TSOS, double kFactor){
+
+  AlgebraicSymMatrix55 errorMatrixToRescale = TSOS.curvilinearError().matrix();
+
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+    std::cout << ">> ***[Matrices multiplied by 100. to improve readibility]*** >>>>>>>>>>" << std::endl;
+    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix before long rescaling:" << std::endl;
+    std::cout << 100.*errorMatrixToRescale << std::endl;
+  }
+  
+  //Let's rescale only the lambda and dsz component
+  for (int j=0;j<5;j++) { errorMatrixToRescale(1,j)*=kFactor; errorMatrixToRescale(j,1)*=kFactor; }
+  for (int j=0;j<5;j++) { errorMatrixToRescale(4,j)*=kFactor; errorMatrixToRescale(j,4)*=kFactor; }
+
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix **AFTER** long rescaling:" << std::endl;
+    std::cout << 100.*errorMatrixToRescale << std::endl;
+  }
+
+  AlgebraicSymMatrix55 newSymErrorMatrix = errorMatrixToRescale.LowerBlock();
+  
+  if ( myDebug_ ) {
+    std::cout << ">>>>>>>>>>>>>>> returned Sym ErrorMatrix **AFTER** long rescaling (for cross check):" << std::endl;
+    std::cout << 100.*newSymErrorMatrix << std::endl;
+  }
+
+  return newSymErrorMatrix;
+
+}
+
 
 //void SplitRefit::setMaterialToKFactor(const TrackerGeometry * theGeometry, TransientTrackingRecHit::RecHitContainer& hits, double kFactor){
 void SplitRefit::setMaterialToKFactor(double kFactor){
@@ -447,10 +838,45 @@ void SplitRefit::setMaterialToKFactor(double kFactor){
       double theNewXi     = geomDet->surface().mediumProperties()->xi();
       double theNewRadLen = geomDet->surface().mediumProperties()->radLen();
       sprintf(buffer, ">>>>setMaterialToKFactor>> nhit= %d kFactor= %f xiOld= %f xiNew= %f radLenOld= %f radLenNew= %f \n", nhit, kFactor, theXi, theNewXi, theRadLen, theNewRadLen);
-      if ( myDebug_ ) std::cout << buffer;
+      //      if ( myDebug_ ) std::cout << buffer;
     }
   }
   
   //  edm::LogInfo("ELFTrackProducer::setMaterialToKFactor") << outputBlock.data();
 }
   
+#include "DataFormats/SiStripDetId/interface/TIBDetId.h"
+#include "DataFormats/SiStripDetId/interface/TOBDetId.h"
+#include "DataFormats/SiStripDetId/interface/TIDDetId.h"
+#include "DataFormats/SiStripDetId/interface/TECDetId.h"
+#include "DataFormats/SiPixelDetId/interface/PXBDetId.h"
+#include "DataFormats/SiPixelDetId/interface/PXFDetId.h"
+
+void SplitRefit::dumpModuleInfo(DetId hitId){
+  
+  if (hitId.subdetId() == StripSubdetector::TIB )  
+    std::cout  << " TIB " << TIBDetId(hitId).layer();
+  else if (hitId.subdetId() == StripSubdetector::TOB ) 
+    std::cout  << " TOB " << TOBDetId(hitId).layer();
+  else if (hitId.subdetId() == StripSubdetector::TEC ) 
+    std::cout  << " TEC " << TECDetId(hitId).wheel() << " ring " << TECDetId(hitId).ring();
+  else if (hitId.subdetId() == StripSubdetector::TID ) 
+    std::cout  << " TID " << TIDDetId(hitId).wheel() << " ring " << TIDDetId(hitId).ring();
+  else if (hitId.subdetId() == (int) PixelSubdetector::PixelBarrel ) 
+    std::cout  << " PXB " << PXBDetId(hitId).layer();
+  else if (hitId.subdetId() == (int) PixelSubdetector::PixelEndcap )
+    std::cout  << " PXF " << PXFDetId(hitId).disk();
+  else 
+    std::cout  << " UKN ";
+
+}
+
+void SplitRefit::dumpTSOSInfo(TrajectoryStateOnSurface& TSOS){
+
+  std::cout << ">>TSOS>> p=" << TSOS.globalMomentum().mag() << "+-" << pErrorAtTSOS(TSOS) <<
+    " pt=" << TSOS.globalMomentum().perp() << "+-" << ptErrorAtTSOS(TSOS) <<
+    " pz=" << TSOS.globalMomentum().z() << "+-" << pzErrorAtTSOS(TSOS) <<
+    " l=" << 0.5*M_PI-TSOS.globalMomentum().theta() << "+-" << lambdaErrorAtTSOS(TSOS) <<
+    std::endl;
+
+}
