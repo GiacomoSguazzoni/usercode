@@ -44,6 +44,16 @@ struct energyLoss {
   double TOut;
 };
 
+struct rescaleParams {
+  bool iSpecial;
+  int iMatrixView;
+  bool iQp;
+  bool iLam;
+  bool iPhi;
+  bool iDxy;
+  bool iDsz;
+};
+
 #endif
 
 

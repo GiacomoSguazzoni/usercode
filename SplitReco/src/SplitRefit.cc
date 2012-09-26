@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.2 2012/08/28 09:57:38 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.3 2012/09/18 15:17:31 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -58,10 +58,12 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
   //
   //Store Quantities needed later
   //
+  theTrackEta = theTrack.eta();
   theTrackTheta = theTrack.theta();
   theTrackThetaErr = theTrack.thetaError();
   theTrackInvSinTheta = 1./sin(theTrackTheta);
   theTrackPt = theTrack.pt();
+  theTrackPz = theTrack.pz();
   theTrackP = theTrack.p();
   theTrackPtSquared = theTrackPt*theTrackPt;
   theTrackPSquared = theTrackP*theTrackP;
@@ -80,17 +82,33 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
   jacoInvPToInvPt                = AlgebraicMatrixID();
   jacoInvPToInvPtTransposed      = AlgebraicMatrixID();
   jacoInvPToInvPt(0,0)           = 1./coslambda; 
-  jacoInvPToInvPtTransposed(0,0) = jacoInvPtToInvP(0,0);
-  jacoInvPToInvPt(0,1)           = theTrackPt*sinlambda/coslambda/coslambda; 
-  jacoInvPToInvPtTransposed(1,0) = jacoInvPtToInvP(0,1);  
+  jacoInvPToInvPtTransposed(0,0) = jacoInvPToInvPt(0,0);
+  jacoInvPToInvPt(0,1)           = sinlambda/coslambda/coslambda/theTrackP; 
+  jacoInvPToInvPtTransposed(1,0) = jacoInvPToInvPt(0,1);  
 
   // To pass from matrix with 1/Pt to 1/P (default)
   jacoInvPtToInvP                = AlgebraicMatrixID();
   jacoInvPtToInvPTransposed      = AlgebraicMatrixID();
   jacoInvPtToInvP(0,0)           = coslambda;
   jacoInvPtToInvPTransposed(0,0) = coslambda;
-  jacoInvPtToInvP(0,1)           = -theTrackP*sinlambda; 
-  jacoInvPtToInvPTransposed(1,0) = jacoInvPToInvPt(0,1);
+  jacoInvPtToInvP(0,1)           = -1.*sinlambda/theTrackPt; 
+  jacoInvPtToInvPTransposed(1,0) = jacoInvPtToInvP(0,1);
+
+  // To pass from matrix with 1/P (default) to 1/Pz
+  jacoInvPToInvPz                = AlgebraicMatrixID();
+  jacoInvPToInvPzTransposed      = AlgebraicMatrixID();
+  jacoInvPToInvPz(0,0)           = 1./sinlambda; 
+  jacoInvPToInvPzTransposed(0,0) = jacoInvPToInvPz(0,0);
+  jacoInvPToInvPz(0,1)           = -1.*coslambda/sinlambda/sinlambda/theTrackP; 
+  jacoInvPToInvPzTransposed(1,0) = jacoInvPToInvPz(0,1);  
+
+  // To pass from matrix with 1/Pz to 1/P (default)
+  jacoInvPzToInvP                = AlgebraicMatrixID();
+  jacoInvPzToInvPTransposed      = AlgebraicMatrixID();
+  jacoInvPzToInvP(0,0)           = sinlambda;
+  jacoInvPzToInvPTransposed(0,0) = sinlambda;
+  jacoInvPzToInvP(0,1)           = coslambda/theTrackPz; 
+  jacoInvPzToInvPTransposed(1,0) = jacoInvPzToInvP(0,1);
 
 #ifdef cmsswVersion44x
   // in CMMSW 44x
@@ -170,7 +188,7 @@ myTrack SplitRefit::initializeWithTrack(const reco::Track track){
       vecZ.push_back(z);
       pAveTrack+=upTSOS.globalMomentum().mag();
       pErrAveTrack+=pErrorAtTSOS(upTSOS);
-      double theta=upTSOS.globalMomentum().theta();
+      //      double theta=upTSOS.globalMomentum().theta();
       double dPerpT=sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
       double hitchi2 = itm->estimate();
       if ( hitchi2 > maxhitchi2 ) maxhitchi2 = hitchi2;
@@ -273,7 +291,8 @@ std::vector<Trajectory> SplitRefit::doGenericRefit(TransientTrackingRecHit::RecH
 
 }
 
-std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement, double kFactor, bool iSpecialErrorRescale){
+std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement, double kFactor, double absEtaBarrelEndcapCut,
+					     rescaleParams barrelRPar, rescaleParams endcapRPar){
 
   setMaterialToKFactor(kFactor);
 
@@ -313,26 +332,11 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
     //      if ( myDebug_ ) std::cout << " iFirst=" << iFirst << " TSOS=" << theInitialStateForSplitRefitting.globalMomentum().mag(); 
     //    } else {
     
-    TrajectoryStateOnSurface theInitialStateForSplitRefitting;
 
-    if ( iSpecialErrorRescale ) {
-      TrajectoryStateOnSurface theStateFromTraj = (theTrajectoryMeasurements.end()-iFirst)->updatedState();
-      // TSOS, factor, rescale 1/pt (= 0 to rescale 1/p), rescale all transv components
-      theStateFromTraj.rescaleError(100);
-      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfLongComponent(theStateFromTraj, 0.);
-      // Constructor from global ref system
-      theInitialStateForSplitRefitting = TrajectoryStateOnSurface( theStateFromTraj.globalParameters(),
-								 CurvilinearTrajectoryError(newErrorMatrix),
-								 theStateFromTraj.surface());
-    } else {
-      TrajectoryStateOnSurface theStateFromTraj = (theTrajectoryMeasurements.end()-iFirst)->forwardPredictedState();
-      theStateFromTraj.rescaleError(100);
-      //Constructor from local ref system
-      theInitialStateForSplitRefitting = TrajectoryStateOnSurface(theStateFromTraj.localParameters(),
-								  theStateFromTraj.localError(),                  
-								theStateFromTraj.surface(),
-								theMF.product());  
-    }
+    //Always use the updated state
+    TrajectoryStateOnSurface theStateFromTraj = (theTrajectoryMeasurements.end()-iFirst)->updatedState();
+
+    TrajectoryStateOnSurface theInitialStateForSplitRefitting = buildInitialStateForSplitRefit(theStateFromTraj, absEtaBarrelEndcapCut, barrelRPar, endcapRPar);
 
     if ( myDebug_ ) std::cout << " iFirst=" << iFirst << " TSOS=" << theInitialStateForSplitRefitting.globalMomentum().mag() << std::endl; 
     
@@ -388,11 +392,11 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
       split.ptErr=ptErrorAtTSOS(firstSplitTSOS);
       // split.curv=abs(firstSplitTSOS.transverseCurvature()); //Apparently this method returns zero...
       split.curv=1./pAve;
-      split.curvErr=split.curv*(pAveErr/pAve); //Relative curv error is the same as relative pt error
+      split.curvErr=split.curv*(pAveErr/pAve); //Relative curv error is the same as relative p error
       split.curvt=1./pAveT;
       split.curvtErr=split.curv*(pAveTErr/pAveT); //Relative curv error is the same as relative pt error
       split.curvz=1./pAveZ;
-      split.curvzErr=split.curv*(pAveZErr/pAveZ); //Relative curv error is the same as relative pt error
+      split.curvzErr=split.curv*(pAveZErr/pAveZ); //Relative curv error is the same as relative pz error
       split.T=0.5*(vecT.at(iLast-1)+vecT.at(iFirst-1));
       split.TErr=0.05;  //half millimiter error (?)
       splits.push_back(split);
@@ -436,6 +440,55 @@ std::vector<Split> SplitRefit::doSplitRefits(int nMinHitSplit, int nHitIncrement
   setMaterialToKFactor(1./kFactor);
     
   return splits;
+
+}
+
+TrajectoryStateOnSurface SplitRefit::buildInitialStateForSplitRefit(TrajectoryStateOnSurface theStateFromTraj, double absEtaBarrelEndcapCut,
+					     rescaleParams barrelRPar, rescaleParams endcapRPar){
+
+  TrajectoryStateOnSurface theInitialStateForSplitRefitting;
+
+  if ( fabs(theTrackEta) < absEtaBarrelEndcapCut ) {
+    //
+    //Barrel
+    if ( barrelRPar.iSpecial ) {
+      theStateFromTraj.rescaleError(100);
+      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfComponents(theStateFromTraj, 0., barrelRPar);
+      // Constructor from global ref system
+      theInitialStateForSplitRefitting = TrajectoryStateOnSurface( theStateFromTraj.globalParameters(),
+								   CurvilinearTrajectoryError(newErrorMatrix),
+								   theStateFromTraj.surface());
+    } else {
+      theStateFromTraj.rescaleError(100);
+      //Constructor from local ref system
+      theInitialStateForSplitRefitting = TrajectoryStateOnSurface(theStateFromTraj.localParameters(),
+								  theStateFromTraj.localError(),                  
+								  theStateFromTraj.surface(),
+								  theMF.product());  
+    }
+    //
+  } else {
+    //
+    //Endcap
+    if ( barrelRPar.iSpecial ) {
+      theStateFromTraj.rescaleError(100);
+      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfComponents(theStateFromTraj, 0., endcapRPar);
+      // Constructor from global ref system
+      theInitialStateForSplitRefitting = TrajectoryStateOnSurface( theStateFromTraj.globalParameters(),
+								   CurvilinearTrajectoryError(newErrorMatrix),
+								   theStateFromTraj.surface());
+    } else {
+      theStateFromTraj.rescaleError(100);
+      //Constructor from local ref system
+      theInitialStateForSplitRefitting = TrajectoryStateOnSurface(theStateFromTraj.localParameters(),
+								  theStateFromTraj.localError(),                  
+								  theStateFromTraj.surface(),
+								  theMF.product());  
+    }
+    //
+  }
+
+  return theInitialStateForSplitRefitting;
 
 }
 
@@ -679,16 +732,27 @@ void SplitRefit::GetPAveFromMeasurements(std::vector<TrajectoryMeasurement> theS
     pZErr2*=pZErr2;
     pAveZ += upTSOS.globalMomentum().z()*theTrackInvSinLambda/pZErr2;
     pAveZErr += 1./pZErr2;
+
   }
   
-  pAve *= 1./pAveErr;
-  pAveErr = sqrt(1./pAveErr);
+  pAveErr = 1./pAveErr;
+  pAve *= pAveErr;
+  pAveErr = sqrt(pAveErr);
   //
-  pAveT *= 1./pAveTErr;
-  pAveTErr = sqrt(1./pAveTErr);
+  pAveTErr = 1./pAveTErr; 
+  pAveT *= pAveTErr;
+  pAveTErr = sqrt(pAveTErr);
   //
-  pAveZ *= 1./pAveZErr;
-  pAveZErr = sqrt(1./pAveZErr);
+  pAveZErr = 1./pAveZErr;
+  pAveZ *= pAveZErr;
+  pAveZErr = sqrt(pAveZErr);
+
+  /*
+  // sguazzTemp
+  pAveErr = 1./(1./pAveZErr/pAveZErr + 1./pAveTErr/pAveTErr);
+  pAve = pAveErr*(pAveZ/pAveZErr/pAveZErr + pAveT/pAveTErr/pAveTErr);
+  pAveErr = sqrt(pAveErr);
+  */
 
 }
 
@@ -724,7 +788,7 @@ double SplitRefit::lambdaErrorAtTSOS(TrajectoryStateOnSurface& TSOS){
   
 }
 
-AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfTransComponent(TrajectoryStateOnSurface& TSOS, double kFactor, int iRescalePt, int iRescaleTransv){
+AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfComponents(TrajectoryStateOnSurface& TSOS, double kFactor, rescaleParams RPar){
 
   AlgebraicSymMatrix55 oldErrorMatrix = TSOS.curvilinearError().matrix();
 
@@ -736,34 +800,44 @@ AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfTransComponent(TrajectoryStateOnS
   }
   
   AlgebraicMatrix55 errorMatrixToRescale;
-  if ( iRescalePt ) {
+  if ( RPar.iMatrixView == 1 ) {
     errorMatrixToRescale = (jacoInvPToInvPt*oldErrorMatrix)*jacoInvPToInvPtTransposed;
+    if ( myDebug_ ) {
+      std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pt before rescaling:" << std::endl;
+      std::cout << 100.*errorMatrixToRescale << std::endl;
+    }
+  } else if ( RPar.iMatrixView == 2) {
+    errorMatrixToRescale = (jacoInvPToInvPz*oldErrorMatrix)*jacoInvPToInvPzTransposed;
+    if ( myDebug_ ) {
+      std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pz before rescaling:" << std::endl;
+      std::cout << 100.*errorMatrixToRescale << std::endl;
+    }
   } else {
     errorMatrixToRescale = oldErrorMatrix;
   }
 
-  if ( myDebug_ ) {
-    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pt before rescaling:" << std::endl;
-    std::cout << 100.*errorMatrixToRescale << std::endl;
-  }
   
-  //Let's rescale only the first component term (p or pt)
-  for (int j=0;j<5;j++) { errorMatrixToRescale(0,j)*=kFactor; errorMatrixToRescale(j,0)*=kFactor; }
-  // ...or all tranvese comp
-  if ( iRescaleTransv ){
-    for (int j=0;j<5;j++) { errorMatrixToRescale(2,j)*=kFactor; errorMatrixToRescale(j,2)*=kFactor; }
-    for (int j=0;j<5;j++) { errorMatrixToRescale(3,j)*=kFactor; errorMatrixToRescale(j,3)*=kFactor; }
-  }
-
-  if ( myDebug_ ) {
-    std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pt **AFTER** rescaling:" << std::endl;
-    std::cout << 100.*errorMatrixToRescale << std::endl;
-  }
+  //Let's rescale only the phi and dxy component
+  if ( RPar.iQp )  { for (int j=0;j<5;j++) { errorMatrixToRescale(0,j)*=kFactor; errorMatrixToRescale(j,0)*=kFactor; };}
+  if ( RPar.iLam ) { for (int j=0;j<5;j++) { errorMatrixToRescale(1,j)*=kFactor; errorMatrixToRescale(j,1)*=kFactor; };}
+  if ( RPar.iPhi ) { for (int j=0;j<5;j++) { errorMatrixToRescale(2,j)*=kFactor; errorMatrixToRescale(j,2)*=kFactor; };}
+  if ( RPar.iDxy ) { for (int j=0;j<5;j++) { errorMatrixToRescale(3,j)*=kFactor; errorMatrixToRescale(j,3)*=kFactor; };}
+  if ( RPar.iDsz ) { for (int j=0;j<5;j++) { errorMatrixToRescale(4,j)*=kFactor; errorMatrixToRescale(j,4)*=kFactor; };}
 
   AlgebraicMatrix55 newErrorMatrix;
 
-  if ( iRescalePt ) {
+  if ( RPar.iMatrixView == 1 ) {
     newErrorMatrix = (jacoInvPtToInvP*errorMatrixToRescale)*jacoInvPtToInvPTransposed;
+    if ( myDebug_ ) {
+      std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pt **AFTER** rescaling:" << std::endl;
+      std::cout << 100.*newErrorMatrix << std::endl;
+    }
+  } else if ( RPar.iMatrixView == 2) {
+    newErrorMatrix = (jacoInvPzToInvP*errorMatrixToRescale)*jacoInvPzToInvPTransposed;
+    if ( myDebug_ ) {
+      std::cout << ">>>>>>>>>>>>>>> ErrorMatrix in Pz **AFTER** rescaling:" << std::endl;
+      std::cout << 100.*newErrorMatrix << std::endl;
+    }
   } else {
     newErrorMatrix = errorMatrixToRescale;
   }
@@ -784,6 +858,7 @@ AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfTransComponent(TrajectoryStateOnS
 
 }
 
+/*
 AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfLongComponent(TrajectoryStateOnSurface& TSOS, double kFactor){
 
   AlgebraicSymMatrix55 errorMatrixToRescale = TSOS.curvilinearError().matrix();
@@ -814,7 +889,7 @@ AlgebraicSymMatrix55 SplitRefit::rescaleErrorOfLongComponent(TrajectoryStateOnSu
   return newSymErrorMatrix;
 
 }
-
+*/
 
 //void SplitRefit::setMaterialToKFactor(const TrackerGeometry * theGeometry, TransientTrackingRecHit::RecHitContainer& hits, double kFactor){
 void SplitRefit::setMaterialToKFactor(double kFactor){

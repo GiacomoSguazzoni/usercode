@@ -17,6 +17,7 @@
 #include "TrackingTools/TransientTrackingRecHit/interface/TransientTrackingRecHitBuilder.h"
 #include "SimTracker/TrackAssociation/interface/TrackAssociatorBase.h"
 
+#include "Tests/SplitReco/interface/Split.h"
 
 #include <TH1.h>
 #include <TGraphErrors.h>
@@ -47,11 +48,14 @@ private:
   // ----------member data ---------------------------
   edm::InputTag tracksTag_; 
   edm::InputTag tpTag_; 
-  edm::InputTag simtracksTag_; 
   bool myDebug_;
   bool isMC_;
   int splitTrackEffHits_;
-  bool specialErrorRescale_;
+  bool superSplit_;
+
+  rescaleParams barrelRPar, endcapRPar;
+  double absEtaBarrelEndcapCut_;
+
   int minSplits_;
   double kFactor_;
   double pullCut_;

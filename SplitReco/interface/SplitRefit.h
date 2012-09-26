@@ -35,7 +35,7 @@ public:
   ~SplitRefit();
 
   myTrack initializeWithTrack(const reco::Track);
-  std::vector<Split> doSplitRefits(int, int, double, bool);
+  std::vector<Split> doSplitRefits(int, int, double, double, rescaleParams, rescaleParams);
   std::vector<energyLoss> energyLossFitOnSplits(std::vector<Split> &);
   energyLoss energyLossFitByPtOnSplits(std::vector<Split> &);
   energyLoss energyLossFitByCurvOnSplits(std::vector<Split> &, int);
@@ -48,8 +48,8 @@ public:
   double lambdaErrorAtTSOS(TrajectoryStateOnSurface &);
   void dumpTSOSInfo(TrajectoryStateOnSurface &);
   void GetPAveFromMeasurements(std::vector<TrajectoryMeasurement>, double&, double&, double&, double&, double&, double&);
-  AlgebraicSymMatrix55 rescaleErrorOfTransComponent(TrajectoryStateOnSurface&, double, int, int);
-  AlgebraicSymMatrix55 rescaleErrorOfLongComponent(TrajectoryStateOnSurface&, double);
+  TrajectoryStateOnSurface buildInitialStateForSplitRefit(TrajectoryStateOnSurface, double, rescaleParams, rescaleParams);
+  AlgebraicSymMatrix55 rescaleErrorOfComponents(TrajectoryStateOnSurface&, double, rescaleParams);
   std::vector<Trajectory> doGenericRefit(TransientTrackingRecHit::RecHitContainer, TrajectoryStateOnSurface);
 
   void dumpModuleInfo(DetId);
@@ -62,8 +62,8 @@ public:
   std::vector<TrajectoryMeasurement> theTrajectoryMeasurements;
   TrajectoryStateOnSurface theInitialStateForRefitting;
   reco::Track theTrack;
-  double theTrackTheta, theTrackInvSinTheta, theTrackThetaErr;
-  double theTrackP, theTrackPSquared, theTrackPt, theTrackPtSquared;
+  double theTrackEta, theTrackTheta, theTrackInvSinTheta, theTrackThetaErr;
+  double theTrackP, theTrackPSquared, theTrackPt, theTrackPz, theTrackPtSquared;
   double BInTesla, theTrackLambda, theTrackInvSinLambda, theTrackInvCosLambda, theTrackCharge;
   myTrack mytrack;
 
@@ -91,6 +91,8 @@ public:
   //
   AlgebraicMatrix55 jacoInvPToInvPt, jacoInvPtToInvP;
   AlgebraicMatrix55 jacoInvPToInvPtTransposed, jacoInvPtToInvPTransposed;
+  AlgebraicMatrix55 jacoInvPToInvPz, jacoInvPzToInvP;
+  AlgebraicMatrix55 jacoInvPToInvPzTransposed, jacoInvPzToInvPTransposed;
 
   //
   //Various quantities
