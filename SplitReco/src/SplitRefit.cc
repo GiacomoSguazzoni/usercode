@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.5 2012/10/04 14:13:45 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.6 2012/10/04 21:37:28 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -453,7 +453,7 @@ TrajectoryStateOnSurface SplitRefit::buildInitialStateForSplitRefit(TrajectorySt
     //Barrel
     if ( barrelRPar.iSpecial ) {
       theStateFromTraj.rescaleError(100);
-      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfComponents(theStateFromTraj, 0., barrelRPar);
+      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfComponents(theStateFromTraj, 0.00001, barrelRPar);
       // Constructor from global ref system
       theInitialStateForSplitRefitting = TrajectoryStateOnSurface( theStateFromTraj.globalParameters(),
 								   CurvilinearTrajectoryError(newErrorMatrix),
@@ -470,9 +470,9 @@ TrajectoryStateOnSurface SplitRefit::buildInitialStateForSplitRefit(TrajectorySt
   } else {
     //
     //Endcap
-    if ( barrelRPar.iSpecial ) {
+    if ( endcapRPar.iSpecial ) {
       theStateFromTraj.rescaleError(100);
-      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfComponents(theStateFromTraj, 0., endcapRPar);
+      AlgebraicSymMatrix55 newErrorMatrix = rescaleErrorOfComponents(theStateFromTraj, 0.00001, endcapRPar);
       // Constructor from global ref system
       theInitialStateForSplitRefitting = TrajectoryStateOnSurface( theStateFromTraj.globalParameters(),
 								   CurvilinearTrajectoryError(newErrorMatrix),
