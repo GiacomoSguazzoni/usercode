@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitReco.cc,v 1.3 2012/09/18 15:17:31 sguazz Exp $
+// $Id: SplitReco.cc,v 1.4 2012/09/26 21:33:39 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -173,17 +173,14 @@ SplitReco::SplitReco(const edm::ParameterSet& iConfig)
   splitTree->Branch("dpdxSplit", &sT_dpdxSplit, "dpdxSplit/F", bs);
   splitTree->Branch("dpdxErrSplit", &sT_dpdxErrSplit, "dpdxSplitErr/F", bs);
   splitTree->Branch("chi2Split",  &sT_chi2Split,  "chi2Split/F",  bs);
-  splitTree->Branch("freeParSplit", &sT_freeParSplit,     "freeParSplit/I",     bs);  
 
   splitTree->Branch("dpdxTSplit", &sT_dpdxTSplit, "dpdxTSplit/F", bs);
   splitTree->Branch("dpdxTErrSplit", &sT_dpdxTErrSplit, "dpdxTSplitErr/F", bs);
   splitTree->Branch("chi2TSplit",  &sT_chi2TSplit,  "chi2TSplit/F",  bs);
-  splitTree->Branch("freeParTSplit", &sT_freeParTSplit,     "freeParTSplit/I",     bs);  
 
   splitTree->Branch("dpdxZSplit", &sT_dpdxZSplit, "dpdxZSplit/F", bs);
   splitTree->Branch("dpdxZErrSplit", &sT_dpdxZErrSplit, "dpdxZSplitErr/F", bs);
   splitTree->Branch("chi2ZSplit",  &sT_chi2ZSplit,  "chi2ZSplit/F",  bs);
-  splitTree->Branch("freeParZSplit", &sT_freeParZSplit, "freeParZSplit/I",     bs);  
 
   // split track method 1 (overlapping splits) super split   		   		   	       
   if ( superSplit_ ){
@@ -192,17 +189,14 @@ SplitReco::SplitReco(const edm::ParameterSet& iConfig)
     splitTree->Branch("dpdxSSplit", &sT_dpdxSSplit, "dpdxSSplit/F", bs);
     splitTree->Branch("dpdxErrSSplit", &sT_dpdxErrSSplit, "dpdxErrSSplit/F", bs);
     splitTree->Branch("chi2SSplit",  &sT_chi2SSplit,  "chi2SSplit/F",  bs);
-    splitTree->Branch("freeParSSplit", &sT_freeParSSplit,     "freeParSSplit/I",     bs);  
     
     splitTree->Branch("dpdxTSSplit", &sT_dpdxTSSplit, "dpdxTSSplit/F", bs);
     splitTree->Branch("dpdxTErrSSplit", &sT_dpdxTErrSSplit, "dpdxTSSplitErr/F", bs);
     splitTree->Branch("chi2TSSplit",  &sT_chi2TSSplit,  "chi2TSSplit/F",  bs);
-    splitTree->Branch("freeParTSSplit", &sT_freeParTSSplit, "freeParTSSplit/I",     bs);  
     
     splitTree->Branch("dpdxZSSplit", &sT_dpdxZSSplit, "dpdxZSSplit/F", bs);
     splitTree->Branch("dpdxZErrSSplit", &sT_dpdxZErrSSplit, "dpdxZSSplitErr/F", bs);
     splitTree->Branch("chi2ZSSplit",  &sT_chi2ZSSplit,  "chi2ZSSplit/F",  bs);
-    splitTree->Branch("freeParZSSplit", &sT_freeParZSSplit, "freeParZSSplit/I",     bs);  
   }
 
 #ifdef extra
@@ -511,17 +505,14 @@ int SplitReco::trackAction(const reco::Track & itTrack){
   sT_dpdxSplit=eLosses.at(0).dpdx;
   sT_dpdxErrSplit=eLosses.at(0).dpdxErr;
   sT_chi2Split=eLosses.at(0).chi2;
-  sT_freeParSplit=eLosses.at(0).freePar;
 
   sT_dpdxTSplit=eLosses.at(1).dpdx;
   sT_dpdxTErrSplit=eLosses.at(1).dpdxErr;
   sT_chi2TSplit=eLosses.at(1).chi2;
-  sT_freeParTSplit=eLosses.at(1).freePar;
 
   sT_dpdxZSplit=eLosses.at(2).dpdx;
   sT_dpdxZErrSplit=eLosses.at(2).dpdxErr;
   sT_chi2ZSplit=eLosses.at(2).chi2;
-  sT_freeParZSplit=eLosses.at(2).freePar;
 
   //do super splits refits
   if ( superSplit_ ){
@@ -537,17 +528,14 @@ int SplitReco::trackAction(const reco::Track & itTrack){
     sT_dpdxSSplit=eLosses2.at(0).dpdx;
     sT_dpdxErrSSplit=eLosses2.at(0).dpdxErr;
     sT_chi2SSplit=eLosses2.at(0).chi2;
-    sT_freeParSSplit=eLosses2.at(0).freePar;
     
     sT_dpdxTSSplit=eLosses2.at(1).dpdx;
     sT_dpdxTErrSSplit=eLosses2.at(1).dpdxErr;
     sT_chi2TSSplit=eLosses2.at(1).chi2;
-    sT_freeParTSSplit=eLosses2.at(1).freePar;
     
     sT_dpdxZSSplit=eLosses2.at(2).dpdx;
     sT_dpdxZErrSSplit=eLosses2.at(2).dpdxErr;
     sT_chi2ZSSplit=eLosses2.at(2).chi2;
-    sT_freeParZSSplit=eLosses2.at(2).freePar;
   }
 
   //

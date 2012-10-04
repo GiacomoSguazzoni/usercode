@@ -154,17 +154,14 @@ private:
   float sT_dpdxSplit;
   float sT_dpdxErrSplit;
   float sT_chi2Split;
-  int sT_freeParSplit;
 
   float sT_dpdxTSplit;
   float sT_dpdxTErrSplit;
   float sT_chi2TSplit;
-  int sT_freeParTSplit;
 
   float sT_dpdxZSplit;
   float sT_dpdxZErrSplit;
   float sT_chi2ZSplit;
-  int sT_freeParZSplit;
 
   // split track method 1 (super split, overlapping splits)
   int sT_NSSplit;
@@ -172,17 +169,14 @@ private:
   float sT_dpdxSSplit;
   float sT_dpdxErrSSplit;
   float sT_chi2SSplit;
-  int sT_freeParSSplit;
 
   float sT_dpdxTSSplit;
   float sT_dpdxTErrSSplit;
   float sT_chi2TSSplit;
-  int sT_freeParTSSplit;
 
   float sT_dpdxZSSplit;
   float sT_dpdxZErrSSplit;
   float sT_chi2ZSSplit;
-  int sT_freeParZSSplit;
 
 #ifdef extra
   float sT_pLossSplit;

@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.3 2012/09/18 15:17:31 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.4 2012/09/26 21:33:39 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -564,8 +564,7 @@ energyLoss SplitRefit::energyLossFitByPtOnSplits(std::vector<Split> &splits){
   eLoss.dpdx = -1.*fit->GetParameter(1)*theTrackInvSinTheta; //Rescale for theta and revert sign
   eLoss.dpdxErr = fit->GetParError(1)*theTrackInvSinTheta; //Rescale for theta
   eLoss.chi2 = fit->GetChisquare();
-  eLoss.freePar = fit->GetNumberFreeParameters();
-  if ( myDebug_ ) std::cout << " linear EL fit p0=" << eLoss.p0 << " p1=" << eLoss.dpdx << " chi2/freePar=" << eLoss.chi2 << "/" << eLoss.freePar << std::endl; 
+  if ( myDebug_ ) std::cout << " linear EL fit p0=" << eLoss.p0 << " p1=" << eLoss.dpdx << " chi2=" << eLoss.chi2 << std::endl; 
   eLoss.TIn  = (*(splits.begin())).T;
   double TInErr = (*(splits.begin())).TErr;
   eLoss.TOut = (*(splits.end()-1)).T;
@@ -671,10 +670,8 @@ energyLoss SplitRefit::energyLossFitByCurvOnSplits(std::vector<Split> &splits, i
     eLoss.dpdx = fit->GetParameter(1)*multFactor;
     eLoss.dpdxErr = fit->GetParError(1)*multFactor; 
     eLoss.chi2 = fit->GetChisquare();
-    eLoss.freePar = fit->GetNumberFreeParameters();
     
-    
-    if ( myDebug_ ) std::cout << " linear EL by Curv fit p0=" << eLoss.p0 << " dpdx=" << eLoss.dpdx << " chi2/freePar=" << eLoss.chi2 << "/" << eLoss.freePar << std::endl; 
+    if ( myDebug_ ) std::cout << " linear EL by Curv fit p0=" << eLoss.p0 << " dpdx=" << eLoss.dpdx << " chi2=" << eLoss.chi2 << std::endl; 
     eLoss.TIn  = (*(splits.begin())).T;
     double TInErr = (*(splits.begin())).TErr;
     eLoss.TOut = (*(splits.end()-1)).T;
