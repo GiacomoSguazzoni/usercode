@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.4 2012/09/26 21:33:39 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.5 2012/10/04 14:13:45 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -33,7 +33,7 @@
 #include <map>
 #include <set>
 
-#define cmsswVersion44x
+#define cmsswREMOVEFOR44Version44x
 
 
 //
@@ -641,7 +641,12 @@ energyLoss SplitRefit::energyLossFitByCurvOnSplits(std::vector<Split> &splits, i
   //
   try {
     TGraphErrors graphForFit(nsplits,arrTSplit,arrCurvSplit,arrTErrSplit,arrCurvErrSplit);  
-    int fitResult = graphForFit.Fit("pol1","Q");
+    int fitResult=0;
+    if ( myDebug_ ) {
+      fitResult = graphForFit.Fit("pol1");
+    } else {
+      fitResult = graphForFit.Fit("pol1","Q");
+    }
     TF1 *fit = graphForFit.GetFunction("pol1");
     if ( fitResult ) {
       if ( myDebug_ ) std::cout << " Linear fit of split curv failed with code: " << fitResult << std::endl;
