@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.6 2012/10/04 21:37:28 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.7 2012/10/04 21:48:47 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -541,7 +541,8 @@ energyLoss SplitRefit::energyLossFitByPtOnSplits(std::vector<Split> &splits){
     arrPtSplit[iarr]=(*it).pt;
     arrPtErrSplit[iarr]=(*it).ptErr;
     arrTSplit[iarr]=(*it).T;
-    arrTErrSplit[iarr]=(*it).TErr;
+    //    arrTErrSplit[iarr]=(*it).TErr; // With no y error the linear fitter is used
+    arrTErrSplit[iarr]=0.;
     iarr++;
 
   if ( myDebug_ ) std::cout << " Split value for fit #" << iarr << " T:" << (*it).T << " TErr:" << (*it).TErr << " pt:" << (*it).pt << " ptErr:" << (*it).ptErr << std::endl;
@@ -628,7 +629,8 @@ energyLoss SplitRefit::energyLossFitByCurvOnSplits(std::vector<Split> &splits, i
     }
 
     arrTSplit[iarr]=(*it).T;
-    arrTErrSplit[iarr]=(*it).TErr;
+    //    arrTErrSplit[iarr]=(*it).TErr; // With no y error the linear fitter is used
+    arrTErrSplit[iarr]=0.;
 
     if ( myDebug_ ) std::cout << " Split value for fit #" << iarr << " T:" << (*it).T << " TErr:" << (*it).TErr << " curv:" << arrCurvSplit[iarr] << " curvErr:" << arrCurvErrSplit[iarr] << std::endl;
 
