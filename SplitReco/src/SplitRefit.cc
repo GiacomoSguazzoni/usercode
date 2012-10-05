@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: SplitRefit.cc,v 1.7 2012/10/04 21:48:47 sguazz Exp $
+// $Id: SplitRefit.cc,v 1.8 2012/10/05 13:09:13 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -734,7 +734,7 @@ void SplitRefit::GetPAveFromMeasurements(std::vector<TrajectoryMeasurement> theS
     pAveTErr += 1./pTErr2;
     //
     pZErr2*=pZErr2;
-    pAveZ += upTSOS.globalMomentum().z()*theTrackInvSinLambda/pZErr2;
+    pAveZ += fabs(upTSOS.globalMomentum().z()*theTrackInvSinLambda)/pZErr2;
     pAveZErr += 1./pZErr2;
 
   }
