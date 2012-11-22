@@ -6,7 +6,7 @@ binHistos::binHistos(const char* id, const char* binInfo, double uC, double vC){
   TSId.Append(id);
   TString TSBinInfo;
   TSBinInfo.Append(binInfo);
-  dPdxSim = new TH1D("dPdxSim"+TSId,"dPdxSim_"+TSId+" "+TSBinInfo+";(dP/dx)_{sim}  [MeV/cm]",80,0.,0.8);
+  dPdxSim = new TH1D("dPdxSim"+TSId,"dPdxSim_"+TSId+" "+TSBinInfo+";(dP/dx)_{sim}  [MeV/cm]",79,0.01,0.8); //No entries if dpdxsim = 0
   dPdxMeas = new TH1D("dPdxMeas"+TSId,"dPdxMeas_"+TSId+" "+TSBinInfo+";(dP/dx)_{meas} [MeV/cm]",80,-2.,4.);
   dPdxPull = new TH1D("dPdxPull"+TSId,"dPdxPull_"+TSId+" "+TSBinInfo+";(Meas - Sim)/MeasErr",80,-8.,8.);
   dPdxMeasVSdPdxSim = new TH2D("dPdxMeasVSdPdxSim"+TSId,"dPdxMeasVSdPdxSim_"+TSId+" "+TSBinInfo+";(dP/dx)_{Sim} [MeV/cm];(dP/dx)_{Meas} [MeV/cm]",100,0.,0.8,100,-0.98,3.);
@@ -80,7 +80,8 @@ void binHistos::WriteAll(TFile *file)
 void binHistos::FitAll(double &mpvSim, double &mpvMeas, double &mpvGaus, double &mpvMean, double &mpvMedian, double &mpvTrunMean)
 {
 
-  mpvSim = FitSim(dPdxSim);
+  mpvSim = 0.;
+  if ( dPdxSim->Integral() ) mpvSim = FitSim(dPdxSim);
   //  FitRoot(dPdxSim);
   mpvGaus = FitGaus(dPdxMeas);
   //  mpvMeas = FitRoot(dPdxMeas);
@@ -284,8 +285,8 @@ double binHistos::FitGaus(TH1* hist){
     double mpv = hist->GetBinCenter(hist->GetMaximumBin());
     double rms = hist->GetRMS();
   
-    min = mpv - 1.5*rms;
-    max = mpv - 1.5*rms;
+    min = mpv - 1.8*rms;
+    max = mpv - 1.8*rms;
 
     TF1 *gfit1 = new TF1("Gaussian1","gaus",min,max); // Create the fit function
     hist->Fit(gfit1,"RQ");
@@ -296,7 +297,7 @@ double binHistos::FitGaus(TH1* hist){
     //    Double_t emean = gfit->GetParError(1); //error on 1st parameter
     Double_t sig = gfit1->GetParameter(2); //value of 1st parameter
 
-    TF1 *gfit2 = new TF1("Gaussian2","gaus",mean-0.8*sig,mean+0.8*sig); // Create the fit function
+    TF1 *gfit2 = new TF1("Gaussian2","gaus",mean-1.0*sig,mean+1.0*sig); // Create the fit function
     hist->Fit(gfit2,"RQ");
 
     // Draw frame on canvas
@@ -474,7 +475,6 @@ double binHistos::FitRoot(TH1* hist){
 
     double mpv = hist->GetBinCenter(hist->GetMaximumBin());
     double rms = hist->GetRMS();
-    double area = hist->GetEntries();
     Double_t chisqr;
     Int_t    ndf;
 

@@ -19,11 +19,15 @@ void setPlotStyle() {
     TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle->SetNumberContours(NCont);
 
+    gROOT->SetStyle("Plain");
+
 }
 
 int main(){
 
   elPlot * myPlot = 0;
+
+  setPlotStyle();
 
   int iWrite = 1;
   
@@ -47,13 +51,13 @@ int main(){
     TChain *mc = new TChain("sT");
     //  mc->Add("./split_QCD_Pt-15to30_TuneZ2_7TeV_pythia6_GEN-SIM-RECODEBUG_PU_S6_START44_V5-v1.root");
     //    mc->Add("./split_qcd1530_v2.root");
-    mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split44/qcd1530_nH4_stdRescale_pz.root"); 
-    //mc->Add("/raid/sguazz/split/qcd1530_stdRescale_nEffHit4.root"); 
+    //mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/minBias_nH4_v2.root"); 
+    mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/qcd1530_nH4_v2.root"); 
+    //mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/minbias_run2012A_nH4_v2.root");
+    //mc->Add("/raid/sguazz/split/qcd1530_pAve_lErr0_nEffHit4.root"); 
     splitTreeForPlot split(mc);
-    //    split.SetEvRangeMax(2000000);
+    //split.SetEvRangeMax(1000000);
     split.LoopForFill(myPlot);
-    
-    setPlotStyle();
     
     myPlot->PlotAndWriteAll();
     myPlot->FitAll();

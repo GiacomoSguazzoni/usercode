@@ -53,7 +53,10 @@ class elPlot {
   dpdxGraph * meanTrunGraph;
 
   dpdxGraph * gausVsEtaGraph;
+  dpdxGraph * meanVsEtaGraph;
+  dpdxGraph * medianVsEtaGraph;
   dpdxGraph * simVsEtaGraph;
+
   dpdxGraph * gausVsPhiGraph;
   dpdxGraph * simVsPhiGraph;
 

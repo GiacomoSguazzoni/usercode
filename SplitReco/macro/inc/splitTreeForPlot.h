@@ -27,6 +27,8 @@ public :
   splitTreeForPlot(TTree *tree);
   ~splitTreeForPlot();
 
+  bool iMC;
+
 };
 
 #endif // #ifdef splitTreeForPlot

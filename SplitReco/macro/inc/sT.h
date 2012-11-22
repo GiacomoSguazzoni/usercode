@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Mon Sep 17 12:17:28 2012 by ROOT version 5.27/06b
+// Mon Oct  8 15:00:59 2012 by ROOT version 5.32/00
 // from TTree sT/sT
-// found on file: /afs/cern.ch/user/s/sguazzon/myWorkarea/split44/qcd1530_nH4_stdRescale_pz.root
+// found on file: /afs/cern.ch/user/s/sguazzon/myWorkarea/split/minBias_nH4_v2.root
 //////////////////////////////////////////////////////////
 
 #ifndef sT_h
@@ -11,6 +11,10 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+
+// Header file for the classes stored in the TTree if any.
+
+// Fixed size dimensions of array or collections stored in the TTree if any.
 
 class sT {
 public :
@@ -63,6 +67,7 @@ public :
    Float_t         pLossSim;
    Float_t         dpdxSim;
    Int_t           nHitSim;
+   Float_t         hitFrac;
    Float_t         TSim;
    Float_t         rInSim;
    Float_t         rOutSim;
@@ -72,28 +77,18 @@ public :
    Float_t         xOutSim;
    Float_t         yOutSim;
    Float_t         zOutSim;
-   Float_t         dpdxSplit;
-   Float_t         dpdxErrSplit;
-   Float_t         chi2Split;
-   Int_t           freeParSplit;
    Int_t           NSplit;
    Float_t         TInSplit;
    Float_t         TOutSplit;
-   Float_t         dpdxByCurvSplit;
-   Float_t         dpdxByCurvErrSplit;
-   Float_t         chi2ByCurvSplit;
-   Int_t           freeParByCurvSplit;
-   Float_t         dpdxSSplit;
-   Float_t         dpdxErrSSplit;
-   Float_t         chi2SSplit;
-   Int_t           freeParSSplit;
-   Int_t           NSSplit;
-   Float_t         TInSSplit;
-   Float_t         TOutSSplit;
-   Float_t         dpdxByCurvSSplit;
-   Float_t         dpdxByCurvErrSSplit;
-   Float_t         chi2ByCurvSSplit;
-   Int_t           freeParByCurvSSplit;
+   Float_t         dpdxSplit;
+   Float_t         dpdxErrSplit;
+   Float_t         chi2Split;
+   Float_t         dpdxTSplit;
+   Float_t         dpdxTErrSplit;
+   Float_t         chi2TSplit;
+   Float_t         dpdxZSplit;
+   Float_t         dpdxZErrSplit;
+   Float_t         chi2ZSplit;
 
    // List of branches
    TBranch        *b_nRun;   //!
@@ -141,6 +136,7 @@ public :
    TBranch        *b_pLossSim;   //!
    TBranch        *b_dpdxSim;   //!
    TBranch        *b_nHitSim;   //!
+   TBranch        *b_hitFrac;   //!
    TBranch        *b_TSim;   //!
    TBranch        *b_rInSim;   //!
    TBranch        *b_rOutSim;   //!
@@ -150,28 +146,18 @@ public :
    TBranch        *b_xOutSim;   //!
    TBranch        *b_yOutSim;   //!
    TBranch        *b_zOutSim;   //!
-   TBranch        *b_dpdxSplit;   //!
-   TBranch        *b_dpdxSplitErr;   //!
-   TBranch        *b_chi2Split;   //!
-   TBranch        *b_freeParSplit;   //!
    TBranch        *b_NSplit;   //!
    TBranch        *b_TInSplit;   //!
    TBranch        *b_TOutSplit;   //!
-   TBranch        *b_dpdxByCurvSplit;   //!
-   TBranch        *b_dpdxByCurvSplitErr;   //!
-   TBranch        *b_chi2ByCurvSplit;   //!
-   TBranch        *b_freeParByCurvSplit;   //!
-   TBranch        *b_dpdxSSplit;   //!
-   TBranch        *b_dpdxErrSSplit;   //!
-   TBranch        *b_chi2SSplit;   //!
-   TBranch        *b_freeParSSplit;   //!
-   TBranch        *b_NSSplit;   //!
-   TBranch        *b_TInSSplit;   //!
-   TBranch        *b_TOutSSplit;   //!
-   TBranch        *b_dpdxByCurvSSplit;   //!
-   TBranch        *b_dpdxByCurvSSplitErr;   //!
-   TBranch        *b_chi2ByCurvSSplit;   //!
-   TBranch        *b_freeParByCurvSSplit;   //!
+   TBranch        *b_dpdxSplit;   //!
+   TBranch        *b_dpdxSplitErr;   //!
+   TBranch        *b_chi2Split;   //!
+   TBranch        *b_dpdxTSplit;   //!
+   TBranch        *b_dpdxTSplitErr;   //!
+   TBranch        *b_chi2TSplit;   //!
+   TBranch        *b_dpdxZSplit;   //!
+   TBranch        *b_dpdxZSplitErr;   //!
+   TBranch        *b_chi2ZSplit;   //!
 
    sT(TTree *tree=0);
    virtual ~sT();
@@ -187,16 +173,16 @@ public :
 #endif
 
 #ifdef sT_cxx
-sT::sT(TTree *tree)
+sT::sT(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/afs/cern.ch/user/s/sguazzon/myWorkarea/split44/qcd1530_nH4_stdRescale_pz.root");
-      if (!f) {
-         f = new TFile("/afs/cern.ch/user/s/sguazzon/myWorkarea/split44/qcd1530_nH4_stdRescale_pz.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/minBias_nH4_v2.root");
+      if (!f || !f->IsOpen()) {
+         f = new TFile("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/minBias_nH4_v2.root");
       }
-      tree = (TTree*)gDirectory->Get("sT");
+      f->GetObject("sT",tree);
 
    }
    Init(tree);
@@ -220,10 +206,8 @@ Long64_t sT::LoadTree(Long64_t entry)
    if (!fChain) return -5;
    Long64_t centry = fChain->LoadTree(entry);
    if (centry < 0) return centry;
-   if (!fChain->InheritsFrom(TChain::Class()))  return centry;
-   TChain *chain = (TChain*)fChain;
-   if (chain->GetTreeNumber() != fCurrent) {
-      fCurrent = chain->GetTreeNumber();
+   if (fChain->GetTreeNumber() != fCurrent) {
+      fCurrent = fChain->GetTreeNumber();
       Notify();
    }
    return centry;
@@ -290,6 +274,7 @@ void sT::Init(TTree *tree)
    fChain->SetBranchAddress("pLossSim", &pLossSim, &b_pLossSim);
    fChain->SetBranchAddress("dpdxSim", &dpdxSim, &b_dpdxSim);
    fChain->SetBranchAddress("nHitSim", &nHitSim, &b_nHitSim);
+   fChain->SetBranchAddress("hitFrac", &hitFrac, &b_hitFrac);
    fChain->SetBranchAddress("TSim", &TSim, &b_TSim);
    fChain->SetBranchAddress("rInSim", &rInSim, &b_rInSim);
    fChain->SetBranchAddress("rOutSim", &rOutSim, &b_rOutSim);
@@ -299,28 +284,18 @@ void sT::Init(TTree *tree)
    fChain->SetBranchAddress("xOutSim", &xOutSim, &b_xOutSim);
    fChain->SetBranchAddress("yOutSim", &yOutSim, &b_yOutSim);
    fChain->SetBranchAddress("zOutSim", &zOutSim, &b_zOutSim);
-   fChain->SetBranchAddress("dpdxSplit", &dpdxSplit, &b_dpdxSplit);
-   fChain->SetBranchAddress("dpdxErrSplit", &dpdxErrSplit, &b_dpdxSplitErr);
-   fChain->SetBranchAddress("chi2Split", &chi2Split, &b_chi2Split);
-   fChain->SetBranchAddress("freeParSplit", &freeParSplit, &b_freeParSplit);
    fChain->SetBranchAddress("NSplit", &NSplit, &b_NSplit);
    fChain->SetBranchAddress("TInSplit", &TInSplit, &b_TInSplit);
    fChain->SetBranchAddress("TOutSplit", &TOutSplit, &b_TOutSplit);
-   fChain->SetBranchAddress("dpdxByCurvSplit", &dpdxByCurvSplit, &b_dpdxByCurvSplit);
-   fChain->SetBranchAddress("dpdxByCurvErrSplit", &dpdxByCurvErrSplit, &b_dpdxByCurvSplitErr);
-   fChain->SetBranchAddress("chi2ByCurvSplit", &chi2ByCurvSplit, &b_chi2ByCurvSplit);
-   fChain->SetBranchAddress("freeParByCurvSplit", &freeParByCurvSplit, &b_freeParByCurvSplit);
-   fChain->SetBranchAddress("dpdxSSplit", &dpdxSSplit, &b_dpdxSSplit);
-   fChain->SetBranchAddress("dpdxErrSSplit", &dpdxErrSSplit, &b_dpdxErrSSplit);
-   fChain->SetBranchAddress("chi2SSplit", &chi2SSplit, &b_chi2SSplit);
-   fChain->SetBranchAddress("freeParSSplit", &freeParSSplit, &b_freeParSSplit);
-   fChain->SetBranchAddress("NSSplit", &NSSplit, &b_NSSplit);
-   fChain->SetBranchAddress("TInSSplit", &TInSSplit, &b_TInSSplit);
-   fChain->SetBranchAddress("TOutSSplit", &TOutSSplit, &b_TOutSSplit);
-   fChain->SetBranchAddress("dpdxByCurvSSplit", &dpdxByCurvSSplit, &b_dpdxByCurvSSplit);
-   fChain->SetBranchAddress("dpdxByCurvErrSSplit", &dpdxByCurvErrSSplit, &b_dpdxByCurvSSplitErr);
-   fChain->SetBranchAddress("chi2ByCurvSSplit", &chi2ByCurvSSplit, &b_chi2ByCurvSSplit);
-   fChain->SetBranchAddress("freeParByCurvSSplit", &freeParByCurvSSplit, &b_freeParByCurvSSplit);
+   fChain->SetBranchAddress("dpdxSplit", &dpdxSplit, &b_dpdxSplit);
+   fChain->SetBranchAddress("dpdxErrSplit", &dpdxErrSplit, &b_dpdxSplitErr);
+   fChain->SetBranchAddress("chi2Split", &chi2Split, &b_chi2Split);
+   fChain->SetBranchAddress("dpdxTSplit", &dpdxTSplit, &b_dpdxTSplit);
+   fChain->SetBranchAddress("dpdxTErrSplit", &dpdxTErrSplit, &b_dpdxTSplitErr);
+   fChain->SetBranchAddress("chi2TSplit", &chi2TSplit, &b_chi2TSplit);
+   fChain->SetBranchAddress("dpdxZSplit", &dpdxZSplit, &b_dpdxZSplit);
+   fChain->SetBranchAddress("dpdxZErrSplit", &dpdxZErrSplit, &b_dpdxZSplitErr);
+   fChain->SetBranchAddress("chi2ZSplit", &chi2ZSplit, &b_chi2ZSplit);
    Notify();
 }
 

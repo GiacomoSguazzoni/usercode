@@ -25,6 +25,13 @@ splitTreeForPlot::splitTreeForPlot(TTree *tree)
 
   SetEvRangeMax(-1);
 
+  iMC = false;
+
+  if ( tree->GetBranch( "pLossSim" )) {
+    std::cout << " This is a MC file... " << std::endl;
+    iMC = true ;
+  }
+
 }
 
 splitTreeForPlot::~splitTreeForPlot()
@@ -39,36 +46,32 @@ int splitTreeForPlot::QualityCut()
 
   //chi2Split is used to check for good fit; failed fits have chi2Split == -1.
   if (
-      //      pt>0.9
-      //    &&
-      //   pt<1.1
-	       pt>1.8
-	 &&
-	 pt<2.2
-	 &&
-	 chi2ByCurvSplit>0. 
+      pt>0.9
       &&
-      chi2ByCurvSplit<2.
+      pt<1.1
+      //      pt>1.8
+      //	 &&
+      //	 pt<2.2
       &&
       chi2<2. 
       &&
       maxchi2<4. 
       &&
       rIn < 8. 
-	    &&
-	    ((rOut>100.)||(zOut>260.)||(zOut<-260.))
-	   &&
-	   pLossSim>0.
+      &&
+      ((rOut>100.)||(zOut>260.)||(zOut<-260.))
+      ///////////////////////////////      &&
+      ///////////////////////////////      pLossSim>0.
       &&
       (nHitIna+nHitMis+nHitBad)==0
       &&
       //To better identify the direction
       dz<5.
-	&&
-	dz>-5.
-	) return 1;
+      &&
+      dz>-5.
+      ) return 1;
   
-  //      pt>0.9&&pt<1.1&&chi2ByCurvSplit>0.&&chi2ByCurvSplit<2.&&chi2<2.&&rIn<8.&&((rOut>100.)||(zOut>260.)||(zOut<-260.))&&pLossSim>0.&&(nHitIna+nHitMis+nHitBad)==0&&dz<5.&&dz>-5.
+  //      pt>0.9&&pt<1.1&&chi2<2.&&rIn<8.&&((rOut>100.)||(zOut>260.)||(zOut<-260.))&&pLossSim>0.&&(nHitIna+nHitMis+nHitBad)==0&&dz<5.&&dz>-5.
 
   return 0;
 
@@ -103,36 +106,79 @@ void splitTreeForPlot::LoopForFill(elPlot* elplot)
     if ( QualityCut() ) { 
       
       // Factor 1000 to go in MeV/cm
+      //      double dpdxSim = 0.; //FIXME
       double dPdxTrue = 1000.*dpdxSim;
       
-      double dPdx, dPdxErr;
+      double dPdx, dPdxErr, dPdxChi2;
 
-      int iSplit = 0; 
-      int iSSplit = 0; 
-      int iCurvSplit = 1; 
-      int iCurvSSplit = 0; 
+      int iSplit = 1; 
 
-      if ( iSSplit ) {
-	dPdx = 1000.*dpdxSSplit;
-        dPdxErr = 1000.*dpdxErrSSplit;
-      } 
-      if ( iSplit ) {
+      //1 p, split
+      //2 pt, splt
+      //3 pz, split
+      //4 weighed average of dpdx from pz and pt
+
+      //11 p, split
+      //22 pt, splt
+      //33 pz, split
+
+      float nDof = NSplit - 2.;
+
+      if ( iSplit == 1 ) {
 	dPdx = 1000.*dpdxSplit;
         dPdxErr = 1000.*dpdxErrSplit;
-      }
-      if ( iCurvSplit ) {
-	dPdx = 1000.*dpdxByCurvSplit;
-        dPdxErr = 1000.*dpdxByCurvErrSplit;
-      }
-      if ( iCurvSSplit ) {
-	dPdx = 1000.*dpdxByCurvSSplit;
-        dPdxErr = 1000.*dpdxByCurvErrSSplit;
-      }
+	dPdxChi2 = chi2Split/nDof;
+      } 
+      if ( iSplit == 2 ) {
+	dPdx = 1000.*dpdxTSplit;
+        dPdxErr = 1000.*dpdxTErrSplit;
+	dPdxChi2 = chi2TSplit/nDof;
+      } 
+      if ( iSplit == 3 ) {
+	dPdx = 1000.*dpdxZSplit;
+        dPdxErr = 1000.*dpdxZErrSplit;
+	dPdxChi2 = chi2ZSplit/nDof;
+      } 
+      if ( iSplit == 4 ) {
+	float invTErr2 = 1./(dpdxTErrSplit*dpdxTErrSplit);
+	float invZErr2 = 1./(dpdxZErrSplit*dpdxZErrSplit);
+	dPdxErr = (invTErr2+invZErr2);
+	dPdx = 1000.*(invZErr2*dpdxZSplit + invTErr2*dpdxTSplit)/dPdxErr;
+	dPdxErr = sqrt(dPdxErr);
+	dPdxChi2 = max(chi2ZSplit/nDof, chi2TSplit/nDof);
+	if ( chi2ZSplit == 0. ) dPdxChi2 = 0.;
+	if ( chi2TSplit == 0. ) dPdxChi2 = 0.;
+      } 
+      //
 
-      //      double phiOut =  sguazzNormalizedPhi(phi-q*asin(0.5*0.01*rOut*0.2998*3.8/pt)); //Bring phi in the range 0 to 2PI
-      double phiOut =  sguazzNormalizedPhi(atan2(yOut,xOut)); //Bring phi in the range 0 to 2PI
+#define removeforSPLIT
+#ifdef SPLIT
+      if ( iSplit == 11 ) {
+	dPdx = 1000.*dpdxSSplit;
+        dPdxErr = 1000.*dpdxErrSSplit;
+	dPdxChi2 = chi2SSplit/nDof;
+      } 
+      if ( iSplit == 22 ) {
+	dPdx = 1000.*dpdxTSSplit;
+        dPdxErr = 1000.*dpdxTErrSSplit;
+	dPdxChi2 = chi2TSSplit/nDof;
+      } 
+      if ( iSplit == 33 ) {
+	dPdx = 1000.*dpdxZSSplit;
+        dPdxErr = 1000.*dpdxZErrSSplit;
+	dPdxChi2 = chi2ZSSplit/nDof;
+      } 
+#endif
 
-      elplot->Fill(dPdxTrue, dPdx, dPdxErr, eta, phiOut);
+      if ( dPdxChi2 < 4. && dPdxChi2>0. ){
+	//if ( dPdxChi2>0. ){
+
+	//      double phiOut =  sguazzNormalizedPhi(phi-q*asin(0.5*0.01*rOut*0.2998*3.8/pt)); //Bring phi in the range 0 to 2PI
+	double phiOut =  sguazzNormalizedPhi(atan2(yOut,xOut)); //Bring phi in the range 0 to 2PI
+
+	elplot->Fill(dPdxTrue, dPdx, dPdxErr, eta, phiOut);
+
+      }
 
     }
 

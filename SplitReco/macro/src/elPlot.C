@@ -163,7 +163,7 @@ elPlot::~elPlot()
   canVsEta.SetBottomMargin(0.15);
 
   // Draw frame
-  TH2F *frameVsEta = new TH2F("frameVsEta",";#eta;(dP/dx) [MeV/cm]",1,-2.0,2.0,1,0,0.7); 
+  TH2F *frameVsEta = new TH2F("frameVsEta",";#eta;(dP/dx) [MeV/cm]",1,-2.1,2.1,1,0,0.7); 
   frameVsEta->SetStats(0);
   frameVsEta->SetTitle("");
   //  frameVsEta->GetYaxis()->SetDecimals(1);
@@ -180,6 +180,8 @@ elPlot::~elPlot()
   TLegend * legVsEta = new TLegend(0.2,0.7,0.45,0.95);
 
   gausVsEtaGraph->draw(legVsEta);
+  meanVsEtaGraph->draw(legVsEta);
+  medianVsEtaGraph->draw(legVsEta);
   simVsEtaGraph->draw(legVsEta);
   legVsEta->SetFillStyle(0);
   legVsEta->SetBorderSize(0);
@@ -207,6 +209,8 @@ void elPlot::otherInits(){
   meanTrunGraph = new dpdxGraph("Trunc Mean",kRed);
 
   gausVsEtaGraph = new dpdxGraph("Gaus Fit",kAzure+3);
+  meanVsEtaGraph = new dpdxGraph("Mean",kSpring-7);
+  medianVsEtaGraph = new dpdxGraph("Median",kOrange-3);
   simVsEtaGraph = new dpdxGraph("Sim MPV",kBlue);
 
   gausVsPhiGraph = new dpdxGraph("Gaus Fit",kAzure+3);
@@ -253,6 +257,11 @@ void elPlot::PlotAndWriteAll()
 
 void elPlot::FitAll()
 {
+
+  //
+  // Open file for writing
+  ofstream myfile;
+  myfile.open ("plots/ploss.dat");
   
   for (std::vector<binHistos*>::iterator it=bHVector.begin() ; it < bHVector.end(); it++ ){
     std::cout << " Fitting histos of bin " << (*it)->getName() << std::endl;
@@ -281,13 +290,23 @@ void elPlot::FitAll()
     meanTrunGraph->addPoint(mpvSim,mpvTruncMean);
     
     gausVsEtaGraph->addPoint(eta,mpvGaus);
+    float shift = 0.03;
+    double etashift = eta - shift;
+    meanVsEtaGraph->addPoint(etashift,mpvMean);
+    etashift = eta + shift;
+    medianVsEtaGraph->addPoint(etashift,mpvMedian);
     simVsEtaGraph->addPoint(eta,mpvSim);
     
     gausVsPhiGraph->addPoint(phi,mpvGaus);
     simVsPhiGraph->addPoint(phi,mpvSim);
 
+    // Write values here
+    myfile << eta << " " << phi << " " << mpvSim << " " << mpvGaus << " " << mpvMean << " " << mpvMedian << std::endl;
+
 
   }
+
+  myfile.close();
 
 }
 
