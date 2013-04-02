@@ -46,12 +46,18 @@ binHistos::~binHistos()
 
 }
 
-void binHistos::Fill(double sim, double meas, double measErr){
+void binHistos::Fill(double wei, double sim, double meas, double measErr){
 
-  dPdxSim->Fill(sim);
-  dPdxMeas->Fill(meas);
-  dPdxPull->Fill((meas-sim)/measErr);
-  dPdxMeasVSdPdxSim->Fill(sim,meas);
+  dPdxMeas->Fill(meas, wei);
+
+  if (sim>0.){
+    dPdxSim->Fill(sim, wei);
+    dPdxPull->Fill((meas-sim)/measErr, wei);
+    dPdxMeasVSdPdxSim->Fill(sim,meas,wei);
+  }
+
+  /// Qui posso scegliere che valori usare
+
 
 }
 

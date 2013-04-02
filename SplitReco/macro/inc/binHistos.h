@@ -14,7 +14,7 @@ class binHistos {
   binHistos(const char*, const char*, double, double);
   binHistos(const char*, TFile*);
   ~binHistos();
-  void Fill(double, double, double);
+  void Fill(double, double, double, double);
   void PlotAll();
   void FitAll(double&, double&, double&, double&, double&, double&);
   void WriteAll(TFile*);

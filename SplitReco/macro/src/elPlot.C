@@ -218,14 +218,14 @@ void elPlot::otherInits(){
 
 }
 
-void elPlot::Fill(double valSim, double valMeas, double valMeasErr, double u, double v)
+void elPlot::Fill(double valSim, double valMeas, double valMeasErr, double u, double v, double wei)
 {
 
   int theBin = FindBinHisto(u, v);
 
   //  std::cout << " u: " << u << " v: " << v << " The bin is number #:" << theBin << std::endl;
 
-  if ( theBin > -1 ) (bHVector.at(theBin))->Fill(valSim, valMeas, valMeasErr);
+  if ( theBin > -1 ) (bHVector.at(theBin))->Fill(wei, valSim, valMeas, valMeasErr);
   
 }
 

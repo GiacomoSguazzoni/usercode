@@ -31,7 +31,7 @@ class elPlot {
   ~elPlot();
   void PlotAndWriteAll();
   void FitAll();
-  void Fill(double, double, double, double, double);
+  void Fill(double, double, double, double, double, double);
 
  private:
 

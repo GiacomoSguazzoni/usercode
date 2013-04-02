@@ -51,12 +51,20 @@ int main(){
     TChain *mc = new TChain("sT");
     //  mc->Add("./split_QCD_Pt-15to30_TuneZ2_7TeV_pythia6_GEN-SIM-RECODEBUG_PU_S6_START44_V5-v1.root");
     //    mc->Add("./split_qcd1530_v2.root");
-    //mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/minBias_nH4_v2.root"); 
-    mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/qcd1530_nH4_v2.root"); 
-    //mc->Add("/afs/cern.ch/user/s/sguazzon/myWorkarea/split/minbias_run2012A_nH4_v2.root");
-    //mc->Add("/raid/sguazz/split/qcd1530_pAve_lErr0_nEffHit4.root"); 
-    splitTreeForPlot split(mc);
-    //split.SetEvRangeMax(1000000);
+    //    mc->Add("/raid/sguazz/split/minbias_run2012Cpart2c_nH4.root"); 
+    //    mc->Add("/raid/sguazz/split/minbias_run2012Cpart1_nH4.root");
+    // mc->Add("/raid/sguazz/split/minbias_run2012Cpart2a_nH4.root");
+    // mc->Add("/raid/sguazz/split/minbias_run2012Cpart2b_nH4.root");
+    // mc->Add("/raid/sguazz/split/minbias_run2012Cpart2c_nH4.root");
+    mc->Add("/raid/sguazz/split/minbias_run2012A_nH4_v2.root"); 
+    //mc->Add("/raid/sguazz/split/minBias_nH4_v2.root"); 
+    //mc->Add("/raid/sguazz/split/MuGun_NomGeo.root"); 
+    //mc->Add("/raid/sguazz/split/MuGun_NomGeo_part1.root"); 
+    //mc->Add("/raid/sguazz/split/MuGun_NomGeo_part2.root"); 
+    //mc->Add("/raid/sguazz/split/MuGun_ExtFlat10.root"); 
+    //mc->Add("/raid/sguazz/split/MuGun_ExtFlat20.root"); 
+    splitTreeForPlot split(mc, -1, -1); //entries for plots, entries for normalization
+    //splitTreeForPlot split(mc, 10000000, 10000000);
     split.LoopForFill(myPlot);
     
     myPlot->PlotAndWriteAll();
