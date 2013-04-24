@@ -2,10 +2,13 @@
 #define ec_H
 
 struct tsosParams {
+  int iok;
   double p;
   double pErr;
   double curv;
   double curvErr;
+  double curvt;
+  double curvtErr;
   double pt;
   double ptErr;
   double pz;
@@ -17,10 +20,13 @@ struct tsosParams {
   uint32_t detid;
   
   void zero(){
+    iok=0; 
     p=0.;
     pErr=0.;
     curv=0.;
     curvErr=0.;
+    curvt=0.;
+    curvtErr=0.;
     pt=0.;
     ptErr=0.;
     pz=0.;

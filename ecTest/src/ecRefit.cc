@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: ecRefit.cc,v 1.9 2012/10/05 13:55:30 sguazz Exp $
+// $Id: ecRefit.cc,v 1.1 2013/04/02 09:59:53 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -24,6 +24,9 @@
 #include "SimTracker/Records/interface/TrackAssociatorRecord.h"
 
 #include "TrackingTools/TrajectoryState/interface/TrajectoryStateTransform.h"
+
+#include "DataFormats/SiStripDetId/interface/SiStripDetId.h"
+#include "DataFormats/TrackerRecHit2D/interface/SiStripMatchedRecHit2D.h"
 
 #include <TF1.h>
 
@@ -51,25 +54,46 @@ ecRefit::ecRefit(const TrackerGeometry * theGeometry, const MagneticField * theM
 
 }
 
-tsosParams ecRefit::doWithTrack(const reco::Track track){
+tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTid, bool iTec, bool iStereo){
 
   theTrack = track;
 
   tsosParams myParams;
   myParams.zero();
   
+  if ( myDebug_ ) std::cout << "   Selecting hits for refit" << std::endl;
+
   // 
   // Hits
   int iFirst = 1;
+  int iCount = 0;
   for (trackingRecHit_iterator i=theTrack.recHitsBegin(); i!=theTrack.recHitsEnd(); i++){
 
     hitsAll.push_back(theB->build(&**i));
 
     DetId id=DetId((theB->build(&**i))->hit()->geographicalId());
-    if ( id.subdetId() == StripSubdetector::TEC ) {
+
+    if ( myDebug_ ) {
+      std::cout << "   #" << iCount;
+      dumpModuleInfo(id);
+      if ( typeid((theB->build(&**i))->hit()) == typeid(SiStripMatchedRecHit2D) ) std::cout << " Matched ";
+      if ( SiStripDetId(id).stereo() ) std::cout << " Stereo ";
+      if ( ! SiStripDetId(id).stereo() ) std::cout << " Mono ";
+    }
+    
+    if ( 
+	( ( id.subdetId() == StripSubdetector::TID && iTid )
+	  ||
+	  ( id.subdetId() == StripSubdetector::TEC && iTec ) )
+	&&
+	( iStereo || ( ! SiStripDetId(id).stereo() ))
+	) {
+
+      //if ( 1 ) {
       hitsTl.push_back(theB->build(&**i)); //Selected hit vector
-
-
+      
+      if ( myDebug_ ) std::cout << " <--Added to Tracklet";
+      
       // Store detid corresponding to the first hit of the tracklet
       //
       if ( iFirst ) {
@@ -78,9 +102,11 @@ tsosParams ecRefit::doWithTrack(const reco::Track track){
       
       //
       iFirst = 0;
-
+      
     }
-
+    
+    if ( myDebug_ ) std::cout << std::endl;
+    iCount++;
 
 
   }
@@ -89,23 +115,20 @@ tsosParams ecRefit::doWithTrack(const reco::Track track){
   // Refit
   std::vector<Trajectory> trajVec = doGenericRefit(theTrack, hitsTl, theG.product(), theMF.product());
     
-  if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
-  if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
-  if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
-  if ( myDebug_ ) std::cout << " Tracklet refit initialization with track..." << std::endl;
+  if ( myDebug_ ) std::cout << "   Tracklet refit initialization with..." << std::endl;
 
   if ( ! trajVec.size()>0 ) return myParams;
   
-  TrajectoryStateOnSurface upTSOS = trajVec.begin()->firstMeasurement().updatedState();
+  TrajectoryStateOnSurface upTSOS = trajVec.begin()->lastMeasurement().updatedState();
   myParams = GetTSOSParams(upTSOS);
+  myParams.iok = 1;
   
-  if ( myDebug_ ) std::cout << " Initialization successful; track refit done. " << std::endl;
-  if ( myDebug_ ) std::cout << " ######################################################################################### " << std::endl;
+  if ( myDebug_ ) std::cout << "   Tracklet refit done. " << std::endl;
+  if ( myDebug_ ) dumpTSOSInfo(upTSOS);
   
   return myParams;
 
 }
-
 
 ecRefit::~ecRefit()
 {
@@ -194,7 +217,7 @@ double ecRefit::ptErrorAtTSOS(TrajectoryStateOnSurface& TSOS){
 double ecRefit::pzErrorAtTSOS(TrajectoryStateOnSurface& TSOS){
 
   AlgebraicSymMatrix66 errors = TSOS.cartesianError().matrix();
-
+  
   return sqrt(errors(5,5));
   
 }
@@ -207,13 +230,49 @@ double ecRefit::paramErrorAtTSOS(TrajectoryStateOnSurface& TSOS, int i){
   
 }
 
-  
 #include "DataFormats/SiStripDetId/interface/TIBDetId.h"
 #include "DataFormats/SiStripDetId/interface/TOBDetId.h"
 #include "DataFormats/SiStripDetId/interface/TIDDetId.h"
 #include "DataFormats/SiStripDetId/interface/TECDetId.h"
 #include "DataFormats/SiPixelDetId/interface/PXBDetId.h"
 #include "DataFormats/SiPixelDetId/interface/PXFDetId.h"
+
+void ecRefit::dumpTSOSInfo(TrajectoryStateOnSurface& TSOS){
+
+  std::cout << "  >>TSOS>> p=" << TSOS.globalMomentum().mag() << "+-" << pErrorAtTSOS(TSOS) <<
+    " pt=" << TSOS.globalMomentum().perp() << "+-" << ptErrorAtTSOS(TSOS) <<
+    " pz=" << TSOS.globalMomentum().z() << "+-" << pzErrorAtTSOS(TSOS) <<
+    " l=" << 0.5*M_PI-TSOS.globalMomentum().theta() << "+-" << paramErrorAtTSOS(TSOS, 1) <<
+    " the=" << TSOS.globalMomentum().theta() << "+-" << paramErrorAtTSOS(TSOS, 1) << 
+    " phi=" << TSOS.globalMomentum().phi() << "+-" << paramErrorAtTSOS(TSOS, 2) << 
+    "; Position: rho:" << 
+    TSOS.globalPosition().transverse() << " phi:" << TSOS.globalPosition().phi() << " z:" << 
+    TSOS.globalPosition().z() << std::endl;
+
+}
+
+tsosParams ecRefit::GetTSOSParams(TrajectoryStateOnSurface& TSOS){
+
+  tsosParams tp;
+  
+  tp.p = TSOS.globalMomentum().mag();
+  tp.pErr = pErrorAtTSOS(TSOS);
+  tp.curv = TSOS.signedInverseMomentum();
+  tp.curvErr = paramErrorAtTSOS(TSOS, 0);
+  tp.pt = TSOS.globalMomentum().perp();
+  tp.ptErr = ptErrorAtTSOS(TSOS);
+  tp.curvt = TSOS.charge()/tp.pt;
+  tp.curvtErr = tp.ptErr*tp.curvt*tp.curvt;
+  tp.pz = TSOS.globalMomentum().z();
+  tp.pzErr = pzErrorAtTSOS(TSOS);
+  tp.phi = TSOS.globalMomentum().phi();
+  tp.phiErr = paramErrorAtTSOS(TSOS, 2);
+  tp.theta = TSOS.globalMomentum().theta();
+  tp.thetaErr = paramErrorAtTSOS(TSOS, 1);
+
+  return tp;
+
+}
 
 void ecRefit::dumpModuleInfo(DetId hitId){
   
@@ -234,33 +293,3 @@ void ecRefit::dumpModuleInfo(DetId hitId){
 
 }
 
-void ecRefit::dumpTSOSInfo(TrajectoryStateOnSurface& TSOS){
-
-  std::cout << ">>TSOS>> p=" << TSOS.globalMomentum().mag() << "+-" << pErrorAtTSOS(TSOS) <<
-    " pt=" << TSOS.globalMomentum().perp() << "+-" << ptErrorAtTSOS(TSOS) <<
-    " pz=" << TSOS.globalMomentum().z() << "+-" << pzErrorAtTSOS(TSOS) <<
-    " l=" << 0.5*M_PI-TSOS.globalMomentum().theta() << "+-" << paramErrorAtTSOS(TSOS, 1) <<
-    std::endl;
-
-}
-
-tsosParams ecRefit::GetTSOSParams(TrajectoryStateOnSurface& TSOS){
-
-  tsosParams tp;
-
-  tp.p = TSOS.globalMomentum().mag();
-  tp.pErr = pErrorAtTSOS(TSOS);
-  tp.curv = TSOS.signedInverseMomentum();
-  tp.curvErr = paramErrorAtTSOS(TSOS, 0);;
-  tp.pt = TSOS.globalMomentum().perp();
-  tp.ptErr = ptErrorAtTSOS(TSOS);
-  tp.pz = TSOS.globalMomentum().z();
-  tp.pzErr = pzErrorAtTSOS(TSOS);
-  tp.phi = TSOS.globalMomentum().phi();
-  tp.phiErr = paramErrorAtTSOS(TSOS, 2);
-  tp.theta = TSOS.globalMomentum().theta();
-  tp.thetaErr = paramErrorAtTSOS(TSOS, 1);
-
-  return tp;
-
-}

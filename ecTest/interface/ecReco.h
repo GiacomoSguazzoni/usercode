@@ -46,6 +46,8 @@ private:
   double pErrorOfTrack(const reco::Track &);
   double pzErrorOfTrack(const reco::Track &);
   
+  void dumpModuleInfo(DetId);
+
   // ----------member data ---------------------------
   edm::InputTag tracksTag_; 
   edm::InputTag tpTag_; 
@@ -57,6 +59,12 @@ private:
   double etaMinCut_;
   int nHitMinCut_;
   int nHitTecMinCut_;
+  int nHitSteTecMinCut_;
+  int nHitTidMinCut_;
+  int nHitSteTidMinCut_;
+  bool iTid;
+  bool iTec;
+  bool iStereo;
 
   std::string fitterName_;
   std::string associatorName_;
@@ -76,6 +84,7 @@ private:
   //
   // Tree stuff
   TTree * ecTree;
+  //
   // run/event/track
   int ecT_nRun;
   int ecT_nEvent;
@@ -88,6 +97,8 @@ private:
   float ecT_pErr;
   float ecT_curv;
   float ecT_curvErr;
+  float ecT_curvt;
+  float ecT_curvtErr;
   float ecT_pt;
   float ecT_ptErr;
   float ecT_pz;
@@ -103,12 +114,32 @@ private:
   float ecT_vx;     
   float ecT_vy;    
   float ecT_vz;    
+  //
+  // inner state
+  float ecT_pIs;
+  float ecT_pErrIs;
+  float ecT_curvIs;
+  float ecT_curvErrIs;
+  float ecT_curvtIs;
+  float ecT_curvtErrIs;
+  float ecT_ptIs;
+  float ecT_ptErrIs;
+  float ecT_pzIs;
+  float ecT_pzErrIs;
+  float ecT_theIs;
+  float ecT_theErrIs;
+  float ecT_phiIs;
+  float ecT_phiErrIs;
+  //
+  // 
   int   ecT_nHitVal;
   int   ecT_nHitPxl;
   int   ecT_nHitTib;
   int   ecT_nHitTid;
+  int   ecT_nHitSteTid;
   int   ecT_nHitTob;
   int   ecT_nHitTec;
+  int   ecT_nHitSteTec;
   int   ecT_nHitMis;
   int   ecT_nHitIna;
   int   ecT_nHitBad;
@@ -124,10 +155,13 @@ private:
   float ecT_hitFrac;    
   //
   // tracklet
+  int   ecT_iokTl;
   float ecT_pTl;
   float ecT_pErrTl;
   float ecT_curvTl;
   float ecT_curvErrTl;
+  float ecT_curvtTl;
+  float ecT_curvtErrTl;
   float ecT_ptTl;
   float ecT_ptErrTl;
   float ecT_pzTl;
@@ -142,6 +176,12 @@ private:
   float ecT_ptSimTl;
   float ecT_theSimTl;
   float ecT_phiSimTl;
+  //
+  // sim at inner state
+  float ecT_pSimIs;
+  float ecT_ptSimIs;
+  float ecT_theSimIs;
+  float ecT_phiSimIs;
 
 };
 

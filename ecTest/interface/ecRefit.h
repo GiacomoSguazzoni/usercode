@@ -34,7 +34,7 @@ public:
   ecRefit(const TrackerGeometry *, const MagneticField *, const TrajectoryFitter *, const TransientTrackingRecHitBuilder *, bool);
   ~ecRefit();
 
-  tsosParams doWithTrack(const reco::Track);
+  tsosParams doWithTrack(const reco::Track, bool, bool, bool);
 
  private:
   void setMaterialToKFactor(double);
@@ -48,7 +48,6 @@ public:
   std::vector<Trajectory> doGenericRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
 
   void dumpModuleInfo(DetId);
-
 
   //Debug switch
   bool myDebug_;
