@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: ecRefit.cc,v 1.1 2013/04/02 09:59:53 sguazz Exp $
+// $Id: ecRefit.cc,v 1.2 2013/04/24 14:24:48 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -54,7 +54,7 @@ ecRefit::ecRefit(const TrackerGeometry * theGeometry, const MagneticField * theM
 
 }
 
-tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTid, bool iTec, bool iStereo){
+tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTib, bool iTid, bool iTob, bool iTec, bool iStereo){
 
   theTrack = track;
 
@@ -67,6 +67,7 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTid, bool iTec, b
   // Hits
   int iFirst = 1;
   int iCount = 0;
+  int iCountSelected = 0;
   for (trackingRecHit_iterator i=theTrack.recHitsBegin(); i!=theTrack.recHitsEnd(); i++){
 
     hitsAll.push_back(theB->build(&**i));
@@ -82,28 +83,40 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTid, bool iTec, b
     }
     
     if ( 
-	( ( id.subdetId() == StripSubdetector::TID && iTid )
-	  ||
-	  ( id.subdetId() == StripSubdetector::TEC && iTec ) )
+	( 
+         ( id.subdetId() == StripSubdetector::TIB && iTib )
+         ||
+         ( id.subdetId() == StripSubdetector::TEC && iTec )
+         ||
+         ( id.subdetId() == StripSubdetector::TID && iTid )
+         ||
+         ( id.subdetId() == StripSubdetector::TOB && iTob )
+	 )
 	&&
-	( iStereo || ( ! SiStripDetId(id).stereo() ))
-	) {
-
-      //if ( 1 ) {
-      hitsTl.push_back(theB->build(&**i)); //Selected hit vector
-      
-      if ( myDebug_ ) std::cout << " <--Added to Tracklet";
-      
-      // Store detid corresponding to the first hit of the tracklet
-      //
-      if ( iFirst ) {
-	myParams.detid = id;
+	( 
+	 iStereo 
+	 || 
+	 ( ! SiStripDetId(id).stereo() )
+	 )
+	)
+      {
+	
+	//if ( 1 ) {
+	hitsTl.push_back(theB->build(&**i)); //Selected hit vector
+	iCountSelected++;
+	
+	if ( myDebug_ ) std::cout << " <--Added to Tracklet";
+	
+	// Store detid corresponding to the first hit of the tracklet
+	//
+	if ( iFirst ) {
+	  myParams.detid = id;
+	}
+	
+	//
+	iFirst = 0;
+	
       }
-      
-      //
-      iFirst = 0;
-      
-    }
     
     if ( myDebug_ ) std::cout << std::endl;
     iCount++;
@@ -122,6 +135,7 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTid, bool iTec, b
   TrajectoryStateOnSurface upTSOS = trajVec.begin()->lastMeasurement().updatedState();
   myParams = GetTSOSParams(upTSOS);
   myParams.iok = 1;
+  myParams.nhit = iCountSelected;
   
   if ( myDebug_ ) std::cout << "   Tracklet refit done. " << std::endl;
   if ( myDebug_ ) dumpTSOSInfo(upTSOS);

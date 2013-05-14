@@ -38,16 +38,23 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
 
   ptMinCut_ = iConfig.getUntrackedParameter<double>("ptMinCut", 0.8);
   ptMaxCut_ = iConfig.getUntrackedParameter<double>("ptMaxCut", 5.2);
-  nHitMinCut_ = iConfig.getUntrackedParameter<int>("nHitMinCut", 6);
-  nHitTecMinCut_ = iConfig.getUntrackedParameter<int>("nHitTecMinCut", 3);
+  nHitMinCut_ = iConfig.getUntrackedParameter<int>("nHitMinCut", 8);
+  nHitTlMinCut_ = iConfig.getUntrackedParameter<int>("nHitTlMinCut", 6);
+  nHitTibMinCut_ = iConfig.getUntrackedParameter<int>("nHitTibMinCut", 0);
+  nHitSteTibMinCut_ = iConfig.getUntrackedParameter<int>("nHitSteTibMinCut", 0);
+  nHitTobMinCut_ = iConfig.getUntrackedParameter<int>("nHitTobMinCut", 0);
+  nHitSteTobMinCut_ = iConfig.getUntrackedParameter<int>("nHitSteTobMinCut", 0);
+  nHitTecMinCut_ = iConfig.getUntrackedParameter<int>("nHitTecMinCut", 0);
   nHitSteTecMinCut_ = iConfig.getUntrackedParameter<int>("nHitSteTecMinCut", 0);
-  nHitTidMinCut_ = iConfig.getUntrackedParameter<int>("nHitTidMinCut", 2);
+  nHitTidMinCut_ = iConfig.getUntrackedParameter<int>("nHitTidMinCut", 0);
   nHitSteTidMinCut_ = iConfig.getUntrackedParameter<int>("nHitSteTidMinCut", 0);
   etaMaxCut_ = iConfig.getUntrackedParameter<double>("etaMaxCut", 2.0);
   etaMinCut_ = iConfig.getUntrackedParameter<double>("etaMinCut", -2.0);
 
   iTid = iConfig.getUntrackedParameter<bool>("useTID", true);
   iTec = iConfig.getUntrackedParameter<bool>("useTEC", true);
+  iTib = iConfig.getUntrackedParameter<bool>("useTIB", true);
+  iTob = iConfig.getUntrackedParameter<bool>("useTOB", true);
   iStereo = iConfig.getUntrackedParameter<bool>("useStereo", true);
 
   fitterName_ = iConfig.getUntrackedParameter<std::string>("Fitter","KFFittingSmootherWithOutliersRejectionAndRK");
@@ -109,13 +116,16 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   ecTree->Branch("phiErrIs",     &ecT_phiErrIs,   "phiErrIs/F",     bs);     
   //
   ecTree->Branch("nHitVal",    &ecT_nHitVal,    "nHitVal/I",    bs);    
+  ecTree->Branch("nHitTl",     &ecT_nHitTl,     "nHitTl/I",     bs);    
   ecTree->Branch("nHitPxl",    &ecT_nHitPxl,    "nHitPxl/I",    bs);    
   ecTree->Branch("nHitTib",    &ecT_nHitTib,    "nHitTib/I",    bs);    
+  ecTree->Branch("nHitSteTib", &ecT_nHitSteTib, "nHitSteTib/I", bs);     
   ecTree->Branch("nHitTob",    &ecT_nHitTob,    "nHitTob/I",    bs);    
-  ecTree->Branch("nHitTec",    &ecT_nHitTec,    "nHitTec/I",    bs);    
-  ecTree->Branch("nHitSteTec", &ecT_nHitSteTec, "nHitSteTec/I", bs);     
+  ecTree->Branch("nHitSteTob", &ecT_nHitSteTob, "nHitSteTob/I", bs);     
   ecTree->Branch("nHitTid",    &ecT_nHitTid,    "nHitTid/I",    bs);    
   ecTree->Branch("nHitSteTid", &ecT_nHitSteTid, "nHitSteTid/I", bs);     
+  ecTree->Branch("nHitTec",    &ecT_nHitTec,    "nHitTec/I",    bs);    
+  ecTree->Branch("nHitSteTec", &ecT_nHitSteTec, "nHitSteTec/I", bs);     
   ecTree->Branch("nHitMis",    &ecT_nHitMis,    "nHitMis/I",    bs);    
   ecTree->Branch("nHitIna",    &ecT_nHitIna,    "nHitIna/I",    bs);    
   ecTree->Branch("nHitBad",    &ecT_nHitBad,    "nHitBad/I",    bs);    
@@ -234,11 +244,11 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 
   for(View<Track>::size_type i=0; i<tC.size(); ++i) {
     edm::RefToBase<reco::Track> itTrack(trackCollectionH, i);
-
-   //
+    
+    //
     // Track preselection
     if ( ! trackPreSelection(*itTrack) ) continue;
-
+    
     ecT_iTrack++;
     
     ecT_iTrackSim=0;
@@ -247,12 +257,12 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
     ecT_theSim=0.;   
     ecT_phiSim=0.;   
     ecT_hitFrac=0.;
-
-  if ( myDebug_ ) std::cout << ">>>>>>---------------------------------------------------------------------------------" << std::endl;
+    
+    if ( myDebug_ ) std::cout << ">>>>>>---------------------------------------------------------------------------------" << std::endl;
     uint32_t detid = trackAction(*itTrack);
-
+    
     if ( isMC_ ) {
-
+      
       try{ 
 	std::vector<std::pair<TrackingParticleRef, double> > tp = RtSC[itTrack];
 	if ( myDebug_ ) std::cout << "   Reco Track pT: " << itTrack->pt() 
@@ -271,12 +281,12 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 	if ( myDebug_ ) std::cout << "->   Track pT: " << itTrack->pt() 
 				  <<  " matched to 0 MC Tracks" << std::endl;
       }
-
+      
     }
-
+    
     //
     // Fill ecTree
-    ecTree->Fill();
+    if ( ecT_iokTl ) ecTree->Fill();
 
   }
 
@@ -421,6 +431,8 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
   ecT_nHitTec = hp.numberOfValidStripTECHits();
   ecT_nHitSteTec = hp.getTrackerMonoStereo(6,1);
   ecT_nHitSteTid = hp.getTrackerMonoStereo(4,1);
+  ecT_nHitSteTib = hp.getTrackerMonoStereo(3,1);
+  ecT_nHitSteTob = hp.getTrackerMonoStereo(5,1);
 
   if ( myDebug_ ) std::cout << ">> This track: " << " pT:" << ecT_pt << " p:" << ecT_p << " eta:" << ecT_eta << " the:" << ecT_the << " phi:" << ecT_phi << " nValHits:" << ecT_nHitVal << " nTecHits:" << ecT_nHitTec << " nTecSteHits:" << ecT_nHitSteTec << std::endl;  
 
@@ -432,6 +444,10 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
       ecT_nHitVal<nHitMinCut_ ||
       ecT_pt<ptMinCut_ ||
       ecT_pt>ptMaxCut_ ||
+      ecT_nHitTib<nHitTibMinCut_ ||
+      ecT_nHitSteTib<nHitSteTibMinCut_ ||
+      ecT_nHitTob<nHitTobMinCut_ ||
+      ecT_nHitSteTob<nHitSteTobMinCut_ ||
       ecT_nHitTec<nHitTecMinCut_ ||
       ecT_nHitSteTec<nHitSteTecMinCut_ ||
       ecT_nHitTid<nHitTidMinCut_ ||
@@ -473,11 +489,12 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
 uint32_t ecReco::trackAction(const reco::Track & itTrack){
 
   ecRefit thisEcRefit(theG.product(), theMF.product(), theFitter.product(), theBuilder.product(), myDebug_);
-  tsosParams myPars = thisEcRefit.doWithTrack(itTrack, iTid, iTec, iStereo);
+  tsosParams myPars = thisEcRefit.doWithTrack(itTrack, iTib, iTid, iTob, iTec, iStereo);
 
   //
   // Tree stuff
   ecT_iokTl =      myPars.iok;
+  ecT_nHitTl =     myPars.nhit;
   ecT_pTl =        myPars.p;
   ecT_pErrTl =     myPars.pErr;
   ecT_curvTl =     myPars.curv;

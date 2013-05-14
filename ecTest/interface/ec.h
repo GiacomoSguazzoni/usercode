@@ -3,6 +3,7 @@
 
 struct tsosParams {
   int iok;
+  int nhit;
   double p;
   double pErr;
   double curv;
@@ -20,6 +21,7 @@ struct tsosParams {
   uint32_t detid;
   
   void zero(){
+    nhit=0;
     iok=0; 
     p=0.;
     pErr=0.;

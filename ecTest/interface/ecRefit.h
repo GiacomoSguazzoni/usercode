@@ -34,7 +34,7 @@ public:
   ecRefit(const TrackerGeometry *, const MagneticField *, const TrajectoryFitter *, const TransientTrackingRecHitBuilder *, bool);
   ~ecRefit();
 
-  tsosParams doWithTrack(const reco::Track, bool, bool, bool);
+  tsosParams doWithTrack(const reco::Track, bool, bool, bool, bool, bool);
 
  private:
   void setMaterialToKFactor(double);

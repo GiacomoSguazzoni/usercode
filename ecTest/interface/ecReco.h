@@ -58,10 +58,17 @@ private:
   double etaMaxCut_;
   double etaMinCut_;
   int nHitMinCut_;
+  int nHitTlMinCut_;
   int nHitTecMinCut_;
   int nHitSteTecMinCut_;
   int nHitTidMinCut_;
   int nHitSteTidMinCut_;
+  int nHitTibMinCut_;
+  int nHitSteTibMinCut_;
+  int nHitTobMinCut_;
+  int nHitSteTobMinCut_;
+  bool iTib;
+  bool iTob;
   bool iTid;
   bool iTec;
   bool iStereo;
@@ -133,11 +140,14 @@ private:
   //
   // 
   int   ecT_nHitVal;
+  int   ecT_nHitTl;
   int   ecT_nHitPxl;
   int   ecT_nHitTib;
+  int   ecT_nHitSteTib;
   int   ecT_nHitTid;
   int   ecT_nHitSteTid;
   int   ecT_nHitTob;
+  int   ecT_nHitSteTob;
   int   ecT_nHitTec;
   int   ecT_nHitSteTec;
   int   ecT_nHitMis;

@@ -28,7 +28,7 @@ readFiles.extend( [
 secFiles.extend( [
     ] );
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 process.ectest = cms.EDAnalyzer('ecReco',
@@ -37,23 +37,36 @@ process.ectest = cms.EDAnalyzer('ecReco',
                                 tracks = cms.untracked.InputTag('generalTracks'),
                                 #                             tp = cms.untracked.InputTag('mergedtruth:MergedTrackTruth'),
                                 tp = cms.untracked.InputTag("mergedtruth","MergedTrackTruth"),
-                                #myDebug = cms.untracked.bool( False ),
-                                myDebug = cms.untracked.bool( True ),
+                                myDebug = cms.untracked.bool( False ),
+                                #myDebug = cms.untracked.bool( True ),
                                 outputFileName = cms.untracked.string("ecTest.root"),
                                 # ptMinCut = cms.untracked.double(0.8),
                                 # ptMaxCut = cms.untracked.double(5.2),
                                 ptMinCut = cms.untracked.double(0.2),
                                 ptMaxCut = cms.untracked.double(10.0),
-                                etaMinCut = cms.untracked.double(1.0),
+                                etaMinCut = cms.untracked.double(0.0),
                                 etaMaxCut = cms.untracked.double(2.5),
-                                nHitMinCut = cms.untracked.int32(5),
-                                nHitTecMinCut = cms.untracked.int32(2),
-                                nHitSteTecMinCut = cms.untracked.int32(0),
-                                useTEC = cms.untracked.bool( True ),
-                                nHitTidMinCut = cms.untracked.int32(2),
+                                #
+                                nHitMinCut = cms.untracked.int32(8),
+                                nHitTlMinCut = cms.untracked.int32(6),
+                                #
+                                nHitTibMinCut = cms.untracked.int32(0),
+                                nHitSteTibMinCut = cms.untracked.int32(0),
+                                useTIB = cms.untracked.bool( True ),
+                                #
+                                nHitTidMinCut = cms.untracked.int32(0),
                                 nHitSteTidMinCut = cms.untracked.int32(0),
                                 useTID = cms.untracked.bool( True ),
-                                useStereo = cms.untracked.bool( True )
+                                #
+                                nHitTobMinCut = cms.untracked.int32(0),
+                                nHitSteTobMinCut = cms.untracked.int32(0),
+                                useTOB = cms.untracked.bool( True ),
+                                #
+                                nHitTecMinCut = cms.untracked.int32(0),
+                                nHitSteTecMinCut = cms.untracked.int32(0),
+                                useTEC = cms.untracked.bool( True ),
+                                #
+                                useStereo = cms.untracked.bool( False )
 )
 
 process.load("Configuration.EventContent.EventContent_cff")
