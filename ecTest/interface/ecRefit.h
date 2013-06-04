@@ -34,7 +34,7 @@ public:
   ecRefit(const TrackerGeometry *, const MagneticField *, const TrajectoryFitter *, const TransientTrackingRecHitBuilder *, bool);
   ~ecRefit();
 
-  tsosParams doWithTrack(const reco::Track, bool, bool, bool, bool, bool);
+  tsosParams doWithTrack(const reco::Track, hitSelector);
 
  private:
   void setMaterialToKFactor(double);
@@ -44,6 +44,7 @@ public:
   double paramErrorAtTSOS(TrajectoryStateOnSurface &, int);
   void dumpTSOSInfo(TrajectoryStateOnSurface &);
   tsosParams GetTSOSParams(TrajectoryStateOnSurface &);
+  int buildHitsVector(const reco::Track, hitSelector, uint32_t&, uint32_t&);
   TrajectoryStateOnSurface buildInitialStateForEcRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
   std::vector<Trajectory> doGenericRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
 
@@ -66,7 +67,6 @@ public:
   //
   // Quantities needed for ec refits
   //
-  TransientTrackingRecHit::RecHitContainer hitsAll;       
   TransientTrackingRecHit::RecHitContainer hitsTl;       
 
 };

@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: ecRefit.cc,v 1.2 2013/04/24 14:24:48 sguazz Exp $
+// $Id: ecRefit.cc,v 1.3 2013/05/14 10:14:17 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -15,6 +15,7 @@
 #include "FWCore/Utilities/interface/Exception.h"
 
 #include "RecoTracker/TransientTrackingRecHit/interface/TkTransientTrackingRecHitBuilder.h"
+#include "TrackingTools/TransientTrackingRecHit/interface/InvalidTransientRecHit.h"
 #include "TrackingTools/MaterialEffects/interface/PropagatorWithMaterial.h"
 #include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h" 
@@ -54,26 +55,34 @@ ecRefit::ecRefit(const TrackerGeometry * theGeometry, const MagneticField * theM
 
 }
 
-tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTib, bool iTid, bool iTob, bool iTec, bool iStereo){
+int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& detidIs, uint32_t& detidTl){
 
-  theTrack = track;
+  ////////////////////////////////////////////////////////////////////////////////
 
-  tsosParams myParams;
-  myParams.zero();
-  
   if ( myDebug_ ) std::cout << "   Selecting hits for refit" << std::endl;
+  if ( myDebug_ ) std::cout << "   Selector: tib:" << hs.tib << " tid:" << hs.tid << " tob:" << hs.tob << " tec:" << hs.tec << " stereo:" << hs.stereo << " all:" << hs.all << std::endl;
 
   // 
   // Hits
-  int iFirst = 1;
+  int iFirstIs = 1;
+  int iFirstTl = 1;
   int iCount = 0;
   int iCountSelected = 0;
+
+  //  TransientTrackingRecHit::RecHitContainer hitsTl;       
+
   for (trackingRecHit_iterator i=theTrack.recHitsBegin(); i!=theTrack.recHitsEnd(); i++){
 
-    hitsAll.push_back(theB->build(&**i));
-
     DetId id=DetId((theB->build(&**i))->hit()->geographicalId());
+    const GeomDet* hitDet = (theB->build(&**i))->det();
 
+    // Store detid corresponding to the first hit of the track
+    //
+    if ( iFirstIs ) {
+      detidIs = id;
+      iFirstIs = 0;
+    }
+    
     if ( myDebug_ ) {
       std::cout << "   #" << iCount;
       dumpModuleInfo(id);
@@ -83,21 +92,22 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTib, bool iTid, b
     }
     
     if ( 
-	( 
-         ( id.subdetId() == StripSubdetector::TIB && iTib )
+	(( 
+         ( id.subdetId() == StripSubdetector::TIB && hs.tib )
          ||
-         ( id.subdetId() == StripSubdetector::TEC && iTec )
+         ( id.subdetId() == StripSubdetector::TEC && hs.tec )
          ||
-         ( id.subdetId() == StripSubdetector::TID && iTid )
+         ( id.subdetId() == StripSubdetector::TID && hs.tid )
          ||
-         ( id.subdetId() == StripSubdetector::TOB && iTob )
+         ( id.subdetId() == StripSubdetector::TOB && hs.tob )
 	 )
 	&&
 	( 
-	 iStereo 
+	 hs.stereo 
 	 || 
 	 ( ! SiStripDetId(id).stereo() )
-	 )
+	 ))
+	|| hs.all
 	)
       {
 	
@@ -109,20 +119,74 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTib, bool iTid, b
 	
 	// Store detid corresponding to the first hit of the tracklet
 	//
-	if ( iFirst ) {
-	  myParams.detid = id;
+	if ( iFirstTl ) {
+	  detidTl = id;
 	}
 	
 	//
-	iFirst = 0;
+	iFirstTl = 0;
 	
-      }
+      } else if( ! iFirstTl ) {
+      
+      // Add here the invalid hit
+      
+      hitsTl.push_back(InvalidTransientRecHit::build(hitDet, TrackingRecHit::missing));
+      if ( myDebug_ ) std::cout << " <--Invalid hit added to Tracklet";
+
+    }
     
     if ( myDebug_ ) std::cout << std::endl;
     iCount++;
 
 
   }
+
+  if ( myDebug_ ) std::cout << " Number of valid hits selected for refit: " << iCountSelected << std::endl;
+  if ( myDebug_ ) std::cout << " Number of hits in the vector: " << hitsTl.size() << std::endl;
+
+  if ( ! iCountSelected ) return 0;
+
+  //Reverse re-loop on hits to drop trailing invalid hits 
+  bool iFirstValidNotYetFound = true;
+  if ( myDebug_ ) std::cout << " Reverse loop to remove trailing invalid hits" << std::endl;
+  int iRecount = hitsTl.size()-1;
+  for (TransientTrackingRecHit::RecHitContainer::const_iterator i=hitsTl.end()-1; i!=hitsTl.begin(); i--){
+
+    if ( myDebug_ ) std::cout << " The hit #" << iRecount;
+    if ( myDebug_ ) std::cout << " isValid:" << (*i)->isValid();
+    if ( (*i)->isValid() ) iFirstValidNotYetFound = false; 
+    if (! (*i)->isValid() && iFirstValidNotYetFound ){
+      hitsTl.pop_back();
+      if ( myDebug_ ) std::cout << " dropped";
+    }
+    if ( myDebug_ ) std::cout << std::endl;
+  
+    iRecount--;
+
+  }
+
+  if ( myDebug_ ) std::cout << " Number of hits in the vector after cleaning: " << hitsTl.size() << std::endl;
+
+  return iCountSelected;
+
+}
+
+tsosParams ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
+
+  theTrack = track;
+
+  tsosParams myParams;
+  myParams.zero();
+  
+  //
+  // Build hits vector  
+  uint32_t detidTl;
+  uint32_t detidIs;
+  myParams.nhit = buildHitsVector(track, hs, detidIs, detidTl);
+  myParams.detidIs = detidIs;
+  myParams.detidTl = detidTl;
+
+  if ( myParams.nhit <= hs.minhits ) return myParams;
 
   //
   // Refit
@@ -135,7 +199,6 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, bool iTib, bool iTid, b
   TrajectoryStateOnSurface upTSOS = trajVec.begin()->lastMeasurement().updatedState();
   myParams = GetTSOSParams(upTSOS);
   myParams.iok = 1;
-  myParams.nhit = iCountSelected;
   
   if ( myDebug_ ) std::cout << "   Tracklet refit done. " << std::endl;
   if ( myDebug_ ) dumpTSOSInfo(upTSOS);

@@ -1,6 +1,17 @@
 #ifndef ec_H
 #define ec_H
 
+struct hitSelector {
+  int minhits;
+  bool tib;
+  bool tid;
+  bool tob;
+  bool tec;
+  bool stereo;
+  bool all;
+
+};
+
 struct tsosParams {
   int iok;
   int nhit;
@@ -18,7 +29,8 @@ struct tsosParams {
   double phiErr;
   double theta;
   double thetaErr;
-  uint32_t detid;
+  uint32_t detidTl;
+  uint32_t detidIs;
   
   void zero(){
     nhit=0;
@@ -37,7 +49,8 @@ struct tsosParams {
     phiErr=0.;
     theta=0.;
     thetaErr=0.;
-    detid=0;
+    detidTl=0;
+    detidIs=0;
   };
   
 };

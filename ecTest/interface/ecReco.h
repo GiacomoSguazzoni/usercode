@@ -40,8 +40,8 @@ private:
   virtual void endJob();
 
   bool trackPreSelection(const reco::Track &);
-  uint32_t trackAction(const reco::Track &);
-  int trackingParticleAction(TrackingParticleRef &, uint32_t);
+  void trackAction(const reco::Track &, uint32_t&, uint32_t&);
+  int trackingParticleAction(TrackingParticleRef &, uint32_t, uint32_t);
 
   double pErrorOfTrack(const reco::Track &);
   double pzErrorOfTrack(const reco::Track &);
@@ -58,7 +58,6 @@ private:
   double etaMaxCut_;
   double etaMinCut_;
   int nHitMinCut_;
-  int nHitTlMinCut_;
   int nHitTecMinCut_;
   int nHitSteTecMinCut_;
   int nHitTidMinCut_;
@@ -67,11 +66,7 @@ private:
   int nHitSteTibMinCut_;
   int nHitTobMinCut_;
   int nHitSteTobMinCut_;
-  bool iTib;
-  bool iTob;
-  bool iTid;
-  bool iTec;
-  bool iStereo;
+  hitSelector hs;
 
   std::string fitterName_;
   std::string associatorName_;
@@ -87,7 +82,7 @@ private:
 
   TFile * file;
   int itrack;
-
+  int nTracksInSample;
   //
   // Tree stuff
   TTree * ecTree;

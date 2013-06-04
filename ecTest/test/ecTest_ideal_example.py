@@ -11,7 +11,9 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load("Configuration.StandardSequences.Reconstruction_cff")
 process.load("SimTracker.TrackAssociation.TrackAssociatorByHits_cfi")
 
-process.GlobalTag.globaltag = "START53_V15::All"
+process.load("RecoTracker.TrackProducer.TrackRefitters_cff")
+
+process.GlobalTag.globaltag = "MC_53_V15::All"
 
 readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
@@ -34,7 +36,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.ectest = cms.EDAnalyzer('ecReco',
                                 isMC = cms.untracked.bool( True ),
                                 #isMC = cms.untracked.bool( False ),
-                                tracks = cms.untracked.InputTag('generalTracks'),
+                                #tracks = cms.untracked.InputTag('generalTracks'),
+                                tracks = cms.untracked.InputTag('TrackRefitter'),
                                 #                             tp = cms.untracked.InputTag('mergedtruth:MergedTrackTruth'),
                                 tp = cms.untracked.InputTag("mergedtruth","MergedTrackTruth"),
                                 myDebug = cms.untracked.bool( False ),
@@ -81,5 +84,5 @@ process.RECO = cms.OutputModule("PoolOutputModule",
                                 fileName = cms.untracked.string('reco.root')
                                 )
 
-process.p = cms.Path(process.ectest)
+process.p = cms.Path(process.TrackRefitter*process.ectest)
 

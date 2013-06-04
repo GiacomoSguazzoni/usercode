@@ -39,7 +39,6 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   ptMinCut_ = iConfig.getUntrackedParameter<double>("ptMinCut", 0.8);
   ptMaxCut_ = iConfig.getUntrackedParameter<double>("ptMaxCut", 5.2);
   nHitMinCut_ = iConfig.getUntrackedParameter<int>("nHitMinCut", 8);
-  nHitTlMinCut_ = iConfig.getUntrackedParameter<int>("nHitTlMinCut", 6);
   nHitTibMinCut_ = iConfig.getUntrackedParameter<int>("nHitTibMinCut", 0);
   nHitSteTibMinCut_ = iConfig.getUntrackedParameter<int>("nHitSteTibMinCut", 0);
   nHitTobMinCut_ = iConfig.getUntrackedParameter<int>("nHitTobMinCut", 0);
@@ -51,11 +50,14 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   etaMaxCut_ = iConfig.getUntrackedParameter<double>("etaMaxCut", 2.0);
   etaMinCut_ = iConfig.getUntrackedParameter<double>("etaMinCut", -2.0);
 
-  iTid = iConfig.getUntrackedParameter<bool>("useTID", true);
-  iTec = iConfig.getUntrackedParameter<bool>("useTEC", true);
-  iTib = iConfig.getUntrackedParameter<bool>("useTIB", true);
-  iTob = iConfig.getUntrackedParameter<bool>("useTOB", true);
-  iStereo = iConfig.getUntrackedParameter<bool>("useStereo", true);
+  
+  hs.minhits = iConfig.getUntrackedParameter<int>("nHitTlMinCut", 6);
+  hs.tid = iConfig.getUntrackedParameter<bool>("useTID", true);
+  hs.tec = iConfig.getUntrackedParameter<bool>("useTEC", true);
+  hs.tib = iConfig.getUntrackedParameter<bool>("useTIB", true);
+  hs.tob = iConfig.getUntrackedParameter<bool>("useTOB", true);
+  hs.stereo = iConfig.getUntrackedParameter<bool>("useStereo", true);
+  hs.all = iConfig.getUntrackedParameter<bool>("useAll", false);
 
   fitterName_ = iConfig.getUntrackedParameter<std::string>("Fitter","KFFittingSmootherWithOutliersRejectionAndRK");
   associatorName_ = iConfig.getUntrackedParameter<std::string>("Associator","TrackAssociatorByHits");
@@ -70,6 +72,10 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   //now do what ever initialization is needed
   ecT_iEvent=0;
   itrack=0;
+
+  //Inizialize track counter
+  nTracksInSample = 0;
+  std::cout << " >>>>>>>> Total number of track is " << nTracksInSample << std::endl;
 
   file = new TFile(FileName_.c_str(),"recreate");
   
@@ -193,6 +199,9 @@ ecReco::~ecReco()
 
   file->Write();
   file->Close();
+
+  std::cout << " >>>>>>>> This sample contains " << nTracksInSample << " tracks in " << ecT_iEvent << " events. Ciao." << std::endl;
+ 
 }
 
 
@@ -237,10 +246,11 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 
   //
   // Loop on event tracks
-  ecT_iTrack=0;
+  ecT_iTrack = 0;
   ecT_NTrack = tC.size();
+  nTracksInSample += tC.size();
   if ( myDebug_ ) std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
-  if ( myDebug_ ) std::cout << ">>>>>> This event contains " << ecT_NTrack << " reconstructed tracks." << std::endl;
+  if ( myDebug_ ) std::cout << ">>>>>> This event contains " << ecT_NTrack << " reconstructed tracks and the total is " << nTracksInSample << "." << std::endl;
 
   for(View<Track>::size_type i=0; i<tC.size(); ++i) {
     edm::RefToBase<reco::Track> itTrack(trackCollectionH, i);
@@ -259,7 +269,9 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
     ecT_hitFrac=0.;
     
     if ( myDebug_ ) std::cout << ">>>>>>---------------------------------------------------------------------------------" << std::endl;
-    uint32_t detid = trackAction(*itTrack);
+    uint32_t detidTl=0;
+    uint32_t detidIs=0;
+    trackAction(*itTrack, detidTl, detidIs);
     
     if ( isMC_ ) {
       
@@ -274,8 +286,12 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 	  ecT_hitFrac = it->second;
 	  if ( myDebug_ ) std::cout << "\t\tMCTrack " << tpr.index() << " pT: " << tpr->pt() << 
 	    " NShared: " << ecT_hitFrac << std::endl;
-	  trackingParticleAction(tpr, detid);
-	  
+	  int itpaout = trackingParticleAction(tpr, detidTl, detidIs);
+	  if ( itpaout ) {
+	    if ( myDebug_ ) std::cout << " Track rejected due to psimhit double match " << std::endl; 
+	    ecT_iokTl=0;
+	  }
+
 	}
       } catch (cms::Exception event) {
 	if ( myDebug_ ) std::cout << "->   Track pT: " << itTrack->pt() 
@@ -294,8 +310,7 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 
 
 // ------------ method called once each job just before starting event loop  ------------
-void ecReco::beginJob(const edm::EventSetup & setup)
-{
+void ecReco::beginJob(const edm::EventSetup & setup) {
 
 }
 
@@ -304,7 +319,7 @@ void ecReco::endJob() {
 
 }
 
-int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetId){
+int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl, uint32_t iDetIdIs){
 
   TrackingParticle* tp = const_cast<TrackingParticle*>(tpr.get());
 	   
@@ -326,8 +341,8 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetId){
   // Store state corresponding to the first hit detid
 
   int iPSHit = 0;
-  int iFirstTrackerHit = 1;
   int iFirstDetIdMatch = 0;
+  int iDoubleMatch = 0;
 
   for(std::vector<PSimHit>::const_iterator TPhit = tp->pSimHit_begin(); TPhit != tp->pSimHit_end(); TPhit++){ //sguazz
     //
@@ -353,41 +368,45 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetId){
       std::cout << " p:" << gMomentumAtHit.mag() << 
 	" pt:" << gMomentumAtHit.perp() <<
 	" the:" << gMomentumAtHit.theta() <<
-	" phi:" << gMomentumAtHit.phi() << std::endl;
-
+	" phi:" << gMomentumAtHit.phi() <<
+	" ptype:" << TPhit->particleType() << " tkid:" << TPhit->trackId() << " proctyp:" << TPhit->processType();
     }
 
 
-    if ( iFirstTrackerHit ) {
-
+    if (detid == iDetIdIs){ 
+      
       ecT_pSimIs=gMomentumAtHit.mag();
       ecT_ptSimIs=gMomentumAtHit.perp();
       ecT_theSimIs=gMomentumAtHit.theta();
       ecT_phiSimIs=gMomentumAtHit.phi();
 
-      iFirstTrackerHit = 0;
-      
+      if ( myDebug_ ) std::cout << "   Found detId match Is " << detid << " == " << iDetIdIs; 
+
     }
 
-    if (detid == iDetId){ 
+    if (detid == iDetIdTl){ 
       
       ecT_pSimTl=gMomentumAtHit.mag();
       ecT_ptSimTl=gMomentumAtHit.perp();
       ecT_theSimTl=gMomentumAtHit.theta();
       ecT_phiSimTl=gMomentumAtHit.phi();
 
-      if ( myDebug_ ) std::cout << "   Found detId match " << detid << " == " << iDetId; 
-      if ( iFirstDetIdMatch ) std::cout << " THIS IS A DOUBLE MATCH!!!";
-      if ( myDebug_ ) std::cout << std::endl;
+      if ( myDebug_ ) std::cout << "   Found detId match Tl " << detid << " == " << iDetIdTl; 
+      if ( iFirstDetIdMatch ) { 
+	std::cout << " THIS IS A DOUBLE MATCH!!!" << std::endl;
+	iDoubleMatch = 1;
+      }
 
       iFirstDetIdMatch = 1;
 
     }
 
+    if ( myDebug_ ) std::cout << std::endl;
     iPSHit++;
 
   }
 
+  if ( iDoubleMatch ) return 1;
   return 0;
 
 }
@@ -473,7 +492,7 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
   ecT_curvtErrIs = ecT_ptErrIs*ecT_curvtIs*ecT_curvtIs;
   ecT_theIs = itTrack.innerMomentum().theta();     
   ecT_theErrIs = sqrt(cov(1,1));  
-  ecT_phiIs = itTrack.innerMomentum().phi();;     
+  ecT_phiIs = itTrack.innerMomentum().phi();     
   ecT_phiErrIs = sqrt(cov(2,2));  
 
   //
@@ -486,10 +505,10 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
 
 }
 
-uint32_t ecReco::trackAction(const reco::Track & itTrack){
+void ecReco::trackAction(const reco::Track & itTrack, uint32_t & detidTl, uint32_t & detidIs){
 
   ecRefit thisEcRefit(theG.product(), theMF.product(), theFitter.product(), theBuilder.product(), myDebug_);
-  tsosParams myPars = thisEcRefit.doWithTrack(itTrack, iTib, iTid, iTob, iTec, iStereo);
+  tsosParams myPars = thisEcRefit.doWithTrack(itTrack, hs);
 
   //
   // Tree stuff
@@ -511,8 +530,11 @@ uint32_t ecReco::trackAction(const reco::Track & itTrack){
   ecT_theErrTl =   myPars.thetaErr;
 
   //
-  // return the DetId of the first tracklet hit
-  return myPars.detid;
+  // return the DetId of the first tracklet hit and the inner state
+  detidTl = myPars.detidTl;
+  detidIs = myPars.detidIs;
+
+  return;
 
 }
 
