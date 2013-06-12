@@ -1,7 +1,7 @@
 #define convR2SforMatPlot_cxx
 #include "convR2SforMatPlot.h"
 
-void convR2SforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0)
+void convR2SforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0, TH1* hist3 = 0)
 {
 
   std::cout << " Metodo LoopForFill 1D..." << std::endl;
@@ -26,13 +26,15 @@ void convR2SforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0)
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
-    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
     
     Double_t X = x-x0;
     Double_t Y = y-y0;
     Double_t Z = z-z0;
-    
-    Double_t radius = sqrt(X*X+Y*Y);
+
+    Double_t XTrue = x+deltax-x0;
+    Double_t YTrue = y+deltay-y0;
+    Double_t ZTrue = z+deltaz-z0;
     
     Int_t myAssoc = isAssoc;
 
@@ -46,14 +48,14 @@ void convR2SforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0)
 
 }
 
-void convR2SforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0)
+void convR2SforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0, TH2* hist3 = 0)
 {
   
   std::cout << " R2S: Metodo LoopForFill 2D..." << std::endl;
   
   std::cout << " minE " << evRangeMin << " maxE " << evRangeMax << std::endl;
   std::cout << " x0 " << x0 << " y0 " << y0 << " z0 " << z0 << std::endl;
-  
+
   if (fChain == 0) return;
   
   Long64_t nentries = fChain->GetEntriesFast();
@@ -67,19 +69,22 @@ void convR2SforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0)
   std::vector<GeoCut>::iterator geoIt;
   
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
     // Verify event range
-    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+    // if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
     
     Double_t X = x-x0;
     Double_t Y = y-y0;
     Double_t Z = z-z0;
 
-    Double_t radius = sqrt(X*X+Y*Y);
-
+    Double_t XTrue = x+deltax-x0;
+    Double_t YTrue = y+deltay-y0;
+    Double_t ZTrue = z+deltaz-z0;
+    
     Int_t myAssoc = isAssoc;
 
 #include "VarArray.cxx"
@@ -92,6 +97,7 @@ void convR2SforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0)
 
 }
 
+#ifdef UNFOLD
 void convR2SforMatPlot::LoopForTrain(RooUnfoldResponse* response)
 {
   
@@ -111,7 +117,7 @@ void convR2SforMatPlot::LoopForTrain(RooUnfoldResponse* response)
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
-    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
 
     Double_t X = x-x0;
     Double_t Y = y-y0;
@@ -127,8 +133,7 @@ void convR2SforMatPlot::LoopForTrain(RooUnfoldResponse* response)
       
       Int_t iGeo = 0;
       for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ ){
-	//        if ( ((*geoIt).GetRMin()<radiusMeas) && ((*geoIt).GetRMax()>radiusMeas) && ((*geoIt).GetZMin()<z) && ((*geoIt).GetZMax()>z) ) iGeo = 1;
-	iGeo += (*geoIt).GeoCutOk(radiusMeas, Z);
+	iGeo += (*geoIt).GeoCutOk(Z, radiusMeas);
       }
       
       if ( iGeo && QualityCut() ) {
@@ -153,3 +158,5 @@ void convR2SforMatPlot::LoopForTrain(RooUnfoldResponse* response)
   }
 
 }
+#endif //#ifdef UNFOLD
+

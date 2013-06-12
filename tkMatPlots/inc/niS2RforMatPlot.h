@@ -8,9 +8,11 @@
 #include <TH2.h>
 #include <TString.h>
 
+#ifdef UNFOLD
 #include <RooUnfoldResponse.h>
+#endif //#ifdef UNFOLD
 
-#include "EffVsRadius.h"
+#include "EffVsUV.h"
 #include "GeoCut.h"
 
 #include "niS2R.h"
@@ -20,7 +22,7 @@ public :
 
   std::vector<GeoCut>* geoCuts;
 
-  EffVsRadius* effR;
+  EffVsUV* effUV;
 
   Int_t evRangeMin;
   Int_t evRangeMax;
@@ -33,19 +35,22 @@ public :
   
   Int_t uIndex;
   Int_t vIndex;
+  Int_t uCutIndex;
+  Int_t vCutIndex;
   
-  void SetUIndex(Int_t uI){ uIndex = uI; };
-  void SetVIndex(Int_t vI){ vIndex = vI; };
+  void SetUIndex(Int_t uI, Int_t uCutI){ uIndex = uI; uCutIndex = uCutI; };
+  void SetVIndex(Int_t vI, Int_t vCutI){ vIndex = vI; vCutIndex = vCutI; };
 
   //
 
   void SetEvRangeMin(Int_t val){ evRangeMin = val; };
   void SetEvRangeMax(Int_t val){ evRangeMax = val; };
-  void SetGeoCuts(std::vector<GeoCut>* gcut){ geoCuts = gcut; };
-  void SetEffRadius(EffVsRadius* eR){ effR = eR; };
-  void LoopForFill(TH1*, TH1*);
-  void LoopForFill(TH2*, TH2*);
+  void SetGeoCuts(std::vector<GeoCut>* gcut, EffVsUV* eff){ geoCuts = gcut; effUV = eff;};
+  void LoopForFill(TH1*);
+  void LoopForFill(TH2*);
+#ifdef UNFOLD
   void LoopForTrain(RooUnfoldResponse*);
+#endif //#ifdef UNFOLD
   Int_t QualityCut();
 
   niS2RforMatPlot(const char* filename);

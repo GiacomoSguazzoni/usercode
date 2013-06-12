@@ -43,78 +43,69 @@ void MatPlot::FillSim(niS2RforMatPlot* mcSimS2R, Int_t minE, Int_t maxE)
   
 }
 
-void MatPlot::Fill(convR2SforMatPlot* r2s, TH2* hist, TH2* fake)
+void MatPlot::Fill(convR2SforMatPlot* r2s, TH2* hist, TH2* fake, TH2* histTrue)
 {
   
-  r2s->SetGeoCuts(geoCuts);
-  r2s->SetEffRadius(effRadius);
-  r2s->LoopForFill(hist, fake);
+  r2s->SetGeoCuts(geoCuts, effUV);
+  r2s->LoopForFill(hist, fake, histTrue);
 
 }
 
-void MatPlot::Fill(convR2SforMatPlot* r2s, TH1* hist, TH1* fake)
+void MatPlot::Fill(convR2SforMatPlot* r2s, TH1* hist, TH1* fake, TH1* histTrue)
 {
 
-  r2s->SetGeoCuts(geoCuts);
-  r2s->SetEffRadius(effRadius);
-  r2s->LoopForFill(hist, fake);
+  r2s->SetGeoCuts(geoCuts, effUV);
+  r2s->LoopForFill(hist, fake, histTrue);
 
 }
 
 void MatPlot::Fill(convS2RforMatPlot* s2r, TH2* hist)
 {
 
-  s2r->SetGeoCuts(geoCuts);
-  s2r->SetEffRadius(effRadius);
-  s2r->LoopForFill(hist, 0);
+  s2r->SetGeoCuts(geoCuts, effUV);
+  s2r->LoopForFill(hist);
 
 }
 
 void MatPlot::Fill(convS2RforMatPlot* s2r, TH1* hist)
 {
 
-
-  s2r->SetGeoCuts(geoCuts);
-  s2r->SetEffRadius(effRadius);
-  s2r->LoopForFill(hist, 0);
+  s2r->SetGeoCuts(geoCuts, effUV);
+  s2r->LoopForFill(hist);
 
 }
 
 //
 
-void MatPlot::Fill(niR2SforMatPlot* r2s, TH2* hist, TH2* fake)
+void MatPlot::Fill(niR2SforMatPlot* r2s, TH2* hist, TH2* fake, TH2* histTrue)
 {
 
-  r2s->SetGeoCuts(geoCuts);
-  r2s->SetEffRadius(effRadius);
-  r2s->LoopForFill(hist, fake);
+  r2s->SetGeoCuts(geoCuts, effUV);
+  r2s->LoopForFill(hist, fake, histTrue);
 
 }
 
-void MatPlot::Fill(niR2SforMatPlot* r2s, TH1* hist, TH1* fake)
+void MatPlot::Fill(niR2SforMatPlot* r2s, TH1* hist, TH1* fake, TH1* histTrue)
 {
 
-  r2s->SetGeoCuts(geoCuts);
-  r2s->SetEffRadius(effRadius);
-  r2s->LoopForFill(hist, fake);
+  r2s->SetGeoCuts(geoCuts, effUV);
+  r2s->LoopForFill(hist, fake, histTrue);
 
 }
 
 void MatPlot::Fill(niS2RforMatPlot* s2r, TH2* hist)
 {
 
-  s2r->SetGeoCuts(geoCuts);
-  s2r->SetEffRadius(effRadius);
-  s2r->LoopForFill(hist, 0);
+  s2r->SetGeoCuts(geoCuts, effUV);
+  s2r->LoopForFill(hist);
 
 }
 
 void MatPlot::Fill(niS2RforMatPlot* s2r, TH1* hist)
 {
 
-  s2r->SetGeoCuts(geoCuts);
-  s2r->SetEffRadius(effRadius);
-  s2r->LoopForFill(hist, 0);
+  s2r->SetGeoCuts(geoCuts, effUV);
+  s2r->LoopForFill(hist);
 
 }
 
@@ -124,70 +115,76 @@ void MatPlot::PlotAll()
   if( rawSim2DH ) {
     Plot(rawSim2DH);
     Plot(rawMC2DH);
+    Plot(rawMCFakeSub2DH);
+    Plot(rawMCFakeSubWrtSimPosition2DH);
     Plot(rawData2DH);
-    Plot(rawFake2DH);
+    Plot(rawMCFake2DH);
     //
     WBScale2D(Sim2DH);
     Plot(Sim2DH);
+    //
     WBScale2D(MC2DH);
     EffScale2D(MC2DH);
     Plot(MC2DH);
+    //
     WBScale2D(Data2DH);
     EffScale2D(Data2DH);
     Plot(Data2DH);
-    WBScale2D(Fake2DH);
-    EffScale2D(Fake2DH);
-    Plot(Fake2DH);
+    //
+    WBScale2D(MCFake2DH);
+    EffScale2D(MCFake2DH);
+    Plot(MCFake2DH);
     std::cout << ">>>>Data entries " << rawData2DH->GetEntries() << " integral " << rawData2DH->Integral() << std::endl;
     std::cout << ">>>>MC entries " << rawMC2DH->GetEntries() << " integral " << rawMC2DH->Integral() << std::endl;
-    std::cout << ">>>>Fake entries " << rawFake2DH->GetEntries() << " integral " << rawFake2DH->Integral() << std::endl;
+    std::cout << ">>>>Fake entries " << rawMCFake2DH->GetEntries() << " integral " << rawMCFake2DH->Integral() << std::endl;
   }
 
   if( rawSim1DH ) {
     Plot(rawSim1DH);
     Plot(rawMC1DH);
-    Plot(rawMCFs1DH);
+    Plot(rawMCFakeSub1DH);
+    Plot(rawMCFakeSubWrtSimPosition1DH);
     Plot(rawData1DH);
-    Plot(rawDataFs1DH);
-    Plot(rawFake1DH);
+    Plot(rawDataFakeSub1DH);
+    Plot(rawMCFake1DH);
     //
     WBScale1D(Sim1DH);
     Plot(Sim1DH);
     WBScale1D(MC1DH);
     EffScale1D(MC1DH);
     Plot(MC1DH);
-    WBScale1D(MCFs1DH);
-    EffScale1D(MCFs1DH);
-    Plot(MCFs1DH);
+    WBScale1D(MCFakeSub1DH);
+    EffScale1D(MCFakeSub1DH);
+    Plot(MCFakeSub1DH);
     WBScale1D(Data1DH);
     EffScale1D(Data1DH);
     Plot(Data1DH);
-    WBScale1D(DataFs1DH);
-    EffScale1D(DataFs1DH);
-    Plot(DataFs1DH);
-    WBScale1D(Fake1DH);
-    EffScale1D(Fake1DH);
-    Plot(Fake1DH);
+    WBScale1D(DataFakeSub1DH);
+    EffScale1D(DataFakeSub1DH);
+    Plot(DataFakeSub1DH);
+    WBScale1D(MCFake1DH);
+    EffScale1D(MCFake1DH);
+    Plot(MCFake1DH);
     //
 #ifdef UNFOLD
-    if ( unfoldBay1MCFs1DH ) {
-      WBScale1D(unfoldBay1MCFs1DH);
-      Plot(unfoldBay1MCFs1DH);
-      WBScale1D(unfoldBay2MCFs1DH);
-      Plot(unfoldBay2MCFs1DH);
-      WBScale1D(unfoldBay3MCFs1DH);
-      Plot(unfoldBay3MCFs1DH);
-      WBScale1D(unfoldBay4MCFs1DH);
-      Plot(unfoldBay4MCFs1DH);
+    if ( unfoldBay1MCFakeSub1DH ) {
+      WBScale1D(unfoldBay1MCFakeSub1DH);
+      Plot(unfoldBay1MCFakeSub1DH);
+      WBScale1D(unfoldBay2MCFakeSub1DH);
+      Plot(unfoldBay2MCFakeSub1DH);
+      WBScale1D(unfoldBay3MCFakeSub1DH);
+      Plot(unfoldBay3MCFakeSub1DH);
+      WBScale1D(unfoldBay4MCFakeSub1DH);
+      Plot(unfoldBay4MCFakeSub1DH);
       //
-      WBScale1D(unfoldBay1DataFs1DH);
-      Plot(unfoldBay1DataFs1DH);
-      WBScale1D(unfoldBay2DataFs1DH);
-      Plot(unfoldBay2DataFs1DH);
-      WBScale1D(unfoldBay3DataFs1DH);
-      Plot(unfoldBay3DataFs1DH);
-      WBScale1D(unfoldBay4DataFs1DH);
-      Plot(unfoldBay4DataFs1DH);
+      WBScale1D(unfoldBay1DataFakeSub1DH);
+      Plot(unfoldBay1DataFakeSub1DH);
+      WBScale1D(unfoldBay2DataFakeSub1DH);
+      Plot(unfoldBay2DataFakeSub1DH);
+      WBScale1D(unfoldBay3DataFakeSub1DH);
+      Plot(unfoldBay3DataFakeSub1DH);
+      WBScale1D(unfoldBay4DataFakeSub1DH);
+      Plot(unfoldBay4DataFakeSub1DH);
     }
 #endif
 
@@ -199,13 +196,14 @@ void MatPlot::WBScale1D(TH1* rWei1DH)
 
   if ( uIndex == 4 && vIndex==0 ) WBScaleR(rWei1DH);
   if ( uIndex == 6 && vIndex==0 ) WBScalePhi(rWei1DH);
+  if ( uIndex == 5 && vIndex==0 ) WBScaleTheta(rWei1DH);
 
 }
 
 void MatPlot::EffScale1D(TH1* rWei1DH)
 {
 
-  if ( uIndex == 4 && vIndex==0 ) EffScaleR(rWei1DH);
+  EffScaleUV(rWei1DH);
 
 }
 
@@ -220,12 +218,11 @@ void MatPlot::WBScale2D(TH2* rWei2DH)
 void MatPlot::EffScale2D(TH2* rWei2DH)
 {
 
-  if ( uIndex == 1 && vIndex==2 ) EffScaleXY(rWei2DH);
-  if ( uIndex == 3 && vIndex==4 ) EffScaleRZ(rWei2DH);
+  EffScaleUV(rWei2DH);
 
 }
 
-void MatPlot::EffScaleXY(TH2* rWei2DH)
+void MatPlot::EffScaleUV(TH2* rWei2DH)
 {
 
   for (Int_t iBin = 1; iBin<rWei2DH->GetNbinsX()+1; iBin++){
@@ -233,8 +230,7 @@ void MatPlot::EffScaleXY(TH2* rWei2DH)
     for (Int_t jBin = 1; jBin<rWei2DH->GetNbinsY()+1; jBin++){
       Double_t y = rWei2DH->GetYaxis()->GetBinCenter(jBin); 
 
-      Double_t rAve = sqrt(x*x+y*y);
-      Double_t eff = effRadius->EffForRadius(rAve);
+      Double_t eff = effUV->EffForUV(x,y);
 
       Double_t wei = 1.;
       if ( eff ) wei = 1./eff;
@@ -243,6 +239,23 @@ void MatPlot::EffScaleXY(TH2* rWei2DH)
       rWei2DH->SetBinContent(iBin,jBin,rWei2DH->GetBinContent(iBin,jBin)*wei);
 
     }
+  }
+}
+
+void MatPlot::EffScaleUV(TH1* rWei1DH)
+{
+  
+  for (Int_t iBin = 1; iBin<rWei1DH->GetNbinsX()+1; iBin++){
+    Double_t x = rWei1DH->GetXaxis()->GetBinCenter(iBin); 
+    
+    Double_t eff = effUV->EffForUV(x,0.5);
+    
+    Double_t wei = 1.;
+    if ( eff ) wei = 1./eff;
+    
+    rWei1DH->SetBinError(iBin,rWei1DH->GetBinError(iBin)*wei);
+    rWei1DH->SetBinContent(iBin,rWei1DH->GetBinContent(iBin)*wei);
+    
   }
 }
 
@@ -269,11 +282,11 @@ void MatPlot::WBScaleXY(TH2* rWei2DH)
      
       for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ )
 	{
-	  if ( (*geoIt).GetRMin()<rMax && (*geoIt).GetRMax()>rMax )
+	  if ( (*geoIt).GetVMin()<rMax && (*geoIt).GetVMax()>rMax )
 	    { 
 	      iValidRange = 1;
-	      if ( (*geoIt).GetZMin() < zMin ) {zMin=(*geoIt).GetZMin();}; 
-	      if ( (*geoIt).GetZMax() > zMax ) {zMax=(*geoIt).GetZMax();}; 
+	      if ( (*geoIt).GetUMin() < zMin ) {zMin=(*geoIt).GetUMin();}; 
+	      if ( (*geoIt).GetUMax() > zMax ) {zMax=(*geoIt).GetUMax();}; 
 	    }
 	}
 
@@ -290,26 +303,6 @@ void MatPlot::WBScaleXY(TH2* rWei2DH)
     }
   }
 
-}
-
-void MatPlot::EffScaleRZ(TH2* rWei2DH)
-{
-
-  for (Int_t iBin = 1; iBin<rWei2DH->GetNbinsX()+1; iBin++){
-    //    Double_t z = rWei2DH->GetXaxis()->GetBinCenter(iBin); 
-    for (Int_t jBin = 1; jBin<rWei2DH->GetNbinsY()+1; jBin++){
-      Double_t r = rWei2DH->GetYaxis()->GetBinCenter(jBin); 
-
-      Double_t eff = effRadius->EffForRadius(r);
-
-      Double_t wei = 1.;
-      if ( eff ) wei = 1./eff;
-      
-      rWei2DH->SetBinError(iBin,jBin,rWei2DH->GetBinError(iBin,jBin)*wei);
-      rWei2DH->SetBinContent(iBin,jBin,rWei2DH->GetBinContent(iBin,jBin)*wei);
-
-    }
-  }
 }
 
 void MatPlot::WBScaleRZ(TH2* rWei2DH)
@@ -331,7 +324,7 @@ void MatPlot::WBScaleRZ(TH2* rWei2DH)
      
       for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ )
 	{
-	  if ( (*geoIt).GetRMin()<r1 && (*geoIt).GetRMax()>r2 && (*geoIt).GetZMin() < z1 && (*geoIt).GetZMax() > z2 ) iValidRange = 1;
+	  if ( (*geoIt).GetVMin()<r1 && (*geoIt).GetVMax()>r2 && (*geoIt).GetUMin() < z1 && (*geoIt).GetUMax() > z2 ) iValidRange = 1;
 	}
       
       Double_t wei = 1.;
@@ -347,28 +340,7 @@ void MatPlot::WBScaleRZ(TH2* rWei2DH)
 void MatPlot::EffScaleR(TH1* rWei1DH)
 {
 
-  TH1D * effH = new TH1D("effH","effH",rWei1DH->GetNbinsX(),rWei1DH->GetBinLowEdge(1),rWei1DH->GetXaxis()->GetBinUpEdge(rWei1DH->GetNbinsX()));
-  
-  for (Int_t iBin = 1; iBin<rWei1DH->GetNbinsX()+1; iBin++){
-    Double_t r = rWei1DH->GetXaxis()->GetBinCenter(iBin); 
-    Double_t eff = effRadius->EffForRadius(r);
-    effH->SetBinContent(iBin,eff);
-  }
-
-  effH->Smooth();
-
-  for (Int_t iBin = 1; iBin<rWei1DH->GetNbinsX()+1; iBin++){
-
-      Double_t wei = 1.;
-      Double_t eff = effH->GetBinContent(iBin);
-      if ( eff ) wei = 1./eff;
-      
-      rWei1DH->SetBinError(iBin,rWei1DH->GetBinError(iBin)*wei);
-      rWei1DH->SetBinContent(iBin,rWei1DH->GetBinContent(iBin)*wei);
-
-  }
-
-  delete effH;
+  //
 
 }
 
@@ -391,11 +363,11 @@ void MatPlot::WBScaleR(TH1* rWei1DH)
     
     for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ )
       {
-	if ( (*geoIt).GetRMin()<=r1 && (*geoIt).GetRMax()>=r2 )
+	if ( (*geoIt).GetVMin()<=r1 && (*geoIt).GetVMax()>=r2 )
 	  { 
 	    iValidRange = 1;
-	    if ( (*geoIt).GetZMin() < zMin ) {zMin=(*geoIt).GetZMin();}; 
-	    if ( (*geoIt).GetZMax() > zMax ) {zMax=(*geoIt).GetZMax();}; 
+	    if ( (*geoIt).GetUMin() < zMin ) {zMin=(*geoIt).GetUMin();}; 
+	    if ( (*geoIt).GetUMax() > zMax ) {zMax=(*geoIt).GetUMax();}; 
 	  }
       }
     
@@ -432,14 +404,53 @@ void MatPlot::WBScalePhi(TH1* rWei1DH)
     for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ )
       {
 	iValidRange = 1;
-	rMin = (*geoIt).GetRMin(); 
-	rMax = (*geoIt).GetRMax();
-	zMin = (*geoIt).GetZMin(); 
-	zMax = (*geoIt).GetZMax();
+	rMin = (*geoIt).GetVMin(); 
+	rMax = (*geoIt).GetVMax();
+	zMin = (*geoIt).GetUMin(); 
+	zMax = (*geoIt).GetUMax();
       }
     
     Double_t wei = 1.;
     if ( iValidRange ) wei = WBWeiCompDrDzDphi(rMin, rMax, zMin, zMax, phi1, phi2);
+    
+    rWei1DH->SetBinError(iBin,rWei1DH->GetBinError(iBin)/wei);
+    rWei1DH->SetBinContent(iBin,rWei1DH->GetBinContent(iBin)/wei);
+  }
+}
+
+void MatPlot::WBScaleTheta(TH1* rWei1DH)
+{
+  
+  //GeoCuts iterator
+  std::vector<GeoCut>::iterator geoIt;
+  
+  std::cout << " Computing rewei histos Phi" << std::endl;
+  
+  for (Int_t iBin = 1; iBin<rWei1DH->GetNbinsX()+1; iBin++){
+    Double_t t1 = rWei1DH->GetXaxis()->GetBinLowEdge(iBin); 
+    Double_t t2 = rWei1DH->GetXaxis()->GetBinUpEdge(iBin); 
+
+    //
+    // Simple implementation only with a single geocut...
+    //    
+
+    Double_t rMin = 0.; 
+    Double_t rMax = 0.;
+    Double_t phiMin = 0.; 
+    Double_t phiMax = 0.;
+
+    Int_t iValidRange = 0;
+    for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ )
+      {
+	iValidRange = 1;
+	rMin = (*geoIt).GetVMin(); 
+	rMax = (*geoIt).GetVMax();
+	phiMin = (*geoIt).GetUMin(); 
+	phiMax = (*geoIt).GetUMax();
+      }
+    
+    Double_t wei = 1.;
+    if ( iValidRange ) wei = WBWeiCompDrDtethaDphi(rMin, rMax, t1, t2, phiMin, phiMax);
     
     rWei1DH->SetBinError(iBin,rWei1DH->GetBinError(iBin)/wei);
     rWei1DH->SetBinContent(iBin,rWei1DH->GetBinContent(iBin)/wei);
@@ -476,6 +487,25 @@ Double_t MatPlot::WBWeiCompDrDzDphi(Double_t r1, Double_t r2, Double_t z1, Doubl
   */
   
   Double_t wei = (phi2-phi1)*(z2-z1)*log(r2/r1);
+  
+  return wei;
+    
+}
+
+Double_t MatPlot::WBWeiCompDrDtethaDphi(Double_t r1, Double_t r2, Double_t t1, Double_t t2, Double_t phi1, Double_t phi2){
+  
+  //  Double_t PI=3.141592653589793;
+  
+  /*
+    Double_t part1 = r2*log(sqrt(r2*r2+z2*z2)+z2)-r2*log(sqrt(r2*r2+z1*z1)+z1);
+    Double_t part2 = r1*log(sqrt(r1*r1+z2*z2)+z2)-r1*log(sqrt(r1*r1+z1*z1)+z1);
+    Double_t part3 = z2*log(sqrt(r2*r2+z2*z2)+r2)-z2*log(sqrt(r1*r1+z2*z2)+r1);
+    Double_t part4 = z1*log(sqrt(r2*r2+z1*z1)+r2)-z1*log(sqrt(r1*r1+z1*z1)+r1);
+    Double_t wei = 2*PI*(part1-part2+part3-part4);
+  */
+  
+
+  Double_t wei = (phi2-phi1)*(r2-r1)*(1./tan(t1)-1./tan(t2));
   
   return wei;
     
@@ -529,25 +559,25 @@ void MatPlot::responseTrain(niS2RforMatPlot* s2r, niR2SforMatPlot* r2s, Int_t mi
 void MatPlot::doUnfold()
 {
   
-  unfoldBay1DataFs1DH = doUnfoldHist("rUfBay1DataFs", 0, rawDataFs1DH);
-  unfoldBay2DataFs1DH = doUnfoldHist("rUfBay2DataFs", 1, rawDataFs1DH);
-  unfoldBay3DataFs1DH = doUnfoldHist("rUfBay3DataFs", 3, rawDataFs1DH);
-  unfoldBay4DataFs1DH = doUnfoldHist("rUfBay4DataFs", 5, rawDataFs1DH);
+  unfoldBay1DataFakeSub1DH = doUnfoldHist("rUfBay1DataFakeSub", 0, rawDataFakeSub1DH);
+  unfoldBay2DataFakeSub1DH = doUnfoldHist("rUfBay2DataFakeSub", 1, rawDataFakeSub1DH);
+  unfoldBay3DataFakeSub1DH = doUnfoldHist("rUfBay3DataFakeSub", 3, rawDataFakeSub1DH);
+  unfoldBay4DataFakeSub1DH = doUnfoldHist("rUfBay4DataFakeSub", 5, rawDataFakeSub1DH);
   
-  std::cout << " rUfBay1DataFs " << unfoldBay1DataFs1DH->GetName() << " " << unfoldBay1DataFs1DH->GetEntries() <<   std::endl;
-  std::cout << " rUfBay2DataFs " << unfoldBay2DataFs1DH->GetName() << " " << unfoldBay2DataFs1DH->GetEntries() <<   std::endl;
-  std::cout << " rUfBay3DataFs " << unfoldBay3DataFs1DH->GetName() << " " << unfoldBay3DataFs1DH->GetEntries() <<   std::endl;
-  std::cout << " rUfBay4DataFs " << unfoldBay4DataFs1DH->GetName() << " " << unfoldBay4DataFs1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay1DataFakeSub " << unfoldBay1DataFakeSub1DH->GetName() << " " << unfoldBay1DataFakeSub1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay2DataFakeSub " << unfoldBay2DataFakeSub1DH->GetName() << " " << unfoldBay2DataFakeSub1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay3DataFakeSub " << unfoldBay3DataFakeSub1DH->GetName() << " " << unfoldBay3DataFakeSub1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay4DataFakeSub " << unfoldBay4DataFakeSub1DH->GetName() << " " << unfoldBay4DataFakeSub1DH->GetEntries() <<   std::endl;
 
-  unfoldBay1MCFs1DH = doUnfoldHist("rUfBay1MCFs", 0, rawMCFs1DH);
-  unfoldBay2MCFs1DH = doUnfoldHist("rUfBay2MCFs", 1, rawMCFs1DH);
-  unfoldBay3MCFs1DH = doUnfoldHist("rUfBay3MCFs", 3, rawMCFs1DH);
-  unfoldBay4MCFs1DH = doUnfoldHist("rUfBay4MCFs", 5, rawMCFs1DH);
+  unfoldBay1MCFakeSub1DH = doUnfoldHist("rUfBay1MCFakeSub", 0, rawMCFakeSub1DH);
+  unfoldBay2MCFakeSub1DH = doUnfoldHist("rUfBay2MCFakeSub", 1, rawMCFakeSub1DH);
+  unfoldBay3MCFakeSub1DH = doUnfoldHist("rUfBay3MCFakeSub", 3, rawMCFakeSub1DH);
+  unfoldBay4MCFakeSub1DH = doUnfoldHist("rUfBay4MCFakeSub", 5, rawMCFakeSub1DH);
 
-  std::cout << " rUfBay1MCFs " << unfoldBay1MCFs1DH->GetName() << " " << unfoldBay1MCFs1DH->GetEntries() <<   std::endl;
-  std::cout << " rUfBay2MCFs " << unfoldBay2MCFs1DH->GetName() << " " << unfoldBay2MCFs1DH->GetEntries() <<   std::endl;
-  std::cout << " rUfBay3MCFs " << unfoldBay3MCFs1DH->GetName() << " " << unfoldBay3MCFs1DH->GetEntries() <<   std::endl;
-  std::cout << " rUfBay4MCFs " << unfoldBay4MCFs1DH->GetName() << " " << unfoldBay4MCFs1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay1MCFakeSub " << unfoldBay1MCFakeSub1DH->GetName() << " " << unfoldBay1MCFakeSub1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay2MCFakeSub " << unfoldBay2MCFakeSub1DH->GetName() << " " << unfoldBay2MCFakeSub1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay3MCFakeSub " << unfoldBay3MCFakeSub1DH->GetName() << " " << unfoldBay3MCFakeSub1DH->GetEntries() <<   std::endl;
+  std::cout << " rUfBay4MCFakeSub " << unfoldBay4MCFakeSub1DH->GetName() << " " << unfoldBay4MCFakeSub1DH->GetEntries() <<   std::endl;
 
 }
 
@@ -582,7 +612,5 @@ void MatPlot::test(Double_t val)
   effRadius->Fail(val);
   std::cout << " The r bin for r=" << val << " is " << effRadius->radiusBin(val) << " and eff " << effRadius->EffForRadius(val) << std::endl;
   */
-  effRadius->DumpEfficiency();
-  effRadius->DumpRawNumbers();
 
 }

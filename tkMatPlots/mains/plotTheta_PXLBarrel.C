@@ -14,15 +14,26 @@
 
 int main(){
 
-  Double_t rMax = 65.;
-  std::vector<GeoCut> geoCuts;
-  geoCuts.push_back(GeoCut(-26., 26., 2., 20.));
-  geoCuts.push_back(GeoCut(-66., 66., 20., rMax));
+  Double_t pi = 3.141592653589793;
 
-  MatPlot myPlot("R", 1., rMax, 0.5, 0.5, -1.);
+  std::vector<GeoCut> geoCuts;
+
+  Double_t thetaMax = 2.*atan(exp(1.));
+  Double_t thetaMin = 2.*atan(exp(-1.));
+			    
+  std::cout << " thetaMin " << thetaMin << " thetaMax " << thetaMax << std::endl;
+
+  // eta = -log(tan(theta/2.)) ==> theta= 2.*tan(exp(-eta))
+  geoCuts.push_back(GeoCut(thetaMin, thetaMax, 2., 13.));
+
+  Double_t binW = (thetaMax-thetaMin)/40.;
+
+  std::cout << " thetaMin " << thetaMin << " thetaMax " << thetaMax << " binW " << binW << std::endl;
+
+  MatPlot myPlot("Theta", thetaMin, thetaMax, binW, binW, -1.);
   myPlot.SetGeoCuts(&geoCuts);
-  myPlot.SetUIndex(4, 3); //Radius for plot, z for cut
-  myPlot.SetVIndex(0, 4); //Plot is 1d, radius for cut
+  myPlot.SetUIndex(5, 5);
+  myPlot.SetVIndex(0, 4);
 
   //
   myPlot.SetMCScaleFact(-1.);

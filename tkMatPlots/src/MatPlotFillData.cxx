@@ -2,12 +2,12 @@ std::cout << " E ora fillo i dati..." << std::endl;
 
 dataR2S->SetEvRangeMin(minE);
 dataR2S->SetEvRangeMax(maxE);
-dataR2S->SetUIndex(uIndex);
-dataR2S->SetVIndex(vIndex);
+dataR2S->SetUIndex(uIndex, uCutIndex);
+dataR2S->SetVIndex(vIndex, vCutIndex);
 
 //2D
   if ( rawData2DH ) {
-    if ( ! rawFake2DH->GetEntries() ) {
+    if ( ! rawMCFake2DH->GetEntries() ) {
       std::cout << " >>>>>>> ERROR!!! Run FillMC first " << std::endl;
       exit(1);
     }
@@ -21,12 +21,14 @@ dataR2S->SetVIndex(vIndex);
     Double_t scaleFact = rawData2DH->Integral()/rawMC2DH->Integral();
     if ( MCScaleFact < 0. ) {
       rawMC2DH->Scale(scaleFact);
-      rawFake2DH->Scale(scaleFact);
-      rawMCFs2DH->Scale(scaleFact);
+      rawMCFake2DH->Scale(scaleFact);
+      rawMCFakeSub2DH->Scale(scaleFact);
+      rawMCFakeSubWrtSimPosition2DH->Scale(scaleFact);
     } else {
       rawMC2DH->Scale(MCScaleFact);
-      rawFake2DH->Scale(MCScaleFact);
-      rawMCFs2DH->Scale(MCScaleFact);
+      rawMCFake2DH->Scale(MCScaleFact);
+      rawMCFakeSub2DH->Scale(MCScaleFact);
+      rawMCFakeSubWrtSimPosition2DH->Scale(MCScaleFact);
     }
     //
     if ( SimScaleFact < 0. ) {
@@ -34,19 +36,19 @@ dataR2S->SetVIndex(vIndex);
     } else {
       rawSim2DH->Scale(SimScaleFact);
     }
-    rawDataFs2DH->Add(rawData2DH,rawFake2DH,1.,-1.);
-    rawDataFs2DH->Sumw2();
+    rawDataFakeSub2DH->Add(rawData2DH,rawMCFake2DH,1.,-1.);
+    rawDataFakeSub2DH->Sumw2();
     //
     Data2DH = (TH2D*)rawData2DH->Clone("Data_"+TSName);
-    DataFs2DH = (TH2D*)rawDataFs2DH->Clone("DataFs_"+TSName);
+    DataFakeSub2DH = (TH2D*)rawDataFakeSub2DH->Clone("DataFakeSub_"+TSName);
     MC2DH = (TH2D*)rawMC2DH->Clone("MC_"+TSName);
-    MCFs2DH = (TH2D*)rawMCFs2DH->Clone("MCFs_"+TSName);
-    Fake2DH = (TH2D*)rawFake2DH->Clone("Fake_"+TSName);
+    MCFakeSub2DH = (TH2D*)rawMCFakeSub2DH->Clone("MCFakeSub_"+TSName);
+    MCFake2DH = (TH2D*)rawMCFake2DH->Clone("MCFake_"+TSName);
     Sim2DH = (TH2D*)rawSim2DH->Clone("Sim_"+TSName);
   }
 //1D
   if ( rawData1DH ) {
-    if ( ! rawFake1DH->GetEntries() ) {
+    if ( ! rawMCFake1DH->GetEntries() ) {
       std::cout << " >>>>>>> ERROR!!! Run FillMC first " << std::endl;
       exit(1);
     }
@@ -63,25 +65,27 @@ dataR2S->SetVIndex(vIndex);
     Double_t scaleFact = rawData1DH->Integral()/rawMC1DH->Integral();
     if ( MCScaleFact < 0. ) {
       rawMC1DH->Scale(scaleFact);
-      rawFake1DH->Scale(scaleFact);
-      rawMCFs1DH->Scale(scaleFact);
+      rawMCFake1DH->Scale(scaleFact);
+      rawMCFakeSub1DH->Scale(scaleFact);
+      rawMCFakeSubWrtSimPosition1DH->Scale(scaleFact);
     } else {
       rawMC1DH->Scale(MCScaleFact);
-      rawFake1DH->Scale(MCScaleFact);
-      rawMCFs1DH->Scale(MCScaleFact);
+      rawMCFake1DH->Scale(MCScaleFact);
+      rawMCFakeSub1DH->Scale(MCScaleFact);
+      rawMCFakeSubWrtSimPosition1DH->Scale(MCScaleFact);
     }
     if ( SimScaleFact < 0. ) {
       rawSim1DH->Scale(scaleFact);
     } else {
       rawSim1DH->Scale(SimScaleFact);
     }
-    rawDataFs1DH->Add(rawData1DH,rawFake1DH,1.,-1.);
-    rawDataFs1DH->Sumw2();
+    rawDataFakeSub1DH->Add(rawData1DH,rawMCFake1DH,1.,-1.);
+    rawDataFakeSub1DH->Sumw2();
     //
     Data1DH = (TH1D*)rawData1DH->Clone("Data_"+TSName);
-    DataFs1DH = (TH1D*)rawDataFs1DH->Clone("DataFs_"+TSName);
+    DataFakeSub1DH = (TH1D*)rawDataFakeSub1DH->Clone("DataFakeSub_"+TSName);
     MC1DH = (TH1D*)rawMC1DH->Clone("MC_"+TSName);
-    MCFs1DH = (TH1D*)rawMCFs1DH->Clone("MCFs_"+TSName);
-    Fake1DH = (TH1D*)rawFake1DH->Clone("Fake_"+TSName);
+    MCFakeSub1DH = (TH1D*)rawMCFakeSub1DH->Clone("MCFakeSub_"+TSName);
+    MCFake1DH = (TH1D*)rawMCFake1DH->Clone("MCFake_"+TSName);
     Sim1DH = (TH1D*)rawSim1DH->Clone("Sim_"+TSName);
   }

@@ -1,7 +1,7 @@
 #define niS2RforMatPlot_cxx
 #include "niS2RforMatPlot.h"
 
-void niS2RforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0)
+void niS2RforMatPlot::LoopForFill(TH1* hist)
 {
   
   std::cout << " Metodo LoopForFill 1D..." << std::endl;
@@ -20,13 +20,15 @@ void niS2RforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0)
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
-    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
 
     Double_t X = x-x0;
     Double_t Y = y-y0;
     Double_t Z = z-z0;
     
-    Double_t radius = sqrt(X*X+Y*Y);
+    Double_t XTrue = x-x0;
+    Double_t YTrue = y-y0;
+    Double_t ZTrue = z-z0;
     
 #include "VarArray.cxx"
     
@@ -36,7 +38,7 @@ void niS2RforMatPlot::LoopForFill(TH1* hist, TH1* hist2 = 0)
   
 }
 
-void niS2RforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0)
+void niS2RforMatPlot::LoopForFill(TH2* hist)
 {
 
   std::cout << " S2R: Metodo LoopForFill 2D..." << std::endl;
@@ -56,13 +58,15 @@ void niS2RforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0)
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
     // Verify event range
-    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
     
     Double_t X = x-x0;
     Double_t Y = y-y0;
     Double_t Z = z-z0;
     
-    Double_t radius = sqrt(X*X+Y*Y);
+    Double_t XTrue = x-x0;
+    Double_t YTrue = y-y0;
+    Double_t ZTrue = z-z0;
     
 #include "VarArray.cxx"
     
@@ -71,6 +75,7 @@ void niS2RforMatPlot::LoopForFill(TH2* hist, TH2* hist2 = 0)
   }  
 }
 
+#ifdef UNFOLD
 void niS2RforMatPlot::LoopForTrain(RooUnfoldResponse* response)
 {
   
@@ -90,7 +95,7 @@ void niS2RforMatPlot::LoopForTrain(RooUnfoldResponse* response)
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
-    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
 
 #include "counter.cxx"
 
@@ -100,7 +105,7 @@ void niS2RforMatPlot::LoopForTrain(RooUnfoldResponse* response)
       Int_t iGeo = 0;
       //Geocut enlarged!
       for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ ){
-        if ( ((*geoIt).GetRMin()-1.<radius) && ((*geoIt).GetRMax()+1.>radius) && ((*geoIt).GetZMin()-1.<z) && ((*geoIt).GetZMax()+1.>z) ) iGeo = 1;
+        if ( ((*geoIt).GetVMin()-1.<radius) && ((*geoIt).GetVMax()+1.>radius) && ((*geoIt).GetUMin()-1.<z) && ((*geoIt).GetUMax()+1.>z) ) iGeo = 1;
       }
       if ( !iGeo ) continue;
       if ( !QualityCut() ) continue;
@@ -118,3 +123,5 @@ void niS2RforMatPlot::LoopForTrain(RooUnfoldResponse* response)
   }
 
 }
+#endif //#ifdef UNFOLD
+

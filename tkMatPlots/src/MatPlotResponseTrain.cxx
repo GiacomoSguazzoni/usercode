@@ -4,8 +4,8 @@
   r2s->SetEvRangeMin(minE);
   r2s->SetEvRangeMax(maxE);
 
-  s2r->SetGeoCuts(geoCuts);
+s2r->SetGeoCuts(geoCuts, effUV);
   s2r->LoopForTrain(response);
-  r2s->SetGeoCuts(geoCuts);
+r2s->SetGeoCuts(geoCuts, effUV);
   r2s->LoopForTrain(response);
 

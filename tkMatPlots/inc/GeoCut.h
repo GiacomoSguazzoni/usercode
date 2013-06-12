@@ -8,18 +8,18 @@
 class GeoCut {
 public :
 
-  Double_t zMin;
-  Double_t zMax;
-  Double_t rMin;
-  Double_t rMax;
+  Double_t uMin;
+  Double_t uMax;
+  Double_t vMin;
+  Double_t vMax;
 
   GeoCut(Double_t, Double_t, Double_t, Double_t);
  ~GeoCut();
 
-  Double_t GetZMin(){ return zMin; };
-  Double_t GetZMax(){ return zMax; };
-  Double_t GetRMin(){ return rMin; };
-  Double_t GetRMax(){ return rMax; };
+  Double_t GetUMin(){ return uMin; };
+  Double_t GetUMax(){ return uMax; };
+  Double_t GetVMin(){ return vMin; };
+  Double_t GetVMax(){ return vMax; };
 
   Int_t GeoCutOk(Double_t, Double_t);
 
@@ -28,13 +28,13 @@ public :
 #endif
 
 #ifdef GeoCut_cxx
-GeoCut::GeoCut(Double_t zmin, Double_t zmax, Double_t rmin, Double_t rmax)
+GeoCut::GeoCut(Double_t umin, Double_t umax, Double_t vmin, Double_t vmax)
 {
 
-  zMin = zmin;
-  zMax = zmax;
-  rMin = rmin;
-  rMax = rmax;
+  uMin = umin;
+  uMax = umax;
+  vMin = vmin;
+  vMax = vmax;
 
 }
 

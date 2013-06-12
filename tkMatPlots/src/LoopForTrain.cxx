@@ -25,7 +25,7 @@ for (Long64_t jentry=0; jentry<nentries;jentry++) {
     
     Int_t iGeo = 0;
     for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ ){
-      if ( ((*geoIt).GetRMin()<radius) && ((*geoIt).GetRMax()>radius) && ((*geoIt).GetZMin()<z) && ((*geoIt).GetZMax()>z) ){ iGeo = 1; };
+      if ( ((*geoIt).GetVMin()<radius) && ((*geoIt).GetVMax()>radius) && ((*geoIt).GetUMin()<z) && ((*geoIt).GetUMax()>z) ){ iGeo = 1; };
     }
     
     if ( !iGeo ) continue;

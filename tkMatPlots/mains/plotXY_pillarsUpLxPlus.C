@@ -5,24 +5,16 @@
 #include "MatPlot.h"
 #include "GeoCut.h"
 
-//
-// Normalizzazione
-//
-// Fattori scala radiali
-//
-// Plot raggio
-
 int main(){
 
-  Double_t rMax = 65.;
   std::vector<GeoCut> geoCuts;
-  geoCuts.push_back(GeoCut(-26., 26., 2., 20.));
-  geoCuts.push_back(GeoCut(-66., 66., 20., rMax));
+  geoCuts.push_back(GeoCut(10., 30., 10., 80.));
 
-  MatPlot myPlot("R", 1., rMax, 0.5, 0.5, -1.);
+  Double_t boxSize = 60.;
+  //MatPlot myPlot("XY", -boxSize, boxSize, -boxSize, boxSize, 1., 0.1);
+  //binsize, binsizesim, binsizeeff
+  MatPlot myPlot("XY", -45., -5., 10., 50., 0.2, 0.1, 120.);
   myPlot.SetGeoCuts(&geoCuts);
-  myPlot.SetUIndex(4, 3); //Radius for plot, z for cut
-  myPlot.SetVIndex(0, 4); //Plot is 1d, radius for cut
 
   //
   myPlot.SetMCScaleFact(-1.);
@@ -55,6 +47,4 @@ int main(){
   myPlot.test();
   myPlot.PlotAll();
 
-
- 
 }

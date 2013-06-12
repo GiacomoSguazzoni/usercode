@@ -11,7 +11,7 @@ SOURCEFILES = plot.C \
               src/niR2SforMatPlot.C \
               src/niS2RforMatPlot.C \
               src/GeoCut.C \
-              src/EffVsRadius.C
+              src/EffVsUV.C
 
 ROOTCFLAGS   = $(shell root-config --cflags)
 ROOTLIBS     = $(shell root-config --libs)
@@ -23,7 +23,8 @@ OBJS    = $(patsubst %.C, %.o, $(SOURCEFILES))
 INCPATH = -I$(ROOTINC) -Iinc -IRooUnfold-0.2.2/src/
 CFLAGS  = -Wall 
 #-Werror
-LIBS    = $(ROOTLIBS) -L. -lRooUnfold
+#LIBS    = $(ROOTLIBS) -L. -lRooUnfold
+LIBS    = $(ROOTLIBS)
 
 %.o: %.C
 	${CC} ${INCPATH} ${CFLAGS} -c -o $@ $<

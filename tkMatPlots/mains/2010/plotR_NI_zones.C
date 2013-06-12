@@ -96,8 +96,8 @@ void plotR_zones_NI(){
   TFile * MCF = new TFile("MC_R.root");
   TH1D * MCH = (TH1D*) MCF->Get("MC_R");;
   //
-  TFile * MCFsF = new TFile("MCFs_R.root");
-  TH1D * MCFsH = (TH1D*) MCFsF->Get("MCFs_R");;
+  TFile * MCFakeSubF = new TFile("MCFakeSub_R.root");
+  TH1D * MCFakeSubH = (TH1D*) MCFakeSubF->Get("MCFakeSub_R");;
   //
   TFile * FakeF = new TFile("Fake_R.root");
   TH1D * FakeH = (TH1D*) FakeF->Get("Fake_R");;
@@ -105,33 +105,33 @@ void plotR_zones_NI(){
   TFile * DataF = new TFile("Data_R.root");
   TH1D * DataH = (TH1D*) DataF->Get("Data_R");;
   //
-  TFile * DataFsF = new TFile("DataFs_R.root");
-  TH1D * DataFsH = (TH1D*) DataFsF->Get("DataFs_R");;
+  TFile * DataFakeSubF = new TFile("DataFakeSub_R.root");
+  TH1D * DataFakeSubH = (TH1D*) DataFakeSubF->Get("DataFakeSub_R");;
   //
   //Unfold Stuff
-  TFile * UfBay1DataFsF = new TFile("rUfBay1DataFs.root");
-  TH1D * UfBay1DataFsH = (TH1D*) UfBay1DataFsF->Get("rUfBay1DataFs");;
+  TFile * UfBay1DataFakeSubF = new TFile("rUfBay1DataFakeSub.root");
+  TH1D * UfBay1DataFakeSubH = (TH1D*) UfBay1DataFakeSubF->Get("rUfBay1DataFakeSub");;
   //
-  TFile * UfBay2DataFsF = new TFile("rUfBay2DataFs.root");
-  TH1D * UfBay2DataFsH = (TH1D*) UfBay2DataFsF->Get("rUfBay2DataFs");;
+  TFile * UfBay2DataFakeSubF = new TFile("rUfBay2DataFakeSub.root");
+  TH1D * UfBay2DataFakeSubH = (TH1D*) UfBay2DataFakeSubF->Get("rUfBay2DataFakeSub");;
   //
-  TFile * UfBay3DataFsF = new TFile("rUfBay3DataFs.root");
-  TH1D * UfBay3DataFsH = (TH1D*) UfBay3DataFsF->Get("rUfBay3DataFs");;
+  TFile * UfBay3DataFakeSubF = new TFile("rUfBay3DataFakeSub.root");
+  TH1D * UfBay3DataFakeSubH = (TH1D*) UfBay3DataFakeSubF->Get("rUfBay3DataFakeSub");;
   //
-  TFile * UfBay4DataFsF = new TFile("rUfBay4DataFs.root");
-  TH1D * UfBay4DataFsH = (TH1D*) UfBay4DataFsF->Get("rUfBay4DataFs");;
+  TFile * UfBay4DataFakeSubF = new TFile("rUfBay4DataFakeSub.root");
+  TH1D * UfBay4DataFakeSubH = (TH1D*) UfBay4DataFakeSubF->Get("rUfBay4DataFakeSub");;
   //
-  TFile * UfBay1MCFsF = new TFile("rUfBay1MCFs.root");
-  TH1D * UfBay1MCFsH = (TH1D*) UfBay1MCFsF->Get("rUfBay1MCFs");;
+  TFile * UfBay1MCFakeSubF = new TFile("rUfBay1MCFakeSub.root");
+  TH1D * UfBay1MCFakeSubH = (TH1D*) UfBay1MCFakeSubF->Get("rUfBay1MCFakeSub");;
   //
-  TFile * UfBay2MCFsF = new TFile("rUfBay2MCFs.root");
-  TH1D * UfBay2MCFsH = (TH1D*) UfBay2MCFsF->Get("rUfBay2MCFs");;
+  TFile * UfBay2MCFakeSubF = new TFile("rUfBay2MCFakeSub.root");
+  TH1D * UfBay2MCFakeSubH = (TH1D*) UfBay2MCFakeSubF->Get("rUfBay2MCFakeSub");;
   //
-  TFile * UfBay3MCFsF = new TFile("rUfBay3MCFs.root");
-  TH1D * UfBay3MCFsH = (TH1D*) UfBay3MCFsF->Get("rUfBay3MCFs");;
+  TFile * UfBay3MCFakeSubF = new TFile("rUfBay3MCFakeSub.root");
+  TH1D * UfBay3MCFakeSubH = (TH1D*) UfBay3MCFakeSubF->Get("rUfBay3MCFakeSub");;
   //
-  TFile * UfBay4MCFsF = new TFile("rUfBay4MCFs.root");
-  TH1D * UfBay4MCFsH = (TH1D*) UfBay4MCFsF->Get("rUfBay4MCFs");;
+  TFile * UfBay4MCFakeSubF = new TFile("rUfBay4MCFakeSub.root");
+  TH1D * UfBay4MCFakeSubH = (TH1D*) UfBay4MCFakeSubF->Get("rUfBay4MCFakeSub");;
   //
   
   //
@@ -141,7 +141,7 @@ void plotR_zones_NI(){
   Float_t nDataE = sqrt(nData);
   Float_t nMCE =  sqrt(nMC);
   Float_t nFakeE = sqrt(nFake);
-  Float_t nMCFsE = sqrt(nMC-nFake);
+  Float_t nMCFakeSubE = sqrt(nMC-nFake);
   Float_t iData = rDataH->Integral();
   Float_t iMC = rMCH->Integral();
   Float_t iFake = rFakeH->Integral();
@@ -156,16 +156,16 @@ void plotR_zones_NI(){
   sprintf(sData,"%.0f#pm%.0f",iData,iDataE);
   TString TSsData(sData);
   //
-  char sDataFs[30];
-  sprintf(sDataFs,"%.0f#pm%.0f",iData-iFake,sqrt(iDataE*iDataE+iFakeE*iFakeE));
-  TString TSsDataFs(sDataFs);
+  char sDataFakeSub[30];
+  sprintf(sDataFakeSub,"%.0f#pm%.0f",iData-iFake,sqrt(iDataE*iDataE+iFakeE*iFakeE));
+  TString TSsDataFakeSub(sDataFakeSub);
   //
   char sMC[30];
   sprintf(sMC,"%.0f#pm%.0f",iMC,iMCE);
   TString TSsMC(sMC);
-  char sMCFs[30];
-  sprintf(sMCFs,"%.0f#pm%.0f",iMC-iFake,nMCFsE*fMC);
-  TString TSsMCFs(sMCFs);
+  char sMCFakeSub[30];
+  sprintf(sMCFakeSub,"%.0f#pm%.0f",iMC-iFake,nMCFakeSubE*fMC);
+  TString TSsMCFakeSub(sMCFakeSub);
   //
   //
   char sFake[30];
@@ -181,18 +181,18 @@ void plotR_zones_NI(){
   //
   SimH->Scale(scaleFact); 
   MCH->Scale(scaleFact);
-  MCFsH->Scale(scaleFact);
+  MCFakeSubH->Scale(scaleFact);
   FakeH->Scale(scaleFact);
   DataH->Scale(scaleFact);
-  DataFsH->Scale(scaleFact);
-  UfBay1DataFsH->Scale(scaleFact);
-  UfBay2DataFsH->Scale(scaleFact);
-  UfBay3DataFsH->Scale(scaleFact);
-  UfBay4DataFsH->Scale(scaleFact);
-  UfBay1MCFsH->Scale(scaleFact);
-  UfBay2MCFsH->Scale(scaleFact);
-  UfBay3MCFsH->Scale(scaleFact);
-  UfBay4MCFsH->Scale(scaleFact);
+  DataFakeSubH->Scale(scaleFact);
+  UfBay1DataFakeSubH->Scale(scaleFact);
+  UfBay2DataFakeSubH->Scale(scaleFact);
+  UfBay3DataFakeSubH->Scale(scaleFact);
+  UfBay4DataFakeSubH->Scale(scaleFact);
+  UfBay1MCFakeSubH->Scale(scaleFact);
+  UfBay2MCFakeSubH->Scale(scaleFact);
+  UfBay3MCFakeSubH->Scale(scaleFact);
+  UfBay4MCFakeSubH->Scale(scaleFact);
 
   //Canvas
   TCanvas *rCan1 = new TCanvas("rCan1","rCan1",1200,600);
@@ -295,17 +295,17 @@ void plotR_zones_NI(){
   SimH->Draw("HISTsame");
 
   Int_t colI = kBlue;
-  //  mcPlot(UfBay1MCFsH, colI);
-  //  mcPlot(UfBay2MCFsH, colI+1);
-  mcPlot(UfBay3MCFsH, colI+2);
-  //  mcPlot(UfBay4MCFsH, colI+3);
+  //  mcPlot(UfBay1MCFakeSubH, colI);
+  //  mcPlot(UfBay2MCFakeSubH, colI+1);
+  mcPlot(UfBay3MCFakeSubH, colI+2);
+  //  mcPlot(UfBay4MCFakeSubH, colI+3);
 
   Int_t colI = kGray;
-  //  dataPlot(UfBay1DataFsH, colI);
-  // dataPlot(UfBay2DataFsH, colI+1);
-  //  dataPlot(UfBay3DataFsH, colI+2);
-  //  dataPlot(UfBay4DataFsH, colI+3);
-  dataPlot(UfBay3DataFsH, kBlack);
+  //  dataPlot(UfBay1DataFakeSubH, colI);
+  // dataPlot(UfBay2DataFakeSubH, colI+1);
+  //  dataPlot(UfBay3DataFakeSubH, colI+2);
+  //  dataPlot(UfBay4DataFakeSubH, colI+3);
+  dataPlot(UfBay3DataFakeSubH, kBlack);
 
   TLegend *legend = 0;
   legend = new TLegend(0.3,0.7,0.89,0.89);
@@ -313,14 +313,14 @@ void plotR_zones_NI(){
   legend->SetFillColor(0);
   legend->SetBorderSize(0.);
   legend->AddEntry(SimH, "MC truth", "f");
-  //  legend->AddEntry(UfBay1DataFsH, "Data 7TeV, fake sub., unfolded Bayes 0 iterations", "pl");
-  //  legend->AddEntry(UfBay2DataFsH, "Data 7TeV, fake sub., unfolded Bayes 1 iterations", "pl");
-  legend->AddEntry(UfBay3DataFsH, "Data 7TeV, fake sub., unfolded "+TSsDataFs, "pl");
-  //  legend->AddEntry(UfBay4DataFsH, "Data 7TeV, fake sub., unfolded Bayes 5 iterations", "pl");
-  //  legend->AddEntry(UfBay1MCFsH, "MC reco, fake sub., unfolded Bayes 0 iterations", "pl");
-  //  legend->AddEntry(UfBay2MCFsH, "MC reco, fake sub., unfolded Bayes 1 iterations", "pl");
-  legend->AddEntry(UfBay3MCFsH, "MC reco, fake sub., unfolded "+TSsMCFs, "fp");
-  //  legend->AddEntry(UfBay4MCFsH, "MC reco, fake sub., unfolded Bayes 5 iterations", "pl");
+  //  legend->AddEntry(UfBay1DataFakeSubH, "Data 7TeV, fake sub., unfolded Bayes 0 iterations", "pl");
+  //  legend->AddEntry(UfBay2DataFakeSubH, "Data 7TeV, fake sub., unfolded Bayes 1 iterations", "pl");
+  legend->AddEntry(UfBay3DataFakeSubH, "Data 7TeV, fake sub., unfolded "+TSsDataFakeSub, "pl");
+  //  legend->AddEntry(UfBay4DataFakeSubH, "Data 7TeV, fake sub., unfolded Bayes 5 iterations", "pl");
+  //  legend->AddEntry(UfBay1MCFakeSubH, "MC reco, fake sub., unfolded Bayes 0 iterations", "pl");
+  //  legend->AddEntry(UfBay2MCFakeSubH, "MC reco, fake sub., unfolded Bayes 1 iterations", "pl");
+  legend->AddEntry(UfBay3MCFakeSubH, "MC reco, fake sub., unfolded "+TSsMCFakeSub, "fp");
+  //  legend->AddEntry(UfBay4MCFakeSubH, "MC reco, fake sub., unfolded Bayes 5 iterations", "pl");
 
   legend->Draw();
   writePrel(frame2);
@@ -353,17 +353,17 @@ void plotR_zones_NI(){
   frame3->Draw();
 
   Int_t colI = kAzure;
-  //  mcPlot(UfBay1MCFsH, colI);
-  //  mcPlot(UfBay2MCFsH, colI+1);
-  mcPlot(MCFsH, colI);
-  //  mcPlot(UfBay4MCFsH, colI+3);
+  //  mcPlot(UfBay1MCFakeSubH, colI);
+  //  mcPlot(UfBay2MCFakeSubH, colI+1);
+  mcPlot(MCFakeSubH, colI);
+  //  mcPlot(UfBay4MCFakeSubH, colI+3);
 
   Int_t colI = kGray;
-  //  dataPlot(UfBay1DataFsH, colI);
-  // dataPlot(UfBay2DataFsH, colI+1);
-  //  dataPlot(UfBay3DataFsH, colI+2);
-  //  dataPlot(UfBay4DataFsH, colI+3);
-  dataPlot(DataFsH, kBlack);
+  //  dataPlot(UfBay1DataFakeSubH, colI);
+  // dataPlot(UfBay2DataFakeSubH, colI+1);
+  //  dataPlot(UfBay3DataFakeSubH, colI+2);
+  //  dataPlot(UfBay4DataFakeSubH, colI+3);
+  dataPlot(DataFakeSubH, kBlack);
 
   TLegend *legend = 0;
   Float_t legx1 = 0.45;
@@ -376,14 +376,14 @@ void plotR_zones_NI(){
   legend->SetFillColor(0);
   legend->SetBorderSize(0.);
   //  legend->AddEntry(SimH, "MC truth", "f");
-  //  legend->AddEntry(UfBay1DataFsH, "Data 7TeV, fake sub., unfolded Bayes 0 iterations", "pl");
-  //  legend->AddEntry(UfBay2DataFsH, "Data 7TeV, fake sub., unfolded Bayes 1 iterations", "pl");
-  legend->AddEntry(DataFsH, "Data 7TeV, fake sub., "+TSsDataFs, "pl");
-  //  legend->AddEntry(UfBay4DataFsH, "Data 7TeV, fake sub., unfolded Bayes 5 iterations", "pl");
-  //  legend->AddEntry(UfBay1MCFsH, "MC reco, fake sub., unfolded Bayes 0 iterations", "pl");
-  //  legend->AddEntry(UfBay2MCFsH, "MC reco, fake sub., unfolded Bayes 1 iterations", "pl");
-  legend->AddEntry(MCFsH, "MC reco, fake sub., "+TSsMCFs, "fp");
-  //  legend->AddEntry(UfBay4MCFsH, "MC reco, fake sub., unfolded Bayes 5 iterations", "pl");
+  //  legend->AddEntry(UfBay1DataFakeSubH, "Data 7TeV, fake sub., unfolded Bayes 0 iterations", "pl");
+  //  legend->AddEntry(UfBay2DataFakeSubH, "Data 7TeV, fake sub., unfolded Bayes 1 iterations", "pl");
+  legend->AddEntry(DataFakeSubH, "Data 7TeV, fake sub., "+TSsDataFakeSub, "pl");
+  //  legend->AddEntry(UfBay4DataFakeSubH, "Data 7TeV, fake sub., unfolded Bayes 5 iterations", "pl");
+  //  legend->AddEntry(UfBay1MCFakeSubH, "MC reco, fake sub., unfolded Bayes 0 iterations", "pl");
+  //  legend->AddEntry(UfBay2MCFakeSubH, "MC reco, fake sub., unfolded Bayes 1 iterations", "pl");
+  legend->AddEntry(MCFakeSubH, "MC reco, fake sub., "+TSsMCFakeSub, "fp");
+  //  legend->AddEntry(UfBay4MCFakeSubH, "MC reco, fake sub., unfolded Bayes 5 iterations", "pl");
 
   legend->Draw();
   writePrel(frame3);

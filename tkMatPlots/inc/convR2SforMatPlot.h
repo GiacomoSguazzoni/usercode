@@ -8,9 +8,11 @@
 #include <TH2.h>
 #include <TString.h>
 
+#ifdef UNFOLD
 #include <RooUnfoldResponse.h>
+#endif //#ifdef UNFOLD
 
-#include "EffVsRadius.h"
+#include "EffVsUV.h"
 #include "GeoCut.h"
 
 #include "convR2S.h"
@@ -20,7 +22,7 @@ public :
 
   std::vector<GeoCut>* geoCuts;
 
-  EffVsRadius* effR;
+  EffVsUV* effUV;
 
   Int_t evRangeMin;
   Int_t evRangeMax;
@@ -33,19 +35,22 @@ public :
   
   Int_t uIndex;
   Int_t vIndex;
+  Int_t uCutIndex;
+  Int_t vCutIndex;
   
-  void SetUIndex(Int_t uI){ uIndex = uI; };
-  void SetVIndex(Int_t vI){ vIndex = vI; };
+  void SetUIndex(Int_t uI, Int_t uCutI){ uIndex = uI; uCutIndex = uCutI; };
+  void SetVIndex(Int_t vI, Int_t vCutI){ vIndex = vI; vCutIndex = vCutI; };
 
   //
 
   void SetEvRangeMin(Int_t val){ evRangeMin = val; };
   void SetEvRangeMax(Int_t val){ evRangeMax = val; };
-  void SetGeoCuts(std::vector<GeoCut>* gcut){ geoCuts = gcut; };
-  void SetEffRadius(EffVsRadius* eR){ effR = eR; };
-  void LoopForFill(TH1*, TH1*);
-  void LoopForFill(TH2*, TH2*);
+  void SetGeoCuts(std::vector<GeoCut>* gcut, EffVsUV* eff){ geoCuts = gcut; effUV = eff;};
+  void LoopForFill(TH1*, TH1*, TH1*);
+  void LoopForFill(TH2*, TH2*, TH2*);
+#ifdef UNFOLD
   void LoopForTrain(RooUnfoldResponse*);
+#endif //#ifdef UNFOLD
   Int_t QualityCut();
   void SetCenterCoord(Double_t XX, Double_t YY, Double_t ZZ){ x0 = XX; y0 = YY; z0 = ZZ;};
 
@@ -86,6 +91,29 @@ convR2SforMatPlot::convR2SforMatPlot(TTree *tree)
   z0=0.;
 
   Init(tree);
+
+  //Select only used branches
+
+  fChain->SetBranchStatus("*",0);
+  fChain->SetBranchStatus("event",1);
+  fChain->SetBranchStatus("isAssoc",1);
+  fChain->SetBranchStatus("pt1",1);
+  fChain->SetBranchStatus("pt2",1);
+  fChain->SetBranchStatus("nHits1",1);
+  fChain->SetBranchStatus("nHits2",1);
+  fChain->SetBranchStatus("x",1);
+  fChain->SetBranchStatus("y",1);
+  fChain->SetBranchStatus("z",1);
+  //  fChain->SetBranchStatus("deltax",1);
+  //  fChain->SetBranchStatus("deltay",1);
+  //  fChain->SetBranchStatus("deltaz",1);
+  fChain->SetBranchStatus("minapp",1);
+  fChain->SetBranchStatus("chi2prob",1);
+  fChain->SetBranchStatus("q_hp",1);
+  fChain->SetBranchStatus("d01",1);
+  fChain->SetBranchStatus("d02",1);
+  fChain->SetBranchStatus("theta1",1);
+  fChain->SetBranchStatus("theta2",1);
 
 }
 

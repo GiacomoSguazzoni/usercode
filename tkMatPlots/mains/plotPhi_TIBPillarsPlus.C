@@ -14,15 +14,17 @@
 
 int main(){
 
-  Double_t rMax = 65.;
-  std::vector<GeoCut> geoCuts;
-  geoCuts.push_back(GeoCut(-26., 26., 2., 20.));
-  geoCuts.push_back(GeoCut(-66., 66., 20., rMax));
+  Double_t pi = 3.141592653589793;
 
-  MatPlot myPlot("R", 1., rMax, 0.5, 0.5, -1.);
+  std::vector<GeoCut> geoCuts;
+  geoCuts.push_back(GeoCut(13., 29., 26., 50.));
+
+  Double_t binW = 10.*pi/180.;
+
+  MatPlot myPlot("Phi", -pi, pi, binW, binW, -1.);
   myPlot.SetGeoCuts(&geoCuts);
-  myPlot.SetUIndex(4, 3); //Radius for plot, z for cut
-  myPlot.SetVIndex(0, 4); //Plot is 1d, radius for cut
+  myPlot.SetUIndex(6, 3); //phi, Z
+  myPlot.SetVIndex(0, 4); //--, R
 
   //
   myPlot.SetMCScaleFact(-1.);
