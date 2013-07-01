@@ -6,8 +6,7 @@ SOURCEFILES = plot.C \
               src/convR2S.C \
               src/convR2SforMatPlot.C \
               src/convS2RforMatPlot.C \
-              src/niS2R.C \
-              src/niR2S.C \
+              src/NtupleReaderNuclearInteractions.C \
               src/niR2SforMatPlot.C \
               src/niS2RforMatPlot.C \
               src/GeoCut.C \

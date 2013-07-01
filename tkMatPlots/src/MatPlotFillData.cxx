@@ -7,6 +7,7 @@ dataR2S->SetVIndex(vIndex, vCutIndex);
 
 //2D
   if ( rawData2DH ) {
+    /*
     if ( ! rawMCFake2DH->GetEntries() ) {
       std::cout << " >>>>>>> ERROR!!! Run FillMC first " << std::endl;
       exit(1);
@@ -15,6 +16,7 @@ dataR2S->SetVIndex(vIndex, vCutIndex);
       std::cout << " >>>>>>> ERROR!!! Run FillSim first " << std::endl;
       exit(1);
     }
+    */
     Fill(dataR2S, rawData2DH);
     rawData2DH->Sumw2();
     rawData2DH->Scale(DataScaleFact);
@@ -48,6 +50,7 @@ dataR2S->SetVIndex(vIndex, vCutIndex);
   }
 //1D
   if ( rawData1DH ) {
+    /*
     if ( ! rawMCFake1DH->GetEntries() ) {
       std::cout << " >>>>>>> ERROR!!! Run FillMC first " << std::endl;
       exit(1);
@@ -56,6 +59,7 @@ dataR2S->SetVIndex(vIndex, vCutIndex);
       std::cout << " >>>>>>> ERROR!!! Run FillSim first " << std::endl;
       exit(1);
     }
+    */
     Fill(dataR2S, rawData1DH);
     std::cout << " rawData1DH GetEntries " << rawData1DH->GetEntries() << " Integral " << rawData1DH->Integral() << std::endl; 
     rawData1DH->Sumw2();

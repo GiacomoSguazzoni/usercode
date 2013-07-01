@@ -7,6 +7,8 @@
 
 #include <TH2.h>
 #include <TString.h>
+#include <TVector3.h>
+#include <Math/VectorUtil.h>
 
 #ifdef UNFOLD
 #include <RooUnfoldResponse.h>
@@ -15,9 +17,9 @@
 #include "EffVsUV.h"
 #include "GeoCut.h"
 
-#include "niR2S.h"
+#include "NtupleReaderNuclearInteractions.h"
 
-class niR2SforMatPlot : public niR2S {
+class niR2SforMatPlot : public NtupleReaderNuclearInteractions {
 public :
 
   std::vector<GeoCut>* geoCuts;
@@ -47,14 +49,14 @@ public :
   void SetEvRangeMax(Int_t val){ evRangeMax = val; };
   void SetGeoCuts(std::vector<GeoCut>* gcut, EffVsUV* eff){ geoCuts = gcut; effUV = eff;};
   void LoopForFill(TH1*, TH1*, TH1*);
-  void LoopForFill(TH2*, TH2*, TH2*);
+  //  void LoopForFill(TH2*, TH2*, TH2*);
 #ifdef UNFOLD
   void LoopForTrain(RooUnfoldResponse*);
 #endif //#ifdef UNFOLD
-  Int_t QualityCut();
+  Int_t QualityCut(int);
   void SetCenterCoord(Double_t XX, Double_t YY, Double_t ZZ){ x0 = XX; y0 = YY; z0 = ZZ;};
 
-  niR2SforMatPlot(const char* filename);
+  //  niR2SforMatPlot(const char* filename);
   niR2SforMatPlot(TTree* tree);
   ~niR2SforMatPlot();
 
@@ -63,6 +65,7 @@ public :
 #endif
 
 #ifdef niR2SforMatPlot_cxx
+/*
 niR2SforMatPlot::niR2SforMatPlot(const char* filename)
 {
   
@@ -80,6 +83,7 @@ niR2SforMatPlot::niR2SforMatPlot(const char* filename)
   Init(tree);
 
 }
+*/
 
 niR2SforMatPlot::niR2SforMatPlot(TTree *tree)
 {
@@ -89,8 +93,10 @@ niR2SforMatPlot::niR2SforMatPlot(TTree *tree)
   x0=0.;
   y0=0.;
   z0=0.;
+  
+  beginJob(tree);
 
-  Init(tree);
+  //  Init(tree);
 
 }
 
@@ -101,7 +107,7 @@ niR2SforMatPlot::~niR2SforMatPlot()
 
 }
 
-Int_t niR2SforMatPlot::QualityCut()
+Int_t niR2SforMatPlot::QualityCut(int i)
 {
 
   Int_t iCut = 0;

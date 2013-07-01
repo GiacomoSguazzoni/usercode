@@ -255,9 +255,9 @@ MatPlot::MatPlot(const char* name, Double_t uMin, Double_t uMax, Double_t vMin, 
     vNBinEff = 1;
   }
 
-  cout << " NBins: Reco U " << uNBin << " Reco V " << vNBin << endl;
-  cout << " NBins: Sim U " << uNBinSim << " Sim V " << vNBinSim << endl;
-  cout << " NBins: Eff U " << uNBinEff << " Eff V " << vNBinEff << endl;
+  std::cout << " NBins: Reco U " << uNBin << " Reco V " << vNBin << std::endl;
+  std::cout << " NBins: Sim U " << uNBinSim << " Sim V " << vNBinSim << std::endl;
+  std::cout << " NBins: Eff U " << uNBinEff << " Eff V " << vNBinEff << std::endl;
 
   TSName.Append(name);
 

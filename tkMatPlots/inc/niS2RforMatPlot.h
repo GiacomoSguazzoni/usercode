@@ -15,9 +15,9 @@
 #include "EffVsUV.h"
 #include "GeoCut.h"
 
-#include "niS2R.h"
+#include "NtupleReaderNuclearInteractions.h"
 
-class niS2RforMatPlot : public niS2R {
+class niS2RforMatPlot : public NtupleReaderNuclearInteractions {
 public :
 
   std::vector<GeoCut>* geoCuts;
@@ -47,11 +47,11 @@ public :
   void SetEvRangeMax(Int_t val){ evRangeMax = val; };
   void SetGeoCuts(std::vector<GeoCut>* gcut, EffVsUV* eff){ geoCuts = gcut; effUV = eff;};
   void LoopForFill(TH1*);
-  void LoopForFill(TH2*);
+  //  void LoopForFill(TH2*);
 #ifdef UNFOLD
   void LoopForTrain(RooUnfoldResponse*);
 #endif //#ifdef UNFOLD
-  Int_t QualityCut();
+  Int_t QualityCut(int);
 
   niS2RforMatPlot(const char* filename);
   niS2RforMatPlot(TTree* tree);
@@ -76,7 +76,9 @@ niS2RforMatPlot::niS2RforMatPlot(const char* filename)
   
   TTree * tree = (TTree*)f->Get("ntupleS2R");
 
-  Init(tree);
+  beginJob(tree);
+
+  //  Init(tree);
 
 }
 
@@ -89,7 +91,9 @@ niS2RforMatPlot::niS2RforMatPlot(TTree* tree)
   y0=0.;
   z0=0.;
 
-  Init(tree);
+  beginJob(tree);
+
+  //  Init(tree);
 
 }
 
@@ -100,7 +104,7 @@ niS2RforMatPlot::~niS2RforMatPlot()
 
 }
 
-Int_t niS2RforMatPlot::QualityCut()
+Int_t niS2RforMatPlot::QualityCut(int i)
 {
 
   Int_t iCut = 0;

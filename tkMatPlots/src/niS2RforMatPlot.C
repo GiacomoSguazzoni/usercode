@@ -20,59 +20,39 @@ void niS2RforMatPlot::LoopForFill(TH1* hist)
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
-    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
-
-    Double_t X = x-x0;
-    Double_t Y = y-y0;
-    Double_t Z = z-z0;
-    
-    Double_t XTrue = x-x0;
-    Double_t YTrue = y-y0;
-    Double_t ZTrue = z-z0;
-    
+    for ( unsigned int i = 0; i < numberOfMC_TrkV; i++ )
+      {
+	//    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
+	
+	Double_t XTrue = MC_TrkV_x->at(i);
+	Double_t YTrue = MC_TrkV_y->at(i);
+	Double_t ZTrue = MC_TrkV_z->at(i);
+	
+	Double_t X = XTrue;
+	Double_t Y = YTrue;
+	Double_t Z = ZTrue;
+	
 #include "VarArray.cxx"
     
-#include "LoopForFillS2R.cxx"
+#include "counter.cxx"
+
+    //Build geometrical cut
+    Int_t iGeo = 0;
+    for ( geoIt=geoCuts->begin() ; geoIt < geoCuts->end(); geoIt++ ){
+      iGeo += (*geoIt).GeoCutOk(ACut, BCut);
+    }
+
+    // Verify cut
+    if ( iGeo && QualityCut(i) ) {
+      hist->Fill(A,B); // Ok
+      if ( ! MC_TrkV_isAssociatedPF->at(i) ) effUV->NotReco(A,B);// Only if not associated count for (in)efficiency
+    }
+    //
     
+      }
+
   }
   
-}
-
-void niS2RforMatPlot::LoopForFill(TH2* hist)
-{
-
-  std::cout << " S2R: Metodo LoopForFill 2D..." << std::endl;
-  
-  if (fChain == 0) return;
-  
-  Long64_t nentries = fChain->GetEntriesFast();
-  
-  Long64_t nbytes = 0, nb = 0;
-  
-  //GeoCuts iterator
-  std::vector<GeoCut>::iterator geoIt;
-  
-  for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    Long64_t ientry = LoadTree(jentry);
-    if (ientry < 0) break;
-    nb = fChain->GetEntry(jentry);   nbytes += nb;
-    
-    // Verify event range
-    //    if ( ! (event >= evRangeMin && event < evRangeMax) ) continue;
-    
-    Double_t X = x-x0;
-    Double_t Y = y-y0;
-    Double_t Z = z-z0;
-    
-    Double_t XTrue = x-x0;
-    Double_t YTrue = y-y0;
-    Double_t ZTrue = z-z0;
-    
-#include "VarArray.cxx"
-    
-#include "LoopForFillS2R.cxx"
-
-  }  
 }
 
 #ifdef UNFOLD
