@@ -7,7 +7,9 @@ struct hitSelector {
   bool tid;
   bool tob;
   bool tec;
+  bool mono;
   bool stereo;
+  bool alt;
   bool all;
 
 };

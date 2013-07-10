@@ -47,14 +47,14 @@ process.ectest = cms.EDAnalyzer('ecReco',
                                 etaMinCut = cms.untracked.double(0.0),
                                 etaMaxCut = cms.untracked.double(2.5),
                                 #
-                                nHitMinCut = cms.untracked.int32(5),
+                                nHitMinCut = cms.untracked.int32(8),
                                 nHitTlMinCut = cms.untracked.int32(4),
                                 #
                                 nHitTibMinCut = cms.untracked.int32(0),
                                 nHitSteTibMinCut = cms.untracked.int32(0),
                                 useTIB = cms.untracked.bool( False ),
                                 #
-                                nHitTidMinCut = cms.untracked.int32(2),
+                                nHitTidMinCut = cms.untracked.int32(0),
                                 nHitSteTidMinCut = cms.untracked.int32(0),
                                 useTID = cms.untracked.bool( True ),
                                 #
@@ -62,15 +62,17 @@ process.ectest = cms.EDAnalyzer('ecReco',
                                 nHitSteTobMinCut = cms.untracked.int32(0),
                                 useTOB = cms.untracked.bool( False ),
                                 #
-                                nHitTecMinCut = cms.untracked.int32(2),
+                                nHitTecMinCut = cms.untracked.int32(0),
                                 nHitSteTecMinCut = cms.untracked.int32(0),
                                 useTEC = cms.untracked.bool( True ),
                                 #
+                                useMono = cms.untracked.bool( False ),
                                 useStereo = cms.untracked.bool( False ),
+                                useStereoIfGlued = cms.untracked.bool( True ),
                                 #
                                 # Activate to have a tracklet == full track; only for debugging
-                                useAll = cms.untracked.bool( False ),
-                                Builder = cms.untracked.string('WithTrackAngle')
+                                useAll = cms.untracked.bool( False )
+#                                Builder = cms.untracked.string('WithTrackAngle')
 )
 
 process.load("Configuration.EventContent.EventContent_cff")

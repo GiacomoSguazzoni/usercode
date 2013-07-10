@@ -1,7 +1,7 @@
 //
 // Original Author:  Giuseppe Cerati
 //         Created:  Fri Aug  7 15:10:58 CEST 2009
-// $Id: ecRefit.cc,v 1.3 2013/05/14 10:14:17 sguazz Exp $
+// $Id: ecRefit.cc,v 1.4 2013/06/04 14:52:17 sguazz Exp $
 //
 //
 // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/SimTracker/TrackAssociation/test/testTrackAssociator.cc?revision=1.17&view=markup&pathrev=CMSSW_2_2_10
@@ -55,12 +55,12 @@ ecRefit::ecRefit(const TrackerGeometry * theGeometry, const MagneticField * theM
 
 }
 
-int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& detidIs, uint32_t& detidTl){
+int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& detidIs, uint32_t& detidTl, int& hitIndexTl){
 
   ////////////////////////////////////////////////////////////////////////////////
 
   if ( myDebug_ ) std::cout << "   Selecting hits for refit" << std::endl;
-  if ( myDebug_ ) std::cout << "   Selector: tib:" << hs.tib << " tid:" << hs.tid << " tob:" << hs.tob << " tec:" << hs.tec << " stereo:" << hs.stereo << " all:" << hs.all << std::endl;
+  if ( myDebug_ ) std::cout << "   Selector: tib:" << hs.tib << " tid:" << hs.tid << " tob:" << hs.tob << " tec:" << hs.tec << " mono:" << hs.mono << " stereo:" << hs.stereo << " alt:" << hs.alt << " all:" << hs.all << std::endl;
 
   // 
   // Hits
@@ -87,26 +87,39 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
       std::cout << "   #" << iCount;
       dumpModuleInfo(id);
       if ( typeid((theB->build(&**i))->hit()) == typeid(SiStripMatchedRecHit2D) ) std::cout << " Matched ";
-      if ( SiStripDetId(id).stereo() ) std::cout << " Stereo ";
-      if ( ! SiStripDetId(id).stereo() ) std::cout << " Mono ";
     }
     
     if ( 
 	(( 
-         ( id.subdetId() == StripSubdetector::TIB && hs.tib )
-         ||
-         ( id.subdetId() == StripSubdetector::TEC && hs.tec )
-         ||
-         ( id.subdetId() == StripSubdetector::TID && hs.tid )
-         ||
-         ( id.subdetId() == StripSubdetector::TOB && hs.tob )
+	  ( id.subdetId() == StripSubdetector::TIB && hs.tib )
+	  ||
+	  ( id.subdetId() == StripSubdetector::TEC && hs.tec )
+	  ||
+	  ( id.subdetId() == StripSubdetector::TID && hs.tid )
+	  ||
+	  ( id.subdetId() == StripSubdetector::TOB && hs.tob )
+	  )
+	 &&
+	 (
+	  ( 
+	   ( hs.stereo || hs.alt )
+	   && 
+	   SiStripDetId(id).stereo()
+	   )
+	  ||
+	  ( 
+	   hs.mono 
+	   && 
+	   ( ! SiStripDetId(id).stereo() )
+	   )
+	  ||
+	  (
+	   hs.alt 
+	   && 
+	   ( ! SiStripDetId(id).glued() )
+	   )
+	  )
 	 )
-	&&
-	( 
-	 hs.stereo 
-	 || 
-	 ( ! SiStripDetId(id).stereo() )
-	 ))
 	|| hs.all
 	)
       {
@@ -118,9 +131,11 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
 	if ( myDebug_ ) std::cout << " <--Added to Tracklet";
 	
 	// Store detid corresponding to the first hit of the tracklet
+	// Stere the index of the first hit of the tracklet
 	//
 	if ( iFirstTl ) {
 	  detidTl = id;
+	  hitIndexTl = iCount;
 	}
 	
 	//
@@ -135,6 +150,8 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
 
     }
     
+    hitsAll.push_back(theB->build(&**i)); //Selected hit vector
+
     if ( myDebug_ ) std::cout << std::endl;
     iCount++;
 
@@ -150,10 +167,13 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
   bool iFirstValidNotYetFound = true;
   if ( myDebug_ ) std::cout << " Reverse loop to remove trailing invalid hits" << std::endl;
   int iRecount = hitsTl.size()-1;
-  for (TransientTrackingRecHit::RecHitContainer::const_iterator i=hitsTl.end()-1; i!=hitsTl.begin(); i--){
+  for (TransientTrackingRecHit::RecHitContainer::const_iterator i=hitsTl.end()-1; i!=hitsTl.begin()-1; i--){
 
-    if ( myDebug_ ) std::cout << " The hit #" << iRecount;
-    if ( myDebug_ ) std::cout << " isValid:" << (*i)->isValid();
+    if ( myDebug_ ) {
+      std::cout << " The hit #" << iRecount << " isValid:" << (*i)->isValid();
+      DetId id=DetId((*i)->geographicalId());
+      dumpModuleInfo(id);
+    }
     if ( (*i)->isValid() ) iFirstValidNotYetFound = false; 
     if (! (*i)->isValid() && iFirstValidNotYetFound ){
       hitsTl.pop_back();
@@ -182,18 +202,36 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
   // Build hits vector  
   uint32_t detidTl;
   uint32_t detidIs;
-  myParams.nhit = buildHitsVector(track, hs, detidIs, detidTl);
+  int hitIndexTl;
+  myParams.nhit = buildHitsVector(track, hs, detidIs, detidTl, hitIndexTl);
   myParams.detidIs = detidIs;
   myParams.detidTl = detidTl;
 
   if ( myParams.nhit <= hs.minhits ) return myParams;
 
   //
-  // Refit
-  std::vector<Trajectory> trajVec = doGenericRefit(theTrack, hitsTl, theG.product(), theMF.product());
-    
-  if ( myDebug_ ) std::cout << "   Tracklet refit initialization with..." << std::endl;
+  // Refit the full track to get intermediate TSOS
+  std::vector<Trajectory> trajVec = doGenericRefit(theTrack, hitsAll, theG.product(), theMF.product());
+  if ( ! trajVec.size()>0 ) return myParams;
+  std::vector<TrajectoryMeasurement> theTrajectoryMeasurements=trajVec.begin()->measurements();
+  std::vector<TrajectoryMeasurement>::iterator theHitIndex = theTrajectoryMeasurements.end()-hitIndexTl-1;
+  TrajectoryStateOnSurface tsos = theHitIndex->updatedState();
+  //  TrajectoryStateOnSurface tsos = (theTrajectoryMeasurements.end()-hitIndexTl+1)->updatedState();
+  //  TrajectoryStateOnSurface tsos = theTrajectoryMeasurements.at(hitIndexTl).updatedState();
+  if ( myDebug_ ) {
+    DetId id=DetId( theHitIndex->recHit()->geographicalId() );
+    //    DetId id=DetId( theTrajectoryMeasurements.at(hitIndexTl).recHit()->geographicalId() );
+    dumpModuleInfo(id);
+    std::cout << std::endl;
+    dumpTSOSInfo(tsos);
+  }
+  
 
+  //
+  // Refit the tracklet with the correct TSOS
+  trajVec.clear();
+  trajVec = doGenericRefitWithTSOS(tsos, hitsTl, theG.product(), theMF.product());
+  if ( myDebug_ ) std::cout << "   Tracklet refit initialization with..." << std::endl;
   if ( ! trajVec.size()>0 ) return myParams;
   
   TrajectoryStateOnSurface upTSOS = trajVec.begin()->lastMeasurement().updatedState();
@@ -224,7 +262,7 @@ std::vector<Trajectory> ecRefit::doGenericRefit(const reco::Track t, TransientTr
 
   //
   // Initial state
-  TrajectoryStateOnSurface initialStateFromTrack = buildInitialStateForEcRefit(track, h, tGeo.product(), tMF.product());
+  TrajectoryStateOnSurface initialStateFromTrack = buildInitialStateForRefit(track, h, tGeo.product(), tMF.product());
   
   //
   // Direction
@@ -238,7 +276,31 @@ std::vector<Trajectory> ecRefit::doGenericRefit(const reco::Track t, TransientTr
   
 }
 
-TrajectoryStateOnSurface ecRefit::buildInitialStateForEcRefit(const reco::Track track, TransientTrackingRecHit::RecHitContainer hits, const TrackerGeometry * theGeo, const MagneticField * theMagField){
+//
+// member functions
+//
+
+std::vector<Trajectory> ecRefit::doGenericRefitWithTSOS(TrajectoryStateOnSurface & tsos, TransientTrackingRecHit::RecHitContainer h, const TrackerGeometry * tG, const MagneticField * tM){
+  
+  edm::ESHandle<TrackerGeometry> tGeo = tG;
+  edm::ESHandle<MagneticField> tMF = tM;
+
+  //
+  // Initial state
+  TrajectoryStateOnSurface initialStateFromTrack = buildInitialStateForTlRefit(tsos, tGeo.product(), tMF.product());
+  
+  //
+  // Direction
+  PropagationDirection seedDir = alongMomentum;
+  // Seed
+  const TrajectorySeed seed = TrajectorySeed(PTrajectoryStateOnDet(), TrajectorySeed::recHitContainer(), seedDir);
+  //
+  // Fit!
+  return theF->fit(seed, h, initialStateFromTrack);
+  
+}
+
+TrajectoryStateOnSurface ecRefit::buildInitialStateForRefit(const reco::Track track, TransientTrackingRecHit::RecHitContainer hits, const TrackerGeometry * theGeo, const MagneticField * theMagField){
 
   reco::Track theTrack = track;
   edm::ESHandle<TrackerGeometry> theG = theGeo;
@@ -254,10 +316,25 @@ TrajectoryStateOnSurface ecRefit::buildInitialStateForEcRefit(const reco::Track 
       (outerStateFromTrack.globalPosition()-hits.front()->det()->position()).mag2() ) ? 
     innerStateFromTrack: outerStateFromTrack;       
   initialStateFromTrack.rescaleError(100);
-  theInitialStateForRefitting = TrajectoryStateOnSurface(initialStateFromTrack.localParameters(),
-							 initialStateFromTrack.localError(),                  
-							 initialStateFromTrack.surface(),
-							 theMF.product());  
+  TrajectoryStateOnSurface theInitialStateForRefitting = TrajectoryStateOnSurface(initialStateFromTrack.localParameters(),
+										  initialStateFromTrack.localError(),                  
+										  initialStateFromTrack.surface(),
+										  theMF.product());  
+  
+  return theInitialStateForRefitting;
+
+}
+
+TrajectoryStateOnSurface ecRefit::buildInitialStateForTlRefit(TrajectoryStateOnSurface& tsos, const TrackerGeometry * theGeo, const MagneticField * theMagField){
+
+  edm::ESHandle<TrackerGeometry> theG = theGeo;
+  edm::ESHandle<MagneticField> theMF = theMagField;
+
+  tsos.rescaleError(100.);
+  TrajectoryStateOnSurface theInitialStateForRefitting = TrajectoryStateOnSurface(tsos.localParameters(),
+										  tsos.localError(),                  
+										  tsos.surface(),
+										  theMF.product());  
   
   return theInitialStateForRefitting;
 
@@ -353,6 +430,10 @@ tsosParams ecRefit::GetTSOSParams(TrajectoryStateOnSurface& TSOS){
 
 void ecRefit::dumpModuleInfo(DetId hitId){
   
+  uint32_t id = hitId; 
+
+  std::cout << " Det id #" << id;
+
   if (hitId.subdetId() == StripSubdetector::TIB )  
     std::cout  << " TIB " << TIBDetId(hitId).layer();
   else if (hitId.subdetId() == StripSubdetector::TOB ) 
@@ -367,6 +448,13 @@ void ecRefit::dumpModuleInfo(DetId hitId){
     std::cout  << " PXF " << PXFDetId(hitId).disk();
   else 
     std::cout  << " UKN ";
+
+  SiStripDetId stripId(hitId);
+
+  if ( stripId.stereo() ) std::cout << " Stereo ";
+  if ( ! stripId.stereo() ) std::cout << " Mono ";
+  if ( stripId.glued() ) std::cout << " Glued ";
+  if ( stripId.partnerDetId() ) std::cout << " hasPartner";
 
 }
 

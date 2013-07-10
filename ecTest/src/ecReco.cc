@@ -56,7 +56,9 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   hs.tec = iConfig.getUntrackedParameter<bool>("useTEC", true);
   hs.tib = iConfig.getUntrackedParameter<bool>("useTIB", true);
   hs.tob = iConfig.getUntrackedParameter<bool>("useTOB", true);
+  hs.mono = iConfig.getUntrackedParameter<bool>("useMono", true);
   hs.stereo = iConfig.getUntrackedParameter<bool>("useStereo", true);
+  hs.alt = iConfig.getUntrackedParameter<bool>("useStereoIfGlued", false);
   hs.all = iConfig.getUntrackedParameter<bool>("useAll", false);
 
   fitterName_ = iConfig.getUntrackedParameter<std::string>("Fitter","KFFittingSmootherWithOutliersRejectionAndRK");

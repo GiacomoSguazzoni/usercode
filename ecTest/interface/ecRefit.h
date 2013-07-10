@@ -44,9 +44,11 @@ public:
   double paramErrorAtTSOS(TrajectoryStateOnSurface &, int);
   void dumpTSOSInfo(TrajectoryStateOnSurface &);
   tsosParams GetTSOSParams(TrajectoryStateOnSurface &);
-  int buildHitsVector(const reco::Track, hitSelector, uint32_t&, uint32_t&);
-  TrajectoryStateOnSurface buildInitialStateForEcRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
+  int buildHitsVector(const reco::Track, hitSelector, uint32_t&, uint32_t&, int&);
+  TrajectoryStateOnSurface buildInitialStateForRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
+  TrajectoryStateOnSurface buildInitialStateForTlRefit(TrajectoryStateOnSurface &, const TrackerGeometry *, const MagneticField *);
   std::vector<Trajectory> doGenericRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
+  std::vector<Trajectory> doGenericRefitWithTSOS(TrajectoryStateOnSurface &, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
 
   void dumpModuleInfo(DetId);
 
@@ -54,8 +56,7 @@ public:
   bool myDebug_;
 
   //Track stuff
-  std::vector<TrajectoryMeasurement> theTrajectoryMeasurements;
-  TrajectoryStateOnSurface theInitialStateForRefitting;
+  //  std::vector<TrajectoryMeasurement> theTrajectoryMeasurements;
   reco::Track theTrack;
 
   //Handles
@@ -67,6 +68,7 @@ public:
   //
   // Quantities needed for ec refits
   //
+  TransientTrackingRecHit::RecHitContainer hitsAll;       
   TransientTrackingRecHit::RecHitContainer hitsTl;       
 
 };
