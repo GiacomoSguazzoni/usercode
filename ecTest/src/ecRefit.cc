@@ -238,6 +238,7 @@ tsosParamsSet ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
 
   //
   // Refit the full track to get intermediate TSOS
+    if ( myDebug_ )
 	std::cout << "Refitting Track to get TSOS for tracklets" << std::endl;
 
   std::vector<Trajectory> trajVec = doGenericRefit(theTrack, hitsAll, theG.product(), theMF.product());
@@ -281,7 +282,8 @@ tsosParamsSet ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
 
   //
   // Refit the tracklet with the correct TSOS
-  std::cout << "Refitting Tracklet with correct TSOS" << std::endl;
+  if ( myDebug_ )
+    std::cout << "Refitting Tracklet with correct TSOS" << std::endl;
   trajVec.clear();
   trajVec = doGenericRefitWithTSOS(tsos, hitsTl, theG.product(), theMF.product());
   if ( myDebug_ ) std::cout << "   Tracklet refit initialization with..." << std::endl;
@@ -302,10 +304,10 @@ tsosParamsSet ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
   
     if (  myDebug_ ) {
     std::cout << "fitOnly_ " << fitOnly_ << std::endl;
-  std::cout << "mom <first> Measurement().updatedState()" << upTSOS.globalMomentum().mag() << std::endl;
-  // the updated state will also be set in fit-only propagation: KF combination between the hit 
-  // and the forward propagated state
-  std::cout << "mom <last> Measurement().updatedState()" << lastTSOS.globalMomentum().mag() << std::endl;
+    std::cout << "mom <first> Measurement().updatedState()" << upTSOS.globalMomentum().mag() << std::endl;
+    // the updated state will also be set in fit-only propagation: KF combination between the hit 
+    // and the forward propagated state
+    std::cout << "mom <last> Measurement().updatedState()" << lastTSOS.globalMomentum().mag() << std::endl;}
     }
 
   myParamsFirst = GetTSOSParams(upTSOS);
