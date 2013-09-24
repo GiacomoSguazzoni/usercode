@@ -31,10 +31,10 @@
 
 class ecRefit{
 public:
-  ecRefit(const TrackerGeometry *, const MagneticField *, const TrajectoryFitter *, const TransientTrackingRecHitBuilder *, bool);
+  ecRefit(const TrackerGeometry *, const MagneticField *, const TrajectoryFitter *, const TrajectoryFitter *, const TransientTrackingRecHitBuilder *, bool, bool);
   ~ecRefit();
 
-  tsosParams doWithTrack(const reco::Track, hitSelector);
+  tsosParamsSet doWithTrack(const reco::Track, hitSelector);
 
  private:
   void setMaterialToKFactor(double);
@@ -44,16 +44,19 @@ public:
   double paramErrorAtTSOS(TrajectoryStateOnSurface &, int);
   void dumpTSOSInfo(TrajectoryStateOnSurface &);
   tsosParams GetTSOSParams(TrajectoryStateOnSurface &);
-  int buildHitsVector(const reco::Track, hitSelector, uint32_t&, uint32_t&, int&);
+  int buildHitsVector(const reco::Track, hitSelector, uint32_t&, uint32_t&, uint32_t&, int&);
   TrajectoryStateOnSurface buildInitialStateForRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
   TrajectoryStateOnSurface buildInitialStateForTlRefit(TrajectoryStateOnSurface &, const TrackerGeometry *, const MagneticField *);
   std::vector<Trajectory> doGenericRefit(const reco::Track, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
   std::vector<Trajectory> doGenericRefitWithTSOS(TrajectoryStateOnSurface &, TransientTrackingRecHit::RecHitContainer, const TrackerGeometry *, const MagneticField *);
+  TrajectoryFitter const* getFitter();
 
   void dumpModuleInfo(DetId);
 
   //Debug switch
   bool myDebug_;
+  // only fit and no smooting, no outlier rejection will be performed
+  bool fitOnly_;
 
   //Track stuff
   //  std::vector<TrajectoryMeasurement> theTrajectoryMeasurements;
@@ -63,6 +66,7 @@ public:
   edm::ESHandle<TrackerGeometry> theG;
   edm::ESHandle<MagneticField> theMF;
   edm::ESHandle<TrajectoryFitter> theF;
+  edm::ESHandle<TrajectoryFitter> theInitialReF;
   edm::ESHandle<TransientTrackingRecHitBuilder> theB;
 
   //

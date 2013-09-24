@@ -57,6 +57,8 @@ struct tsosParams {
   
 };
 
+typedef std::pair < tsosParams, tsosParams > tsosParamsSet;
+
 #endif
 
 
