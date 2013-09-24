@@ -35,6 +35,8 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   std::string FileName_ = iConfig.getUntrackedParameter<std::string>("outputFileName", "ecTrack.root");
   myDebug_ = iConfig.getUntrackedParameter<bool>("myDebug", false);
   isMC_ = iConfig.getUntrackedParameter<bool>("isMC", true);
+  fitOnly_ = iConfig.getUntrackedParameter<bool>("fitOnly", false);
+  
 
   ptMinCut_ = iConfig.getUntrackedParameter<double>("ptMinCut", 0.8);
   ptMaxCut_ = iConfig.getUntrackedParameter<double>("ptMaxCut", 5.2);
@@ -61,6 +63,7 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   hs.alt = iConfig.getUntrackedParameter<bool>("useStereoIfGlued", false);
   hs.all = iConfig.getUntrackedParameter<bool>("useAll", false);
 
+  initialRefitterName_ = iConfig.getUntrackedParameter<std::string>("InitialRefitter");
   fitterName_ = iConfig.getUntrackedParameter<std::string>("Fitter","KFFittingSmootherWithOutliersRejectionAndRK");
   associatorName_ = iConfig.getUntrackedParameter<std::string>("Associator","TrackAssociatorByHits");
   builderName_ = iConfig.getUntrackedParameter<std::string>("Builder","WithAngleAndTemplate");   
@@ -107,6 +110,8 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   ecTree->Branch("theErr",     &ecT_theErr,     "theErr/F",     bs);     
   ecTree->Branch("phi",        &ecT_phi,        "phi/F",        bs);     
   ecTree->Branch("phiErr",     &ecT_phiErr,     "phiErr/F",     bs);     
+  ecTree->Branch("nLoops",	&ecT_nLoops,	"nLoops/I",	bs);
+
   // track inner state
   ecTree->Branch("pIs",          &ecT_pIs,        "pIs/F",          bs);       
   ecTree->Branch("pErrIs",       &ecT_pErrIs,     "pErrIs/F",       bs);       
@@ -150,6 +155,7 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
     ecTree->Branch("iTrackSim",  &ecT_iTrackSim,  "iTrackSim/I",  bs);    
     ecTree->Branch("pSim",       &ecT_pSim,       "pSim/F",       bs);    
     ecTree->Branch("ptSim",      &ecT_ptSim,      "ptSim/F",      bs);   
+    ecTree->Branch("pzSim",      &ecT_pzSim,      "pzSim/F",      bs);
     ecTree->Branch("theSim",     &ecT_theSim,     "theSim/F",     bs);  
     ecTree->Branch("phiSim",     &ecT_phiSim,     "phiSim/F",     bs);  
     ecTree->Branch("nHitSim",    &ecT_nHitSim,    "nHitSim/I",    bs);    
@@ -171,12 +177,38 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   ecTree->Branch("theErrTl",     &ecT_theErrTl,   "theErrTl/F",     bs);     
   ecTree->Branch("phiTl",        &ecT_phiTl,      "phiTl/F",        bs);     
   ecTree->Branch("phiErrTl",     &ecT_phiErrTl,   "phiErrTl/F",     bs);     
+
+  // trackLet Os   		   		   	       
+  //ecTree->Branch("iok",          &ecT_iokTl,      "iok/I",          bs);       
+  ecTree->Branch("pTlOs",          &ecT_pTlOs,        "pTlOs/F",          bs);       
+  ecTree->Branch("pErrTlOs",       &ecT_pErrTlOs,     "pErrTlOs/F",       bs);       
+  ecTree->Branch("cTlOs",          &ecT_curvTlOs,     "cTlOs/F",          bs);       
+  ecTree->Branch("cErrTlOs",       &ecT_curvErrTlOs,  "cErrTlOs/F",       bs);       
+  ecTree->Branch("ctTlOs",         &ecT_curvtTlOs,    "ctTlOs/F",         bs);       
+  ecTree->Branch("ctErrTlOs",      &ecT_curvtErrTlOs, "ctErrTlOs/F",      bs);       
+  ecTree->Branch("ptTlOs",         &ecT_ptTlOs,       "ptTlOs/F",         bs);      
+  ecTree->Branch("ptErrTlOs",      &ecT_ptErrTlOs,    "ptErrTlOs/F",      bs);       
+  ecTree->Branch("pzTlOs",         &ecT_pzTlOs,       "pzTlOs/F",         bs);      
+  ecTree->Branch("pzErrTlOs",      &ecT_pzErrTlOs,    "pzErrTlOs/F",      bs);       
+  ecTree->Branch("theTlOs",        &ecT_theTlOs,      "theTlOs/F",        bs);     
+  ecTree->Branch("theErrTlOs",     &ecT_theErrTlOs,   "theErrTlOs/F",     bs);     
+  ecTree->Branch("phiTlOs",        &ecT_phiTlOs,      "phiTlOs/F",        bs);     
+  ecTree->Branch("phiErrTlOs",     &ecT_phiErrTlOs,   "phiErrTlOs/F",     bs); 
+
   // simtrack	     		   		   	       
   if ( isMC_ ){
     ecTree->Branch("pSimTl",    &ecT_pSimTl,    "pSimTl/F",  bs);    
     ecTree->Branch("ptSimTl",   &ecT_ptSimTl,   "ptSimTl/F",  bs);    
+    ecTree->Branch("pzSimTl",   &ecT_pzSimTl,   "pzSimTl/F",  bs);
     ecTree->Branch("theSimTl",  &ecT_theSimTl,  "theSimTl/F",  bs);   
     ecTree->Branch("phiSimTl",  &ecT_phiSimTl,  "phiSimTl/F",  bs);  
+
+    ecTree->Branch("pSimTlOs",    &ecT_pSimTlOs,    "pSimTlOs/F",  bs);    
+    ecTree->Branch("ptSimTlOs",   &ecT_ptSimTlOs,   "ptSimTlOs/F",  bs);    
+    ecTree->Branch("pzSimTlOs",   &ecT_pzSimTlOs,   "pzSimTlOs/F",  bs);
+    ecTree->Branch("theSimTlOs",  &ecT_theSimTlOs,  "theSimTlOs/F",  bs);   
+    ecTree->Branch("phiSimTlOs",  &ecT_phiSimTlOs,  "phiSimTlOs/F",  bs);  
+
     ecTree->Branch("pSimIs",    &ecT_pSimIs,    "pSimIs/F",  bs);    
     ecTree->Branch("ptSimIs",   &ecT_ptSimIs,   "ptSimIs/F",  bs);    
     ecTree->Branch("theSimIs",  &ecT_theSimIs,  "theSimIs/F",  bs);   
@@ -228,6 +260,8 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
   setup.get<TrackerDigiGeometryRecord>().get(theG);
   setup.get<IdealMagneticFieldRecord>().get(theMF);  
   setup.get<TrajectoryFitter::Record>().get(fitterName_,theFitter);
+  setup.get<TrajectoryFitter::Record>().get(initialRefitterName_,theInitialRefitter);
+
   setup.get<TrackAssociatorRecord>().get(associatorName_,theAssociator);
   setup.get<TransientRecHitRecord>().get(builderName_,theBuilder);
 
@@ -265,15 +299,17 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
     
     ecT_iTrackSim=0;
     ecT_pSim=0.;     
-    ecT_ptSim=0.;    
+    ecT_ptSim=0.;
+    ecT_pzSim=0.;     
     ecT_theSim=0.;   
     ecT_phiSim=0.;   
     ecT_hitFrac=0.;
     
     if ( myDebug_ ) std::cout << ">>>>>>---------------------------------------------------------------------------------" << std::endl;
     uint32_t detidTl=0;
+    uint32_t detidTlOs=0;
     uint32_t detidIs=0;
-    trackAction(*itTrack, detidTl, detidIs);
+    trackAction(*itTrack, detidTl, detidTlOs, detidIs);
     
     if ( isMC_ ) {
       
@@ -288,11 +324,16 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
 	  ecT_hitFrac = it->second;
 	  if ( myDebug_ ) std::cout << "\t\tMCTrack " << tpr.index() << " pT: " << tpr->pt() << 
 	    " NShared: " << ecT_hitFrac << std::endl;
-	  int itpaout = trackingParticleAction(tpr, detidTl, detidIs);
-	  if ( itpaout ) {
+
+	  int itpaout = trackingParticleAction(tpr, detidTl, detidTlOs, detidIs);
+	  if ( itpaout == 1 ) {
 	    if ( myDebug_ ) std::cout << " Track rejected due to psimhit double match " << std::endl; 
 	    ecT_iokTl=0;
 	  }
+          if ( itpaout == 2 ) {
+            if ( myDebug_ ) std::cout << " Track rejected because Tl det id or Is det id could not be found in the sim hits " << std::endl;
+            ecT_iokTl=0;
+          }
 
 	}
       } catch (cms::Exception event) {
@@ -304,7 +345,9 @@ ecReco::analyze(const edm::Event& iEvent, const edm::EventSetup& setup)
     
     //
     // Fill ecTree
-    if ( ecT_iokTl ) ecTree->Fill();
+    // always fill, to know how many failed.
+    //if ( ecT_iokTl ) 
+      ecTree->Fill();
 
   }
 
@@ -321,14 +364,20 @@ void ecReco::endJob() {
 
 }
 
-int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl, uint32_t iDetIdIs){
+int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl, uint32_t iDetIdTlOs, uint32_t iDetIdIs){
 
   TrackingParticle* tp = const_cast<TrackingParticle*>(tpr.get());
+
+  // important to find both, otherwise we will not be able to compare to sim
+  bool IsFound = false;
+  bool TlFound = false;
+
 	   
   // If more than one associated sim track only the latter enters in the ntupla
   ecT_iTrackSim=tpr.index(); 
   ecT_pSim=tpr->p();      
-  ecT_ptSim=tpr->pt();     
+  ecT_ptSim=tpr->pt();
+  ecT_pzSim=tpr->pz();     
   ecT_theSim=tpr->theta();    
   ecT_phiSim=tpr->phi();    
   ecT_nHitSim=tpr->trackPSimHit().size();
@@ -345,6 +394,11 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl,
   int iPSHit = 0;
   int iFirstDetIdMatch = 0;
   int iDoubleMatch = 0;
+  
+  if ( myDebug_ ) {
+    std::cout << "Looking for DetId : " << iDetIdIs << " get get inner state infos" << std::endl;
+    std::cout << "Looking for DetId : " << iDetIdTl << " get get first tracklet state infos" << std::endl;
+  }
 
   for(std::vector<PSimHit>::const_iterator TPhit = tp->pSimHit_begin(); TPhit != tp->pSimHit_end(); TPhit++){ //sguazz
     //
@@ -368,6 +422,7 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl,
       std::cout << "   PSimHit #" << iPSHit;
       dumpModuleInfo(detid);
       std::cout << " p:" << gMomentumAtHit.mag() << 
+	" in #det " << detid <<
 	" pt:" << gMomentumAtHit.perp() <<
 	" the:" << gMomentumAtHit.theta() <<
 	" phi:" << gMomentumAtHit.phi() <<
@@ -376,6 +431,8 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl,
 
 
     if (detid == iDetIdIs){ 
+
+      IsFound = true;
       
       ecT_pSimIs=gMomentumAtHit.mag();
       ecT_ptSimIs=gMomentumAtHit.perp();
@@ -388,8 +445,11 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl,
 
     if (detid == iDetIdTl){ 
       
+      TlFound = true;
+      
       ecT_pSimTl=gMomentumAtHit.mag();
       ecT_ptSimTl=gMomentumAtHit.perp();
+      ecT_pzSimTl=gMomentumAtHit.z();
       ecT_theSimTl=gMomentumAtHit.theta();
       ecT_phiSimTl=gMomentumAtHit.phi();
 
@@ -398,9 +458,15 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl,
 	std::cout << " THIS IS A DOUBLE MATCH!!!" << std::endl;
 	iDoubleMatch = 1;
       }
-
       iFirstDetIdMatch = 1;
+    }
 
+    if (detid == iDetIdTlOs){ 
+      ecT_pSimTlOs=gMomentumAtHit.mag();
+      ecT_ptSimTlOs=gMomentumAtHit.perp();
+      ecT_pzSimTlOs=gMomentumAtHit.z();
+      ecT_theSimTlOs=gMomentumAtHit.theta();
+      ecT_phiSimTlOs=gMomentumAtHit.phi();
     }
 
     if ( myDebug_ ) std::cout << std::endl;
@@ -409,6 +475,9 @@ int ecReco::trackingParticleAction(TrackingParticleRef & tpr, uint32_t iDetIdTl,
   }
 
   if ( iDoubleMatch ) return 1;
+
+  if ( !IsFound || !TlFound ) return 2;
+
   return 0;
 
 }
@@ -438,6 +507,7 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
   ecT_nHitVal  = itTrack.numberOfValidHits();
   ecT_curvt    = ecT_q/ecT_pt;
   ecT_curvtErr = ecT_ptErr*ecT_curvt*ecT_curvt;
+  ecT_nLoops   = (int)itTrack.nLoops();
 
   //
   // hit pattern of the track
@@ -507,34 +577,58 @@ bool ecReco::trackPreSelection(const reco::Track & itTrack){
 
 }
 
-void ecReco::trackAction(const reco::Track & itTrack, uint32_t & detidTl, uint32_t & detidIs){
+void ecReco::trackAction(const reco::Track & itTrack, uint32_t & detidTl, uint32_t & detidTlOs, uint32_t & detidIs){
 
-  ecRefit thisEcRefit(theG.product(), theMF.product(), theFitter.product(), theBuilder.product(), myDebug_);
-  tsosParams myPars = thisEcRefit.doWithTrack(itTrack, hs);
+  ecRefit thisEcRefit(theG.product(), theMF.product(), theInitialRefitter.product(), theFitter.product(), theBuilder.product(), myDebug_, fitOnly_);
+  tsosParamsSet myPars = thisEcRefit.doWithTrack(itTrack, hs);
 
   //
   // Tree stuff
-  ecT_iokTl =      myPars.iok;
-  ecT_nHitTl =     myPars.nhit;
-  ecT_pTl =        myPars.p;
-  ecT_pErrTl =     myPars.pErr;
-  ecT_curvTl =     myPars.curv;
-  ecT_curvErrTl =  myPars.curvErr;
-  ecT_curvtTl =    myPars.curvt;
-  ecT_curvtErrTl = myPars.curvtErr;
-  ecT_ptTl =       myPars.pt;
-  ecT_ptErrTl =    myPars.ptErr;
-  ecT_pzTl =       myPars.pz;
-  ecT_pzErrTl =    myPars.pzErr;
-  ecT_phiTl =      myPars.phi;
-  ecT_phiErrTl =   myPars.phiErr;
-  ecT_theTl =      myPars.theta;
-  ecT_theErrTl =   myPars.thetaErr;
+  tsosParams & myParamsFirst = myPars.first;
+  tsosParams & myParamsLast = myPars.second;
+
+  ecT_iokTl =      myParamsFirst.iok;
+  ecT_nHitTl =     myParamsFirst.nhit;
+  ecT_pTl =        myParamsFirst.p;
+  ecT_pErrTl =     myParamsFirst.pErr;
+  ecT_curvTl =     myParamsFirst.curv;
+  ecT_curvErrTl =  myParamsFirst.curvErr;
+  ecT_curvtTl =    myParamsFirst.curvt;
+  ecT_curvtErrTl = myParamsFirst.curvtErr;
+  ecT_ptTl =       myParamsFirst.pt;
+  ecT_ptErrTl =    myParamsFirst.ptErr;
+  ecT_pzTl =       myParamsFirst.pz;
+  ecT_pzErrTl =    myParamsFirst.pzErr;
+  ecT_phiTl =      myParamsFirst.phi;
+  ecT_phiErrTl =   myParamsFirst.phiErr;
+  ecT_theTl =      myParamsFirst.theta;
+  ecT_theErrTl =   myParamsFirst.thetaErr;
+
+  // todo: fill myParamsLast here
+
+  ecT_iokTlOs =      myParamsLast.iok;
+  ecT_nHitTlOs =     myParamsLast.nhit;
+  ecT_pTlOs =        myParamsLast.p;
+  ecT_pErrTlOs =     myParamsLast.pErr;
+  ecT_curvTlOs =     myParamsLast.curv;
+  ecT_curvErrTlOs =  myParamsLast.curvErr;
+  ecT_curvtTlOs =    myParamsLast.curvt;
+  ecT_curvtErrTlOs = myParamsLast.curvtErr;
+  ecT_ptTlOs =       myParamsLast.pt;
+  ecT_ptErrTlOs =    myParamsLast.ptErr;
+  ecT_pzTlOs =       myParamsLast.pz;
+  ecT_pzErrTlOs =    myParamsLast.pzErr;
+  ecT_phiTlOs =      myParamsLast.phi;
+  ecT_phiErrTlOs =   myParamsLast.phiErr;
+  ecT_theTlOs =      myParamsLast.theta;
+  ecT_theErrTlOs =   myParamsLast.thetaErr;
 
   //
   // return the DetId of the first tracklet hit and the inner state
-  detidTl = myPars.detidTl;
-  detidIs = myPars.detidIs;
+  detidTl = myParamsFirst.detidTl;
+  detidIs = myParamsFirst.detidIs;
+
+  detidTlOs = myParamsLast.detidTl;
 
   return;
 

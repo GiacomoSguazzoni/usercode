@@ -21,6 +21,7 @@
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h" 
 #include "TrackingTools/Records/interface/TrackingComponentsRecord.h" 
 #include "TrackingTools/Records/interface/TransientRecHitRecord.h" 
+#include "TrackingTools/TrackFitters/interface/KFFittingSmoother.h"
 
 #include "SimTracker/Records/interface/TrackAssociatorRecord.h"
 
@@ -43,19 +44,22 @@
 //
 // constructors and destructor
 //
-ecRefit::ecRefit(const TrackerGeometry * theGeometry, const MagneticField * theMagneticField, const TrajectoryFitter * theFitter, const TransientTrackingRecHitBuilder * theBuilder, bool debug)
+ecRefit::ecRefit(const TrackerGeometry * theGeometry, const MagneticField * theMagneticField, const TrajectoryFitter * theInitialRefitter, const TrajectoryFitter * theFitter, const TransientTrackingRecHitBuilder * theBuilder, bool debug, bool 
+fitOnly)
 {
 
   myDebug_ = debug;
+  fitOnly_ = fitOnly;
 
   theG = theGeometry;
   theMF = theMagneticField;
   theF = theFitter;
+  theInitialReF = theInitialRefitter;
   theB = theBuilder;
 
 }
 
-int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& detidIs, uint32_t& detidTl, int& hitIndexTl){
+int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& detidIs, uint32_t& detidTl, uint32_t& detidTlOs, int& hitIndexTl){
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -81,6 +85,7 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
     if ( iFirstIs ) {
       detidIs = id;
       iFirstIs = 0;
+      if ( myDebug_ ) std::cout << " selected detid #" << id.rawId() << " as detidIs";
     }
     
     if ( myDebug_ ) {
@@ -134,10 +139,14 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
 	// Stere the index of the first hit of the tracklet
 	//
 	if ( iFirstTl ) {
+	  if ( myDebug_ ) std::cout << " selected detid #" << id.rawId() << " as detidTl" ;
 	  detidTl = id;
 	  hitIndexTl = iCount;
 	}
-	
+    // store the id of the last hit of the triplet
+    // will no be done for invalid hits
+    detidTlOs = id;
+	 
 	//
 	iFirstTl = 0;
 	
@@ -157,6 +166,9 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
 
 
   }
+
+  if ( myDebug_ ) std::cout << " detidTl: " << detidTl << " detIdIs: " << detidIs << std::endl;
+
 
   if ( myDebug_ ) std::cout << " Number of valid hits selected for refit: " << iCountSelected << std::endl;
   if ( myDebug_ ) std::cout << " Number of hits in the vector: " << hitsTl.size() << std::endl;
@@ -191,33 +203,69 @@ int ecRefit::buildHitsVector(const reco::Track track, hitSelector hs, uint32_t& 
 
 }
 
-tsosParams ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
+tsosParamsSet ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
 
   theTrack = track;
 
-  tsosParams myParams;
-  myParams.zero();
+  //assert ( fitOnly_ );
+
+  tsosParams myParamsFirst;
+  tsosParams myParamsLast;
+  myParamsFirst.zero();
+  myParamsLast.zero();
   
   //
   // Build hits vector  
-  uint32_t detidTl;
-  uint32_t detidIs;
-  int hitIndexTl;
-  myParams.nhit = buildHitsVector(track, hs, detidIs, detidTl, hitIndexTl);
-  myParams.detidIs = detidIs;
-  myParams.detidTl = detidTl;
 
-  if ( myParams.nhit <= hs.minhits ) return myParams;
+  uint32_t detidTl = 0;
+  uint32_t detidTlOs = 0;
+  uint32_t detidIs = 0;
+  int hitIndexTl = 0;
+  auto numberHits  = buildHitsVector(track, hs, detidIs, detidTl, detidTlOs, hitIndexTl);
+  // attention: my Params will be overwritten below and this value needs to be reset 
+  myParamsFirst.nhit = numberHits;
+  myParamsFirst.detidIs = detidIs;
+  myParamsFirst.detidTl = detidTl;
+
+  myParamsLast.detidIs = detidIs;
+  myParamsLast.detidTl = detidTlOs;
+  myParamsLast.nhit = myParamsFirst.nhit;
+ 
+  if ( myDebug_ )
+    std::cout << "Number of hits: "<< myParamsFirst.nhit << " min hits cut: " << hs.minhits << std::endl; 
+
+  if ( myParamsFirst.nhit <= hs.minhits ) return tsosParamsSet( myParamsFirst, myParamsLast );
 
   //
   // Refit the full track to get intermediate TSOS
+	std::cout << "Refitting Track to get TSOS for tracklets" << std::endl;
+
   std::vector<Trajectory> trajVec = doGenericRefit(theTrack, hitsAll, theG.product(), theMF.product());
-  if ( ! trajVec.size()>0 ) return myParams;
+  if ( ! trajVec.size()>0 ) return tsosParamsSet( myParamsFirst, myParamsLast );
   std::vector<TrajectoryMeasurement> theTrajectoryMeasurements=trajVec.begin()->measurements();
+
+  if ( myDebug_ )
+    std::cout << "hitIndexTl : " << hitIndexTl << " size " << trajVec.begin()->measurements().size() << " and " << myParamsFirst.nhit << "initial hits" << std::endl;
+
+  // recheck the min hit criteria as some hits might have been killed during the refit
+  // there is a certain amount of traces where this will happen
+  if ( trajVec.begin()->measurements().size() < size_t( hs.minhits ) ) {
+    if ( myDebug_ )
+      std::cout << "Error: refit has less hits than min: " << trajVec.begin()->measurements().size() << std::endl;
+
+    return tsosParamsSet( myParamsFirst, myParamsLast ); 
+  }
+
   std::vector<TrajectoryMeasurement>::iterator theHitIndex = theTrajectoryMeasurements.end()-hitIndexTl-1;
+
+  if ( ! theHitIndex->updatedState().isValid() ) {
+      if ( myDebug_ ) 
+            std::cout << "Error: Initial refit not valid" << std::endl;
+      return tsosParamsSet( myParamsFirst, myParamsLast );
+  }
+
   TrajectoryStateOnSurface tsos = theHitIndex->updatedState();
-  //  TrajectoryStateOnSurface tsos = (theTrajectoryMeasurements.end()-hitIndexTl+1)->updatedState();
-  //  TrajectoryStateOnSurface tsos = theTrajectoryMeasurements.at(hitIndexTl).updatedState();
+
   if ( myDebug_ ) {
     DetId id=DetId( theHitIndex->recHit()->geographicalId() );
     //    DetId id=DetId( theTrajectoryMeasurements.at(hitIndexTl).recHit()->geographicalId() );
@@ -225,23 +273,57 @@ tsosParams ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
     std::cout << std::endl;
     dumpTSOSInfo(tsos);
   }
+
+  // make sure the refit was a success 
+  if ( ! tsos.isValid() )
+    return tsosParamsSet( myParamsFirst, myParamsLast );
   
 
   //
   // Refit the tracklet with the correct TSOS
+  std::cout << "Refitting Tracklet with correct TSOS" << std::endl;
   trajVec.clear();
   trajVec = doGenericRefitWithTSOS(tsos, hitsTl, theG.product(), theMF.product());
   if ( myDebug_ ) std::cout << "   Tracklet refit initialization with..." << std::endl;
-  if ( ! trajVec.size()>0 ) return myParams;
+  if ( ! trajVec.size()>0 ) return tsosParamsSet( myParamsFirst, myParamsLast );
   
-  TrajectoryStateOnSurface upTSOS = trajVec.begin()->lastMeasurement().updatedState();
-  myParams = GetTSOSParams(upTSOS);
-  myParams.iok = 1;
+  TrajectoryStateOnSurface upTSOS;
+  TrajectoryStateOnSurface lastTSOS;
+
+    // this is tricky. if only the fitter round is run, the last / first measurement nomenclature is correct
+    // if fitter + smoother is run however, the logic is reversed
+    if ( fitOnly_ ) {
+        upTSOS = trajVec.begin()->firstMeasurement().updatedState();
+        lastTSOS = trajVec.begin()->lastMeasurement().updatedState();
+    } else {
+        upTSOS = trajVec.begin()->lastMeasurement().updatedState();
+        lastTSOS = trajVec.begin()->firstMeasurement().updatedState();
+    }
+  
+    if (  myDebug_ ) {
+    std::cout << "fitOnly_ " << fitOnly_ << std::endl;
+  std::cout << "mom <first> Measurement().updatedState()" << upTSOS.globalMomentum().mag() << std::endl;
+  // the updated state will also be set in fit-only propagation: KF combination between the hit 
+  // and the forward propagated state
+  std::cout << "mom <last> Measurement().updatedState()" << lastTSOS.globalMomentum().mag() << std::endl;
+    }
+
+  myParamsFirst = GetTSOSParams(upTSOS);
+  myParamsFirst.iok = 1;
+  myParamsFirst.nhit = numberHits;
+  myParamsFirst.detidIs = detidIs;
+  myParamsFirst.detidTl = detidTl;
+
+  myParamsLast = GetTSOSParams(lastTSOS);
+  myParamsLast.iok = 1;
+  myParamsLast.detidIs = detidIs;
+  myParamsLast.detidTl = detidTlOs;
+  myParamsLast.nhit = myParamsFirst.nhit;
   
   if ( myDebug_ ) std::cout << "   Tracklet refit done. " << std::endl;
   if ( myDebug_ ) dumpTSOSInfo(upTSOS);
   
-  return myParams;
+  return tsosParamsSet(  myParamsFirst, myParamsLast );
 
 }
 
@@ -253,6 +335,23 @@ ecRefit::~ecRefit()
 //
 // member functions
 //
+
+TrajectoryFitter const * ecRefit::getFitter() {
+  TrajectoryFitter const* tfBase = &(*theF);
+  if ( fitOnly_ ) {
+    // use the fitter only and perform no smoothing
+    KFFittingSmoother const* kfFitSmooth = dynamic_cast<KFFittingSmoother const*>(tfBase);
+    if ( kfFitSmooth == nullptr ) {   
+        std::cout << "Fit only is supported only for KFFittingSmoother" << std::endl;
+        assert( false );
+    }
+        std::cout << "running Fit only" << std::endl;
+    	return kfFitSmooth->fitter();
+  }
+  else {
+    return tfBase;
+ }	  
+}
 
 std::vector<Trajectory> ecRefit::doGenericRefit(const reco::Track t, TransientTrackingRecHit::RecHitContainer h, const TrackerGeometry * tG, const MagneticField * tM){
   
@@ -272,8 +371,14 @@ std::vector<Trajectory> ecRefit::doGenericRefit(const reco::Track t, TransientTr
   const TrajectorySeed seed = TrajectorySeed(PTrajectoryStateOnDet(), TrajectorySeed::recHitContainer(), seedDir);
   //
   // Fit!
-  return theF->fit(seed, h, initialStateFromTrack);
+  std::vector<Trajectory> traj;
+ 
+  std:: cout << " %%% CALLING FIT" << std::endl;
+
+  // use the initial refitter here..
+  traj = theInitialReF->fit(seed, h, initialStateFromTrack);
   
+  return traj;
 }
 
 //
@@ -296,7 +401,8 @@ std::vector<Trajectory> ecRefit::doGenericRefitWithTSOS(TrajectoryStateOnSurface
   const TrajectorySeed seed = TrajectorySeed(PTrajectoryStateOnDet(), TrajectorySeed::recHitContainer(), seedDir);
   //
   // Fit!
-  return theF->fit(seed, h, initialStateFromTrack);
+  std:: cout << " %%% CALLING FIT" << std::endl;
+  return getFitter()->fit(seed, h, initialStateFromTrack);
   
 }
 

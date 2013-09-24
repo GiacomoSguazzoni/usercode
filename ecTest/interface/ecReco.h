@@ -40,8 +40,8 @@ private:
   virtual void endJob();
 
   bool trackPreSelection(const reco::Track &);
-  void trackAction(const reco::Track &, uint32_t&, uint32_t&);
-  int trackingParticleAction(TrackingParticleRef &, uint32_t, uint32_t);
+  void trackAction(const reco::Track &, uint32_t&, uint32_t&, uint32_t&);
+  int trackingParticleAction(TrackingParticleRef &, uint32_t, uint32_t, uint32_t);
 
   double pErrorOfTrack(const reco::Track &);
   double pzErrorOfTrack(const reco::Track &);
@@ -53,6 +53,9 @@ private:
   edm::InputTag tpTag_; 
   bool myDebug_;
   bool isMC_;
+  // if true, no track smoothing and outlier rejection will be performed
+  bool fitOnly_;
+
   double ptMinCut_;
   double ptMaxCut_;
   double etaMaxCut_;
@@ -69,12 +72,14 @@ private:
   hitSelector hs;
 
   std::string fitterName_;
+  std::string initialRefitterName_;
   std::string associatorName_;
   std::string builderName_;
 
   edm::ESHandle<TrackerGeometry> theG;
   edm::ESHandle<MagneticField> theMF;
   edm::ESHandle<TrajectoryFitter> theFitter;
+  edm::ESHandle<TrajectoryFitter> theInitialRefitter;
   edm::ESHandle<TrackAssociatorBase> theAssociator;
   edm::ESHandle<TransientTrackingRecHitBuilder> theBuilder;
 
@@ -116,6 +121,7 @@ private:
   float ecT_vx;     
   float ecT_vy;    
   float ecT_vz;    
+  int ecT_nLoops;
   //
   // inner state
   float ecT_pIs;
@@ -132,6 +138,23 @@ private:
   float ecT_theErrIs;
   float ecT_phiIs;
   float ecT_phiErrIs;
+
+  // outer state for full fit, not done up to now
+ /* int   ecT_nHitTlOs;
+  float ecT_pTlOs;
+  float ecT_pErrTlOs;
+  float ecT_curvTlOs;
+  float ecT_curvErrTlOs;
+  float ecT_curvtTlOs;
+  float ecT_curvtErrTlOs;
+  float ecT_ptTlOs;
+  float ecT_ptErrTlOs;
+  float ecT_pzTlOs;
+  float ecT_pzErrTlOs;
+  float ecT_theTlOs;
+  float ecT_theErrTlOs;
+  float ecT_phiTlOs;
+  float ecT_phiErrTlOs;*/
   //
   // 
   int   ecT_nHitVal;
@@ -154,6 +177,7 @@ private:
   int   ecT_iTrackSim;
   float ecT_pSim;
   float ecT_ptSim;
+  float ecT_pzSim;
   float ecT_theSim;
   float ecT_phiSim;
   int   ecT_nHitSim;    
@@ -175,12 +199,39 @@ private:
   float ecT_theErrTl;
   float ecT_phiTl;
   float ecT_phiErrTl;
+
+  // tracklet outer state
+  int   ecT_nHitTlOs;
+  int   ecT_iokTlOs;
+  float ecT_pTlOs;
+  float ecT_pErrTlOs;
+  float ecT_curvTlOs;
+  float ecT_curvErrTlOs;
+  float ecT_curvtTlOs;
+  float ecT_curvtErrTlOs;
+  float ecT_ptTlOs;
+  float ecT_ptErrTlOs;
+  float ecT_pzTlOs;
+  float ecT_pzErrTlOs;
+  float ecT_theTlOs;
+  float ecT_theErrTlOs;
+  float ecT_phiTlOs;
+  float ecT_phiErrTlOs;
   //
   // simtracklet
   float ecT_pSimTl;
   float ecT_ptSimTl;
+  float ecT_pzSimTl;
   float ecT_theSimTl;
   float ecT_phiSimTl;
+
+  // simtracklet outer state
+  float ecT_pSimTlOs;
+  float ecT_ptSimTlOs;
+  float ecT_pzSimTlOs;
+  float ecT_theSimTlOs;
+  float ecT_phiSimTlOs;
+
   //
   // sim at inner state
   float ecT_pSimIs;
