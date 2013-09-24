@@ -63,7 +63,7 @@ ecReco::ecReco(const edm::ParameterSet& iConfig)
   hs.alt = iConfig.getUntrackedParameter<bool>("useStereoIfGlued", false);
   hs.all = iConfig.getUntrackedParameter<bool>("useAll", false);
 
-  initialRefitterName_ = iConfig.getUntrackedParameter<std::string>("InitialRefitter");
+  initialRefitterName_ = iConfig.getUntrackedParameter<std::string>("InitialRefitter","KFFittingSmootherWithOutliersRejectionAndRK");
   fitterName_ = iConfig.getUntrackedParameter<std::string>("Fitter","KFFittingSmootherWithOutliersRejectionAndRK");
   associatorName_ = iConfig.getUntrackedParameter<std::string>("Associator","TrackAssociatorByHits");
   builderName_ = iConfig.getUntrackedParameter<std::string>("Builder","WithAngleAndTemplate");   
