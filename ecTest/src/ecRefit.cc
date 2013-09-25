@@ -287,28 +287,28 @@ tsosParamsSet ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
   trajVec.clear();
   trajVec = doGenericRefitWithTSOS(tsos, hitsTl, theG.product(), theMF.product());
   if ( myDebug_ ) std::cout << "   Tracklet refit initialization with..." << std::endl;
-  if ( ! trajVec.size()>0 ) return tsosParamsSet( myParamsFirst, myParamsLast );
+  if ( !(trajVec.size() > 0) ) return tsosParamsSet( myParamsFirst, myParamsLast );
   
   TrajectoryStateOnSurface upTSOS;
   TrajectoryStateOnSurface lastTSOS;
 
     // this is tricky. if only the fitter round is run, the last / first measurement nomenclature is correct
     // if fitter + smoother is run however, the logic is reversed
-    if ( fitOnly_ ) {
-        upTSOS = trajVec.begin()->firstMeasurement().updatedState();
-        lastTSOS = trajVec.begin()->lastMeasurement().updatedState();
-    } else {
-        upTSOS = trajVec.begin()->lastMeasurement().updatedState();
-        lastTSOS = trajVec.begin()->firstMeasurement().updatedState();
-    }
+  if ( fitOnly_ ) {
+     upTSOS = trajVec.begin()->firstMeasurement().updatedState();
+     lastTSOS = trajVec.begin()->lastMeasurement().updatedState();
+  } else {
+     upTSOS = trajVec.begin()->lastMeasurement().updatedState();
+     lastTSOS = trajVec.begin()->firstMeasurement().updatedState();
+  }
   
-    if (  myDebug_ ) {
-    std::cout << "fitOnly_ " << fitOnly_ << std::endl;
-    std::cout << "mom <first> Measurement().updatedState()" << upTSOS.globalMomentum().mag() << std::endl;
-    // the updated state will also be set in fit-only propagation: KF combination between the hit 
-    // and the forward propagated state
-    std::cout << "mom <last> Measurement().updatedState()" << lastTSOS.globalMomentum().mag() << std::endl;}
-    }
+  if (  myDebug_ ) {
+     std::cout << "fitOnly_ " << fitOnly_ << std::endl;
+     std::cout << "mom <first> Measurement().updatedState()" << upTSOS.globalMomentum().mag() << std::endl;
+     // the updated state will also be set in fit-only propagation: KF combination between the hit 
+     // and the forward propagated state
+     std::cout << "mom <last> Measurement().updatedState()" << lastTSOS.globalMomentum().mag() << std::endl;
+  }
 
   myParamsFirst = GetTSOSParams(upTSOS);
   myParamsFirst.iok = 1;
@@ -326,7 +326,6 @@ tsosParamsSet ecRefit::doWithTrack(const reco::Track track, hitSelector hs){
   if ( myDebug_ ) dumpTSOSInfo(upTSOS);
   
   return tsosParamsSet(  myParamsFirst, myParamsLast );
-
 }
 
 ecRefit::~ecRefit()
